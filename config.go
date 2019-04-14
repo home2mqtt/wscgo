@@ -61,6 +61,12 @@ func (devices *deviceList) processConfig(cat string, id string, section *ini.Sec
 			topic: getStringSafe(section, "topic"),
 			out:   getIntSafe(section, "out"),
 		})
+	case "serial":
+		devices.devices = append(devices.devices, &serialconf{
+			portname:  getStringSafe(section, "port"),
+			baudrate:  uint(getIntSafe(section, "baud")),
+			topicroot: getStringSafe(section, "topic"),
+		})
 	case ini.DEFAULT_SECTION:
 
 	default:

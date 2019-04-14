@@ -12,7 +12,7 @@ func main() {
 	}
 	devices := loadConfig(args[0])
 
-	opts := mqtt.NewClientOptions().AddBroker("tcp://192.168.0.1:1883").SetClientID("test0").SetAutoReconnect(true)
+	opts := mqtt.NewClientOptions().AddBroker("tcp://192.168.0.1:1883").SetAutoReconnect(true)
 
 	execute(opts, devices)
 }

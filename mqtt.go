@@ -4,11 +4,29 @@ import "time"
 import "github.com/eclipse/paho.mqtt.golang"
 import "strconv"
 import "log"
+import "fmt"
 
 type mqttDevice interface {
 	tick()
 	init()
 	configure(mqtt.Client)
+}
+
+func (serialconf *serialconf) configure(client mqtt.Client) {
+	serialconf.valuecallback = func(arg int, value int) {
+		switch arg {
+		case 10:
+			client.Publish(serialconf.topicroot+"/temperature", 0, false, fmt.Sprintf("%d", value))
+		case 11:
+			client.Publish(serialconf.topicroot+"/humidity", 0, false, fmt.Sprintf("%d", value))
+		}
+	}
+	client.Subscribe(serialconf.topicroot+"/light", 0, func(client mqtt.Client, msg mqtt.Message) {
+		value, err := strconv.Atoi(string(msg.Payload()))
+		if err == nil {
+			serialconf.setLight(value)
+		}
+	})
 }
 
 func (io *io) configure(client mqtt.Client) {
@@ -43,6 +61,7 @@ func execute(options *mqtt.ClientOptions, devices []mqttDevice) {
 	controlTicker := time.NewTicker(100 * time.Millisecond)
 
 	client := mqtt.NewClient(options.SetOnConnectHandler(func(client mqtt.Client) {
+		log.Println("Connected to MQTT broker")
 		for _, p := range devices {
 			p.configure(client)
 			p.init()
