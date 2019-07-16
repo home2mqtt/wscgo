@@ -18,7 +18,7 @@ stages:
   - build
   - deploy
 
-compile:
+compile-rpizw:
   stage: build
   script:
     - go build -o $CI_PROJECT_DIR/wscgo
