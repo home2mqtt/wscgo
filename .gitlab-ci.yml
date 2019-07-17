@@ -29,3 +29,13 @@ compile-rpizw:
     - grill-tamasi
     - rpizw
 
+compile-opiz:
+  stage: build
+  script:
+    - go build -o $CI_PROJECT_DIR/wscgo
+  artifacts:
+    paths:
+      - wscgo
+  tags:
+    - grill-tamasi
+    - opiz
