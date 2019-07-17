@@ -32,6 +32,9 @@ compile-rpizw:
 compile-opiz:
   stage: build
   script:
+    - go get github.com/eclipse/paho.mqtt.golang
+    - go get github.com/jacobsa/go-serial/serial
+    - go get gopkg.in/ini.v1
     - go build -o $CI_PROJECT_DIR/wscgo
   artifacts:
     paths:
