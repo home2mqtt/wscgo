@@ -21,10 +21,10 @@ stages:
 compile-rpizw:
   stage: build
   script:
-    - go build -o $CI_PROJECT_DIR/wscgo
+    - go build -o $CI_PROJECT_DIR/wscgo-rpizw
   artifacts:
     paths:
-      - wscgo
+      - wscgo-rpizw
   tags:
     - grill-tamasi
     - rpizw
@@ -35,10 +35,10 @@ compile-opiz:
     - go get github.com/eclipse/paho.mqtt.golang
     - go get github.com/jacobsa/go-serial/serial
     - go get gopkg.in/ini.v1
-    - go build -o $CI_PROJECT_DIR/wscgo
+    - go build -o $CI_PROJECT_DIR/wscgo-opiz
   artifacts:
     paths:
-      - wscgo
+      - wscgo-opiz
   tags:
     - grill-tamasi
     - opiz
