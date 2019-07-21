@@ -18,7 +18,7 @@ stages:
   - build
   - deploy
 
-compile-rpizw:
+compile:rpizw:
   stage: build
   script:
     - go build -o $CI_PROJECT_DIR/wscgo-rpizw
@@ -30,7 +30,7 @@ compile-rpizw:
     - rpizw
     - golang
 
-compile-opiz:
+compile:opiz:
   stage: build
   script:
     - go get github.com/eclipse/paho.mqtt.golang
@@ -44,3 +44,21 @@ compile-opiz:
     - grill-tamasi
     - opiz
     - golang
+    
+deploy:opiz:
+  stage: deploy
+  dependencies: 
+    - compile:opiz
+  script:
+    - curl --user 'repository:$DAV_PASS' -T $CI_PROJECT_DIR/wscgo-opiz $DAV_URL
+  only:
+    - master
+
+deploy:rpizw:
+  stage: deploy
+  dependencies: 
+    - compile:rpizw
+  script:
+    - curl --user 'repository:$DAV_PASS' -T $CI_PROJECT_DIR/wscgo-rpizw $DAV_URL
+  only:
+    - master
