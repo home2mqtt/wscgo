@@ -8,10 +8,7 @@ variables:
 # the default GOPATH being /go, then you'd need to have your
 # repository in /go/src/gitlab.com/namespace/project
 # Thus, making a symbolic link corrects this.
-before_script:
-  - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
-  - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
-  - cd $GOPATH/src/$REPO_NAME
+
 
 stages:
   - test
@@ -20,6 +17,10 @@ stages:
 
 compile:rpizw:
   stage: build
+  before_script:
+    - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
+    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+    - cd $GOPATH/src/$REPO_NAME
   script:
     - go build -o $CI_PROJECT_DIR/wscgo-rpizw
   artifacts:
@@ -32,6 +33,10 @@ compile:rpizw:
 
 compile:opiz:
   stage: build
+  before_script:
+    - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
+    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+    - cd $GOPATH/src/$REPO_NAME
   script:
     - go get github.com/eclipse/paho.mqtt.golang
     - go get github.com/jacobsa/go-serial/serial
