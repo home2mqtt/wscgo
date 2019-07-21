@@ -53,6 +53,8 @@ deploy:opiz:
     - curl --user repository:$DAV_PASS --anyauth -T $CI_PROJECT_DIR/wscgo-opiz $DAV_URL
   only:
     - master
+  tags:
+    - grill-tamasi
 
 deploy:rpizw:
   stage: deploy
@@ -62,3 +64,5 @@ deploy:rpizw:
     - curl --user repository:$DAV_PASS --anyauth -T $CI_PROJECT_DIR/wscgo-rpizw $DAV_URL
   only:
     - master
+  tags:
+    - grill-tamasi
