@@ -50,7 +50,7 @@ deploy:opiz:
   dependencies: 
     - compile:opiz
   script:
-    - curl --user 'repository:$DAV_PASS' --anyauth -T $CI_PROJECT_DIR/wscgo-opiz $DAV_URL
+    - curl --user repository:$DAV_PASS --anyauth -T $CI_PROJECT_DIR/wscgo-opiz $DAV_URL
   only:
     - master
 
@@ -59,6 +59,6 @@ deploy:rpizw:
   dependencies: 
     - compile:rpizw
   script:
-    - curl --user 'repository:$DAV_PASS' --anyauth -T $CI_PROJECT_DIR/wscgo-rpizw $DAV_URL
+    - curl --user repository:$DAV_PASS --anyauth -T $CI_PROJECT_DIR/wscgo-rpizw $DAV_URL
   only:
     - master
