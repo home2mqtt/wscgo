@@ -28,6 +28,7 @@ compile-rpizw:
   tags:
     - grill-tamasi
     - rpizw
+    - golang
 
 compile-opiz:
   stage: build
@@ -42,3 +43,4 @@ compile-opiz:
   tags:
     - grill-tamasi
     - opiz
+    - golang
