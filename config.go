@@ -53,6 +53,7 @@ func (devices *deviceList) processConfig(cat string, id string, section *ini.Sec
 			DownPin:       getIntSafe(section, "downpin"),
 			DirSwitchWait: getIntSafe(section, "dirswitchwait"),
 			Range:         getIntSafe(section, "range"),
+			PrevDir:       0,
 		})
 	case "nand":
 		devices.devices = append(devices.devices, &nand{
