@@ -93,15 +93,20 @@ func TestUpDown(t *testing.T) {
 
 	s.init()
 
+	// Check up
 	s.setCmd(1)
 	s.tick()
 	checkPins("req up ", t, io, HIGH, LOW)
 
+	// Check wait
 	s.setCmd(-1)
 	for i := 0; i < s.DirSwitchWait; i++ {
 		s.tick()
 		checkPins("waiting ", t, io, LOW, LOW)
 	}
+	s.tick()
+
+	// Check down
 	checkPins("req down ", t, io, LOW, HIGH)
 
 	s.tick()
