@@ -1,9 +1,12 @@
 package main
 
-import "gopkg.in/ini.v1"
-import "log"
-import "strings"
-import "strconv"
+import (
+	"log"
+	"strconv"
+	"strings"
+
+	"gopkg.in/ini.v1"
+)
 
 type deviceList struct {
 	devices []mqttDevice
@@ -35,7 +38,7 @@ func getStringSafe(section *ini.Section, key string) string {
 	return k.String()
 }
 
-func (devices *deviceList) processConfig(cat string, id string, section *ini.Section) {
+func (devices *deviceList) processConfig(cat string, id string, section *ini.Section, ioContext ioContext) {
 	switch cat {
 	case "mcp23017":
 		address := getIntSafe(section, "address")
@@ -44,6 +47,7 @@ func (devices *deviceList) processConfig(cat string, id string, section *ini.Sec
 	case "shutter":
 		topic := getStringSafe(section, "topic") + "/" + id
 		devices.devices = append(devices.devices, &shutter{
+			ioContext:     ioContext,
 			topic:         topic,
 			UpPin:         getIntSafe(section, "uppin"),
 			DownPin:       getIntSafe(section, "downpin"),
@@ -52,14 +56,16 @@ func (devices *deviceList) processConfig(cat string, id string, section *ini.Sec
 		})
 	case "nand":
 		devices.devices = append(devices.devices, &nand{
-			in1: getIntSafe(section, "in1"),
-			in2: getIntSafe(section, "in2"),
-			out: getIntSafe(section, "out"),
+			ioContext: ioContext,
+			in1:       getIntSafe(section, "in1"),
+			in2:       getIntSafe(section, "in2"),
+			out:       getIntSafe(section, "out"),
 		})
 	case "io":
 		devices.devices = append(devices.devices, &io{
-			topic: getStringSafe(section, "topic"),
-			out:   getIntSafe(section, "out"),
+			ioContext: ioContext,
+			topic:     getStringSafe(section, "topic"),
+			out:       getIntSafe(section, "out"),
 		})
 	case "serial":
 		devices.devices = append(devices.devices, &serialconf{
@@ -94,7 +100,7 @@ func loadConfig(filename string) []mqttDevice {
 		if l > 1 {
 			id = cat[1]
 		}
-		result.processConfig(category, id, s)
+		result.processConfig(category, id, s, &wiringPiIO{})
 	}
 
 	return result.devices

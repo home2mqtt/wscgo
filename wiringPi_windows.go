@@ -16,17 +16,20 @@ const INPUT = 0
 // OUTPUT = 1
 const OUTPUT = 1
 
+type wiringPiIO struct {
+}
+
 func mcp23017Setup(expansionBase int, address int) {
 }
 
-func digitalWrite(pin int, value int) {
+func (*wiringPiIO) digitalWrite(pin int, value int) {
 	//fmt.Printf("DO[%d]:%d\n", pin, value)
 }
 
-func digitalRead(pin int) int {
+func (*wiringPiIO) digitalRead(pin int) int {
 	return LOW
 }
 
-func pinMode(pin int, mode int) {
+func (*wiringPiIO) pinMode(pin int, mode int) {
 
 }

@@ -25,6 +25,9 @@ const INPUT = C.INPUT
 // OUTPUT = wiringPI OUTPUT
 const OUTPUT = C.OUTPUT
 
+type wiringPiIO struct {
+}
+
 func mcp23017Setup(expansionBase int, address int) {
 	rc := C.mcp23017Setup(C.int(expansionBase), C.int(address))
 	if rc != C.setuprc {
@@ -33,14 +36,14 @@ func mcp23017Setup(expansionBase int, address int) {
 	C.wiringPiSetup()
 }
 
-func digitalWrite(pin int, value int) {
+func (*wiringPiIO) digitalWrite(pin int, value int) {
 	C.digitalWrite((C.int)(pin), (C.int)(value))
 }
 
-func digitalRead(pin int) int {
+func (*wiringPiIO) digitalRead(pin int) int {
 	return int(C.digitalRead((C.int)(pin)))
 }
 
-func pinMode(pin int, mode int) {
+func (*wiringPiIO) pinMode(pin int, mode int) {
 	C.pinMode((C.int)(pin), (C.int)(mode))
 }

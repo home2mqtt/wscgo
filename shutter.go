@@ -3,6 +3,7 @@ package main
 type shutterCallback func(int)
 
 type shutter struct {
+	ioContext
 	UpPin         int
 	DownPin       int
 	DirSwitchWait int
@@ -19,23 +20,23 @@ type shutter struct {
 }
 
 func (shutter *shutter) up() {
-	digitalWrite(shutter.DownPin, LOW) // turn off down
-	digitalWrite(shutter.UpPin, HIGH)  // turn on up
+	shutter.digitalWrite(shutter.DownPin, LOW) // turn off down
+	shutter.digitalWrite(shutter.UpPin, HIGH)  // turn on up
 }
 
 func (shutter *shutter) down() {
-	digitalWrite(shutter.UpPin, LOW)    // turn off up
-	digitalWrite(shutter.DownPin, HIGH) // turn on down
+	shutter.digitalWrite(shutter.UpPin, LOW)    // turn off up
+	shutter.digitalWrite(shutter.DownPin, HIGH) // turn on down
 }
 
 func (shutter *shutter) stop() {
-	digitalWrite(shutter.UpPin, LOW)   // turn off up
-	digitalWrite(shutter.DownPin, LOW) // turn on down
+	shutter.digitalWrite(shutter.UpPin, LOW)   // turn off up
+	shutter.digitalWrite(shutter.DownPin, LOW) // turn on down
 }
 
 func (shutter *shutter) init() {
-	pinMode(shutter.UpPin, OUTPUT)
-	pinMode(shutter.DownPin, OUTPUT)
+	shutter.pinMode(shutter.UpPin, OUTPUT)
+	shutter.pinMode(shutter.DownPin, OUTPUT)
 	shutter.Prev = -1
 }
 
