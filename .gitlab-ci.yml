@@ -15,6 +15,19 @@ stages:
   - build
   - deploy
 
+test:rpizw:
+  stage: test
+  before_script:
+    - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
+    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+    - cd $GOPATH/src/$REPO_NAME
+  script:
+    - go test
+  tags:
+    - grill-tamasi
+    - rpizw
+    - golang  
+
 compile:rpizw:
   stage: build
   before_script:
