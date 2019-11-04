@@ -46,6 +46,11 @@ func (shutter *shutter) setCmd(steps int) {
 	if steps == 0 {
 		//stop
 		shutter.Cmd = 0
+		if shutter.PrevDir != 0 {
+			shutter.Wait = shutter.DirSwitchWait
+		} else {
+			shutter.PrevDir = 0
+		}
 	} else if steps > 0 {
 		//up
 		if shutter.Cmd < 0 {
@@ -85,6 +90,11 @@ func (shutter *shutter) tick() {
 		shutter.Wait--
 	} else if shutter.Cmd == 0 {
 		shutter.stop()
+
+		if shutter.PrevDir != 0 {
+			shutter.Wait = shutter.DirSwitchWait
+		}
+		shutter.PrevDir = 0
 	} else {
 		if shutter.Cmd > 0 {
 			shutter.up()
