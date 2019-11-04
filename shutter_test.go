@@ -78,6 +78,28 @@ func checkPins(msg string, t *testing.T, io testIo, up int, down int) {
 	}
 }
 
+func TestZero(t *testing.T) {
+	io := testIo{
+		modes:  []int{INPUT, INPUT, INPUT},
+		values: []int{LOW, LOW, LOW},
+	}
+	s := shutter{
+		ioContext:     &io,
+		UpPin:         0,
+		DownPin:       1,
+		DirSwitchWait: 20,
+		Range:         10,
+	}
+
+	s.init()
+
+	for i := 0; i < 50; i++ {
+		s.tick()
+		checkPins("req zero ", t, io, LOW, LOW)
+	}
+
+}
+
 func TestUpDown(t *testing.T) {
 	io := testIo{
 		modes:  []int{INPUT, INPUT, INPUT},
@@ -110,7 +132,5 @@ func TestUpDown(t *testing.T) {
 	checkPins("req down ", t, io, LOW, HIGH)
 
 	s.tick()
-	if io.values[0] != LOW {
-		t.Errorf("up is high\n")
-	}
+	checkPins("req down ", t, io, LOW, LOW)
 }
