@@ -71,3 +71,41 @@ func TestUp(t *testing.T) {
 		t.Errorf("up is high\n")
 	}
 }
+
+func checkPins(msg string, t *testing.T, io testIo, up int, down int) {
+	if io.values[0] != up || io.values[1] != down {
+		t.Errorf("%s UP[exc-actal]: %d - %d, DOWN[exc-actal]: %d - %d\n", msg, up, io.values[0], down, io.values[1])
+	}
+}
+
+func TestUpDown(t *testing.T) {
+	io := testIo{
+		modes:  []int{INPUT, INPUT, INPUT},
+		values: []int{LOW, LOW, LOW},
+	}
+	s := shutter{
+		ioContext:     &io,
+		UpPin:         0,
+		DownPin:       1,
+		DirSwitchWait: 20,
+		Range:         10,
+	}
+
+	s.init()
+
+	s.setCmd(1)
+	s.tick()
+	checkPins("req up ", t, io, HIGH, LOW)
+
+	s.setCmd(-1)
+	for i := 0; i < s.DirSwitchWait; i++ {
+		s.tick()
+		checkPins("waiting ", t, io, LOW, LOW)
+	}
+	checkPins("req down ", t, io, LOW, HIGH)
+
+	s.tick()
+	if io.values[0] != LOW {
+		t.Errorf("up is high\n")
+	}
+}
