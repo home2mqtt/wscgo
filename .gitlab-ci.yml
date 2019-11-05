@@ -24,7 +24,7 @@ test:rpizw:
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
     - cd $GOPATH/src/$REPO_NAME
   script:
-    - go test gitlab.com/grill-tamasi/wscgo
+    - go test
   tags:
     - grill-tamasi
     - rpizw
