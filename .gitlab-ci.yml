@@ -1,6 +1,7 @@
 variables:
   REPO_NAME: gitlab.com/grill-tamasi.hu/wscgo
   GO111MODULE: "on"
+  VERSION: 0.1-alpha2
 
 # The problem is that to be able to use go get, one needs to put
 # the repository in the $GOPATH. So for example if your gitlab domain
@@ -80,9 +81,9 @@ deb:
     - compile:rpizw
   script:
     - equivs-build wscgo-opiz.cfg
-    - curl -X PUT -T wscgo-opiz_0.1-alpha1_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-opiz/0.1-alpha1/pool/main/w/wscgo-opiz/wscgo-opiz_0.1-alpha1_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
+    - curl -X PUT -T wscgo-opiz_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-opiz/${VERSION}/pool/main/w/wscgo-opiz/wscgo-opiz_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
     - equivs-build wscgo-rpizw.cfg
-    - curl -X PUT -T wscgo-rpizw_0.1-alpha1_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-rpizw/0.1-alpha1/pool/main/w/wscgo-rpizw/wscgo-rpizw_0.1-alpha1_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
+    - curl -X PUT -T wscgo-rpizw_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-rpizw/${VERSION}/pool/main/w/wscgo-rpizw/wscgo-rpizw_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
   artifacts:
     paths:
       - "*.deb"
