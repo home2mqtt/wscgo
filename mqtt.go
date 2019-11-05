@@ -46,6 +46,7 @@ func (nand *nand) configure(client mqtt.Client) {
 }
 
 func (shutter *shutter) configure(client mqtt.Client) {
+	// Setup single command topic
 	rcvtopic := shutter.topic
 	statustopic := rcvtopic + "/state"
 	client.Subscribe(rcvtopic, 0, func(client mqtt.Client, msg mqtt.Message) {
@@ -54,9 +55,27 @@ func (shutter *shutter) configure(client mqtt.Client) {
 			shutter.setCmd(value)
 		}
 	})
+	log.Println("Topic (", rcvtopic, ") configured for shutter", shutter.id)
+
+	// Callback config
 	shutter.Callback = func(state int) {
 		client.Publish(statustopic, 0, true, []byte(strconv.Itoa(state)))
 	}
+
+	// Setup group command topic
+	groupRcvTopic := shutter.groupTopic
+	if groupRcvTopic != "" {
+		client.Subscribe(groupRcvTopic, 0, func(client mqtt.Client, msg mqtt.Message) {
+			value, err := strconv.Atoi(string(msg.Payload()))
+			if err == nil {
+				shutter.setCmd(value)
+			}
+		})
+		log.Println("Group topic (", groupRcvTopic, ") configured for shutter", shutter.id)
+	} else {
+		log.Println("No group topic configured for shutter", shutter.id)
+	}
+
 	log.Println("Configured ", shutter, "{", rcvtopic)
 }
 

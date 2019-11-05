@@ -3,6 +3,7 @@ package main
 type shutterCallback func(int)
 
 type shutter struct {
+	id string
 	ioContext
 	UpPin         int
 	DownPin       int
@@ -15,8 +16,9 @@ type shutter struct {
 	Current int
 	Prev    int
 
-	topic    string
-	Callback shutterCallback
+	topic      string
+	groupTopic string
+	Callback   shutterCallback
 
 	PrevDir int
 }

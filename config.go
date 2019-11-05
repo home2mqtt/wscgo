@@ -11,9 +11,7 @@ import (
 type deviceList struct {
 	devices    []mqttDevice
 	MqttConfig struct {
-		host                     string
-		allShutterTopic          string
-		allShutterTopicIsEnabled bool
+		host string
 	}
 }
 
@@ -62,19 +60,14 @@ func (devices *deviceList) processConfig(cat string, id string, section *ini.Sec
 		mcp23017Setup(expansionBase, address)
 	case "mqttconfig":
 		hostURL := getStringSafe(section, "host")
-		allShutterTopic := getOptionalStringSafe(section, "allShutterTopic", "")
 		devices.MqttConfig.host = hostURL
-		devices.MqttConfig.allShutterTopic = allShutterTopic
-		if allShutterTopic == "" {
-			devices.MqttConfig.allShutterTopicIsEnabled = false
-		} else {
-			devices.MqttConfig.allShutterTopicIsEnabled = true
-		}
 	case "shutter":
 		topic := getStringSafe(section, "topic") + "/" + id
 		devices.devices = append(devices.devices, &shutter{
+			id:            id,
 			ioContext:     ioContext,
 			topic:         topic,
+			groupTopic:    getOptionalStringSafe(section, "opt_groupTopic", ""),
 			UpPin:         getIntSafe(section, "uppin"),
 			DownPin:       getIntSafe(section, "downpin"),
 			DirSwitchWait: getIntSafe(section, "dirswitchwait"),
@@ -112,8 +105,6 @@ func loadConfig(filename string) deviceList {
 		devices: make([]mqttDevice, 0),
 	}
 	result.MqttConfig.host = "tcp://192.168.0.1:1883"
-	result.MqttConfig.allShutterTopic = ""
-	result.MqttConfig.allShutterTopicIsEnabled = false
 
 	cfg, err := ini.Load(filename)
 	if err != nil {
