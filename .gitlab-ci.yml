@@ -15,8 +15,27 @@ stages:
   - build
   - deploy
 
+test:rpizw:
+  stage: test
+  variables:
+    GO111MODULE: "on"
+  before_script:
+    - echo $REPO_NAME
+    - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
+    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+    - cd $GOPATH/src/$REPO_NAME
+  script:
+    - cd wscgo
+    - go test
+  tags:
+    - grill-tamasi
+    - rpizw
+    - golang  
+
 compile:rpizw:
   stage: build
+  variables:
+    GO111MODULE: "on"
   before_script:
     - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
@@ -33,6 +52,8 @@ compile:rpizw:
 
 compile:opiz:
   stage: build
+  variables:
+    GO111MODULE: "on"
   before_script:
     - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME

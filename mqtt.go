@@ -1,10 +1,13 @@
 package main
 
-import "time"
-import "github.com/eclipse/paho.mqtt.golang"
-import "strconv"
-import "log"
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"strconv"
+	"time"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
+)
 
 type mqttDevice interface {
 	tick()
