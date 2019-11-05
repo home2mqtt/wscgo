@@ -9,7 +9,12 @@ import (
 )
 
 type deviceList struct {
-	devices []mqttDevice
+	devices    []mqttDevice
+	MqttConfig struct {
+		host                     string
+		allShutterTopic          string
+		allShutterTopicIsEnabled bool
+	}
 }
 
 func getIntSafe(section *ini.Section, key string) int {
@@ -38,12 +43,33 @@ func getStringSafe(section *ini.Section, key string) string {
 	return k.String()
 }
 
+func getOptionalStringSafe(section *ini.Section, key string, defaultValue string) string {
+	if !section.HasKey(key) {
+		return defaultValue
+	}
+	k, err := section.GetKey(key)
+	if err != nil {
+		log.Fatal("Invalid value of ", key, " in ", section.Name(), ": ", err)
+	}
+	return k.String()
+}
+
 func (devices *deviceList) processConfig(cat string, id string, section *ini.Section, ioContext ioContext) {
 	switch cat {
 	case "mcp23017":
 		address := getIntSafe(section, "address")
 		expansionBase := getIntSafe(section, "expansionBase")
 		mcp23017Setup(expansionBase, address)
+	case "mqttconfig":
+		hostURL := getStringSafe(section, "host")
+		allShutterTopic := getOptionalStringSafe(section, "allShutterTopic", "")
+		devices.MqttConfig.host = hostURL
+		devices.MqttConfig.allShutterTopic = allShutterTopic
+		if allShutterTopic == "" {
+			devices.MqttConfig.allShutterTopicIsEnabled = false
+		} else {
+			devices.MqttConfig.allShutterTopicIsEnabled = true
+		}
 	case "shutter":
 		topic := getStringSafe(section, "topic") + "/" + id
 		devices.devices = append(devices.devices, &shutter{
@@ -81,10 +107,14 @@ func (devices *deviceList) processConfig(cat string, id string, section *ini.Sec
 	}
 }
 
-func loadConfig(filename string) []mqttDevice {
+func loadConfig(filename string) deviceList {
 	result := deviceList{
 		devices: make([]mqttDevice, 0),
 	}
+	result.MqttConfig.host = "tcp://192.168.0.1:1883"
+	result.MqttConfig.allShutterTopic = ""
+	result.MqttConfig.allShutterTopicIsEnabled = false
+
 	cfg, err := ini.Load(filename)
 	if err != nil {
 		log.Fatalf("Fail to read file: %v", err)
@@ -104,5 +134,5 @@ func loadConfig(filename string) []mqttDevice {
 		result.processConfig(category, id, s, &wiringPiIO{})
 	}
 
-	return result.devices
+	return result
 }
