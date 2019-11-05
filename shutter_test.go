@@ -30,6 +30,8 @@ func TestInit(t *testing.T) {
 		DownPin:       1,
 		DirSwitchWait: 20,
 		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
 	}
 
 	s.init()
@@ -52,6 +54,8 @@ func TestUp(t *testing.T) {
 		DownPin:       1,
 		DirSwitchWait: 20,
 		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
 	}
 
 	s.init()
@@ -89,6 +93,8 @@ func TestZero(t *testing.T) {
 		DownPin:       1,
 		DirSwitchWait: 20,
 		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
 	}
 
 	s.init()
@@ -109,8 +115,10 @@ func TestDirectionChange(t *testing.T) {
 		ioContext:     &io,
 		UpPin:         0,
 		DownPin:       1,
-		DirSwitchWait: 20,
+		DirSwitchWait: 10,
 		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
 	}
 
 	s.init()
@@ -144,8 +152,10 @@ func TestDirectionChangeWithExtraWait(t *testing.T) {
 		ioContext:     &io,
 		UpPin:         0,
 		DownPin:       1,
-		DirSwitchWait: 20,
+		DirSwitchWait: 2,
 		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
 	}
 
 	s.init()
@@ -161,8 +171,47 @@ func TestDirectionChangeWithExtraWait(t *testing.T) {
 		checkPins("waiting ", t, io, LOW, LOW)
 	}
 	s.tick()
+	s.tick()
 
 	// Check down
+	s.setCmd(-1)
+	s.tick()
+	checkPins("req down ", t, io, LOW, HIGH)
+
+	s.tick()
+	checkPins("req stop ", t, io, LOW, LOW)
+}
+
+func TestDirectionChangeWithStop(t *testing.T) {
+	io := testIo{
+		modes:  []int{INPUT, INPUT, INPUT},
+		values: []int{LOW, LOW, LOW},
+	}
+	s := shutter{
+		ioContext:     &io,
+		UpPin:         0,
+		DownPin:       1,
+		DirSwitchWait: 2,
+		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
+	}
+
+	s.init()
+
+	// Check up
+	s.setCmd(1)
+	s.tick()
+	checkPins("req up ", t, io, HIGH, LOW)
+
+	// Stop --> wait
+	s.setCmd(0)
+	for i := 0; i < s.DirSwitchWait; i++ {
+		s.tick()
+		checkPins("waiting ", t, io, LOW, LOW)
+	}
+
+	// Check wait
 	s.setCmd(-1)
 	s.tick()
 	checkPins("req down ", t, io, LOW, HIGH)
