@@ -1,7 +1,5 @@
 package main
 
-import "log"
-
 type shutterCallback func(int)
 
 type shutter struct {
@@ -22,8 +20,7 @@ type shutter struct {
 	groupTopic string
 	Callback   shutterCallback
 
-	PrevDir int
-
+	PrevDir     int
 	firstCmd    bool
 	stopCounter int
 	shouldWait  bool
@@ -101,7 +98,6 @@ func (shutter *shutter) tick() {
 		if shutter.Wait == 0 {
 			shutter.PrevDir = 0
 		}
-		log.Println("WAIT")
 	} else if shutter.Cmd == 0 {
 		shutter.stop()
 
@@ -110,10 +106,8 @@ func (shutter *shutter) tick() {
 		}
 		if shutter.stopCounter >= shutter.DirSwitchWait {
 			shutter.shouldWait = false
-			log.Println("STOP")
 		} else {
 			shutter.shouldWait = true
-			log.Println("STOP - Should wait")
 		}
 
 	} else {
@@ -126,7 +120,6 @@ func (shutter *shutter) tick() {
 				shutter.Current = shutter.Range
 			}
 			shutter.PrevDir = 1
-			log.Println("UP")
 		} else {
 			shutter.down()
 			shutter.Cmd++
@@ -135,7 +128,6 @@ func (shutter *shutter) tick() {
 				shutter.Current = 0
 			}
 			shutter.PrevDir = -1
-			log.Println("DOWN")
 		}
 
 		if shutter.Callback != nil {
