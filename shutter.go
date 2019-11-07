@@ -69,7 +69,7 @@ func (shutter *shutter) setCmd(steps int) {
 			shutter.Cmd += steps
 		}
 
-		if shutter.PrevDir != 1 && shutter.PrevDir != 0 && !shutter.firstCmd && shutter.shouldWait {
+		if (shutter.PrevDir != 1 && shutter.PrevDir != 0 && !shutter.firstCmd) || (shutter.shouldWait && shutter.PrevDir != 1) {
 			shutter.Wait = shutter.DirSwitchWait - shutter.stopCounter
 		}
 
@@ -84,7 +84,7 @@ func (shutter *shutter) setCmd(steps int) {
 			shutter.Cmd += steps
 		}
 
-		if shutter.PrevDir != -1 && shutter.PrevDir != 0 && !shutter.firstCmd && shutter.shouldWait {
+		if (shutter.PrevDir != -1 && shutter.PrevDir != 0 && !shutter.firstCmd) || (shutter.shouldWait && shutter.PrevDir != -1) {
 			shutter.Wait = shutter.DirSwitchWait - shutter.stopCounter
 		}
 
