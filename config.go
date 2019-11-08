@@ -8,7 +8,7 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-type deviceList struct {
+type configuration struct {
 	devices    []mqttDevice
 	MqttConfig struct {
 		host string
@@ -52,7 +52,7 @@ func getOptionalStringSafe(section *ini.Section, key string, defaultValue string
 	return k.String()
 }
 
-func (devices *deviceList) processConfig(cat string, id string, section *ini.Section, ioContext ioContext) {
+func (devices *configuration) processConfig(cat string, id string, section *ini.Section, ioContext ioContext) {
 	switch cat {
 	case "mcp23017":
 		address := getIntSafe(section, "address")
@@ -101,8 +101,8 @@ func (devices *deviceList) processConfig(cat string, id string, section *ini.Sec
 	}
 }
 
-func loadConfig(filename string) deviceList {
-	result := deviceList{
+func loadConfig(filename string) configuration {
+	result := configuration{
 		devices: make([]mqttDevice, 0),
 	}
 	result.MqttConfig.host = "tcp://192.168.0.1:1883"
