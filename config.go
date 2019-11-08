@@ -58,7 +58,7 @@ func (devices *deviceList) processConfig(cat string, id string, section *ini.Sec
 		address := getIntSafe(section, "address")
 		expansionBase := getIntSafe(section, "expansionBase")
 		mcp23017Setup(expansionBase, address)
-	case "mqttconfig":
+	case "mqtt":
 		hostURL := getStringSafe(section, "host")
 		devices.MqttConfig.host = hostURL
 	case "shutter":
