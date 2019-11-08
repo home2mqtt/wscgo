@@ -3,6 +3,7 @@ package main
 type shutterCallback func(int)
 
 type shutter struct {
+	id string
 	ioContext
 	UpPin         int
 	DownPin       int
@@ -15,10 +16,14 @@ type shutter struct {
 	Current int
 	Prev    int
 
-	topic    string
-	Callback shutterCallback
+	topic      string
+	groupTopic string
+	Callback   shutterCallback
 
-	PrevDir int
+	PrevDir     int
+	firstCmd    bool
+	stopCounter int
+	shouldWait  bool
 }
 
 func (shutter *shutter) up() {
@@ -46,10 +51,10 @@ func (shutter *shutter) setCmd(steps int) {
 	if steps == 0 {
 		//stop
 		shutter.Cmd = 0
-		if shutter.PrevDir != 0 {
+		if shutter.PrevDir != 0 && !shutter.firstCmd {
 			shutter.Wait = shutter.DirSwitchWait
 		} else {
-			shutter.PrevDir = 0
+			//shutter.PrevDir = 0
 		}
 	} else if steps > 0 {
 		//up
@@ -61,8 +66,8 @@ func (shutter *shutter) setCmd(steps int) {
 			shutter.Cmd += steps
 		}
 
-		if shutter.PrevDir < 0 {
-			shutter.Wait = shutter.DirSwitchWait
+		if (shutter.PrevDir != 1 && shutter.PrevDir != 0 && !shutter.firstCmd) || (shutter.shouldWait && shutter.PrevDir != 1) {
+			shutter.Wait = shutter.DirSwitchWait - shutter.stopCounter
 		}
 
 		shutter.PrevDir = 1
@@ -76,26 +81,37 @@ func (shutter *shutter) setCmd(steps int) {
 			shutter.Cmd += steps
 		}
 
-		if shutter.PrevDir > 0 {
-			shutter.Wait = shutter.DirSwitchWait
+		if (shutter.PrevDir != -1 && shutter.PrevDir != 0 && !shutter.firstCmd) || (shutter.shouldWait && shutter.PrevDir != -1) {
+			shutter.Wait = shutter.DirSwitchWait - shutter.stopCounter
 		}
 
 		shutter.PrevDir = -1
 	}
+
+	shutter.firstCmd = false
 }
 
 func (shutter *shutter) tick() {
 	if shutter.Wait > 0 {
 		shutter.stop()
 		shutter.Wait--
+		if shutter.Wait == 0 {
+			shutter.PrevDir = 0
+		}
 	} else if shutter.Cmd == 0 {
 		shutter.stop()
 
-		if shutter.PrevDir != 0 {
-			shutter.Wait = shutter.DirSwitchWait
+		if shutter.stopCounter <= shutter.DirSwitchWait && shutter.shouldWait {
+			shutter.stopCounter++
 		}
-		shutter.PrevDir = 0
+		if shutter.stopCounter >= shutter.DirSwitchWait {
+			shutter.shouldWait = false
+		} else {
+			shutter.shouldWait = true
+		}
+
 	} else {
+		shutter.stopCounter = 0
 		if shutter.Cmd > 0 {
 			shutter.up()
 			shutter.Cmd--
@@ -103,6 +119,7 @@ func (shutter *shutter) tick() {
 			if shutter.Current > shutter.Range {
 				shutter.Current = shutter.Range
 			}
+			shutter.PrevDir = 1
 		} else {
 			shutter.down()
 			shutter.Cmd++
@@ -110,6 +127,7 @@ func (shutter *shutter) tick() {
 			if shutter.Current < 0 {
 				shutter.Current = 0
 			}
+			shutter.PrevDir = -1
 		}
 
 		if shutter.Callback != nil {

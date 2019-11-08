@@ -8,8 +8,11 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-type deviceList struct {
-	devices []mqttDevice
+type configuration struct {
+	devices    []mqttDevice
+	MqttConfig struct {
+		host string
+	}
 }
 
 func getIntSafe(section *ini.Section, key string) int {
@@ -38,22 +41,39 @@ func getStringSafe(section *ini.Section, key string) string {
 	return k.String()
 }
 
-func (devices *deviceList) processConfig(cat string, id string, section *ini.Section, ioContext ioContext) {
+func getOptionalStringSafe(section *ini.Section, key string, defaultValue string) string {
+	if !section.HasKey(key) {
+		return defaultValue
+	}
+	k, err := section.GetKey(key)
+	if err != nil {
+		log.Fatal("Invalid value of ", key, " in ", section.Name(), ": ", err)
+	}
+	return k.String()
+}
+
+func (devices *configuration) processConfig(cat string, id string, section *ini.Section, ioContext ioContext) {
 	switch cat {
 	case "mcp23017":
 		address := getIntSafe(section, "address")
 		expansionBase := getIntSafe(section, "expansionBase")
 		mcp23017Setup(expansionBase, address)
+	case "mqtt":
+		hostURL := getStringSafe(section, "host")
+		devices.MqttConfig.host = hostURL
 	case "shutter":
 		topic := getStringSafe(section, "topic") + "/" + id
 		devices.devices = append(devices.devices, &shutter{
+			id:            id,
 			ioContext:     ioContext,
 			topic:         topic,
+			groupTopic:    getOptionalStringSafe(section, "opt_groupTopic", ""),
 			UpPin:         getIntSafe(section, "uppin"),
 			DownPin:       getIntSafe(section, "downpin"),
 			DirSwitchWait: getIntSafe(section, "dirswitchwait"),
 			Range:         getIntSafe(section, "range"),
 			PrevDir:       0,
+			firstCmd:      true,
 		})
 	case "nand":
 		devices.devices = append(devices.devices, &nand{
@@ -81,10 +101,12 @@ func (devices *deviceList) processConfig(cat string, id string, section *ini.Sec
 	}
 }
 
-func loadConfig(filename string) []mqttDevice {
-	result := deviceList{
+func loadConfig(filename string) configuration {
+	result := configuration{
 		devices: make([]mqttDevice, 0),
 	}
+	result.MqttConfig.host = "tcp://192.168.0.1:1883"
+
 	cfg, err := ini.Load(filename)
 	if err != nil {
 		log.Fatalf("Fail to read file: %v", err)
@@ -104,5 +126,5 @@ func loadConfig(filename string) []mqttDevice {
 		result.processConfig(category, id, s, &wiringPiIO{})
 	}
 
-	return result.devices
+	return result
 }

@@ -19,6 +19,12 @@ func (io *testIo) pinMode(pin int, mode int) {
 	io.modes[pin] = mode
 }
 
+func checkPins(msg string, t *testing.T, io testIo, up int, down int) {
+	if io.values[0] != up || io.values[1] != down {
+		t.Errorf("%s UP[exp-actal]: %d - %d, DOWN[exp-actal]: %d - %d\n", msg, up, io.values[0], down, io.values[1])
+	}
+}
+
 func TestInit(t *testing.T) {
 	io := testIo{
 		modes:  []int{INPUT, INPUT, INPUT},
@@ -30,6 +36,8 @@ func TestInit(t *testing.T) {
 		DownPin:       1,
 		DirSwitchWait: 20,
 		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
 	}
 
 	s.init()
@@ -50,8 +58,10 @@ func TestUp(t *testing.T) {
 		ioContext:     &io,
 		UpPin:         0,
 		DownPin:       1,
-		DirSwitchWait: 20,
+		DirSwitchWait: 2,
 		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
 	}
 
 	s.init()
@@ -59,26 +69,39 @@ func TestUp(t *testing.T) {
 	s.setCmd(10)
 	for i := 0; i < 10; i++ {
 		s.tick()
-		if io.values[0] != HIGH {
-			t.Errorf("up is low %d\n", i)
-		}
-		if io.values[1] != LOW {
-			t.Errorf("down is high %d\n", i)
-		}
+		checkPins("reg up", t, io, HIGH, LOW)
 	}
 	s.tick()
-	if io.values[0] != LOW {
-		t.Errorf("up is high\n")
-	}
+	checkPins("reg stop", t, io, LOW, LOW)
 }
 
-func checkPins(msg string, t *testing.T, io testIo, up int, down int) {
-	if io.values[0] != up || io.values[1] != down {
-		t.Errorf("%s UP[exp-actal]: %d - %d, DOWN[exp-actal]: %d - %d\n", msg, up, io.values[0], down, io.values[1])
+func TestDown(t *testing.T) {
+	io := testIo{
+		modes:  []int{INPUT, INPUT, INPUT},
+		values: []int{LOW, LOW, LOW},
 	}
+	s := shutter{
+		ioContext:     &io,
+		UpPin:         0,
+		DownPin:       1,
+		DirSwitchWait: 2,
+		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
+	}
+
+	s.init()
+
+	s.setCmd(-10)
+	for i := 0; i < 10; i++ {
+		s.tick()
+		checkPins("reg down", t, io, LOW, HIGH)
+	}
+	s.tick()
+	checkPins("reg stop", t, io, LOW, LOW)
 }
 
-func TestZero(t *testing.T) {
+func TestStop(t *testing.T) {
 	io := testIo{
 		modes:  []int{INPUT, INPUT, INPUT},
 		values: []int{LOW, LOW, LOW},
@@ -89,6 +112,8 @@ func TestZero(t *testing.T) {
 		DownPin:       1,
 		DirSwitchWait: 20,
 		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
 	}
 
 	s.init()
@@ -109,8 +134,10 @@ func TestDirectionChange(t *testing.T) {
 		ioContext:     &io,
 		UpPin:         0,
 		DownPin:       1,
-		DirSwitchWait: 20,
+		DirSwitchWait: 2,
 		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
 	}
 
 	s.init()
@@ -144,8 +171,10 @@ func TestDirectionChangeWithExtraWait(t *testing.T) {
 		ioContext:     &io,
 		UpPin:         0,
 		DownPin:       1,
-		DirSwitchWait: 20,
+		DirSwitchWait: 2,
 		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
 	}
 
 	s.init()
@@ -161,8 +190,47 @@ func TestDirectionChangeWithExtraWait(t *testing.T) {
 		checkPins("waiting ", t, io, LOW, LOW)
 	}
 	s.tick()
+	s.tick()
 
 	// Check down
+	s.setCmd(-1)
+	s.tick()
+	checkPins("req down ", t, io, LOW, HIGH)
+
+	s.tick()
+	checkPins("req stop ", t, io, LOW, LOW)
+}
+
+func TestDirectionChangeWithStop(t *testing.T) {
+	io := testIo{
+		modes:  []int{INPUT, INPUT, INPUT},
+		values: []int{LOW, LOW, LOW},
+	}
+	s := shutter{
+		ioContext:     &io,
+		UpPin:         0,
+		DownPin:       1,
+		DirSwitchWait: 2,
+		Range:         10,
+		PrevDir:       0,
+		firstCmd:      true,
+	}
+
+	s.init()
+
+	// Check up
+	s.setCmd(1)
+	s.tick()
+	checkPins("req up ", t, io, HIGH, LOW)
+
+	// Stop --> wait
+	s.setCmd(0)
+	for i := 0; i < s.DirSwitchWait; i++ {
+		s.tick()
+		checkPins("waiting ", t, io, LOW, LOW)
+	}
+
+	// Check wait
 	s.setCmd(-1)
 	s.tick()
 	checkPins("req down ", t, io, LOW, HIGH)
