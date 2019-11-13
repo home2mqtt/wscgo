@@ -14,6 +14,7 @@ variables:
 stages:
   - test
   - build
+  - package
   - deploy
 
 test:rpizw:
@@ -72,26 +73,43 @@ compile:opiz:
     - opiz
     - golang
     
-## Deploy
+package:opiz:
+  stage:package
+  dependencies:
+    - compile:opiz
+  script:
+    - cp wscgo-opiz wscgo
+    - equivs-build wscgo-opiz.cfg
+  artifacts:
+    paths:
+      - "*.deb"
+  tags:
+    - grill-tamasi
+    - equivs
+
+package:rpizw:
+  stage:package
+  dependencies:
+    - compile:rpizw
+  script:
+    - cp wscgo-rpizw wscgo
+    - equivs-build wscgo-rpizw.cfg
+  artifacts:
+    paths:
+      - "*.deb"
+  tags:
+    - grill-tamasi
+    - equivs
 
 deb:
   stage: deploy
   dependencies:
-    - compile:opiz
-    - compile:rpizw
+    - package:opiz
+    - package:rpizw
   script:
-    - cp wscgo-opiz wscgo
-    - equivs-build wscgo-opiz.cfg
     - curl -X PUT -T wscgo-opiz_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-opiz/${VERSION}/pool/main/w/wscgo-opiz/wscgo-opiz_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
-    - rm wscgo
-    - cp wscgo-rpizw wscgo
-    - equivs-build wscgo-rpizw.cfg
     - curl -X PUT -T wscgo-rpizw_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-rpizw/${VERSION}/pool/main/w/wscgo-rpizw/wscgo-rpizw_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
-  artifacts:
-    paths:
-      - "*.deb"
   only:
     - master
   tags:
     - grill-tamasi
-    - equivs
