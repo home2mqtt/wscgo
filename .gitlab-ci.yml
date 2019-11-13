@@ -15,6 +15,7 @@ stages:
   - test
   - build
   - package
+  - integration-test
   - deploy
 
 test:rpizw:
@@ -100,6 +101,26 @@ package:rpizw:
   tags:
     - grill-tamasi
     - equivs
+
+integration-test:rpizw
+  stage: integration-test
+  dependencies:
+    - package:rpizw
+  script:
+    - dpkg --dry-run -i wscgo-rpizw_${VERSION}_armhf.deb
+  tags:
+    - grill-tamasi
+    - rpizw
+
+integration-test:opiz
+  stage: integration-test
+  dependencies:
+    - package:opiz
+  script:
+    - dpkg --dry-run -i wscgo-opiz_${VERSION}_armhf.deb
+  tags:
+    - grill-tamasi
+    - opiz
 
 deb:
   stage: deploy
