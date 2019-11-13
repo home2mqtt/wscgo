@@ -74,7 +74,7 @@ compile:opiz:
     - golang
     
 package:opiz:
-  stage:package
+  stage: package
   dependencies:
     - compile:opiz
   script:
@@ -88,7 +88,7 @@ package:opiz:
     - equivs
 
 package:rpizw:
-  stage:package
+  stage: package
   dependencies:
     - compile:rpizw
   script:
