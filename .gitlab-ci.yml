@@ -1,7 +1,7 @@
 variables:
   REPO_NAME: gitlab.com/grill-tamasi.hu/wscgo
   GO111MODULE: "on"
-  VERSION: 0.1-alpha2
+  VERSION: 0.1-alpha3
 
 # The problem is that to be able to use go get, one needs to put
 # the repository in the $GOPATH. So for example if your gitlab domain
@@ -14,6 +14,8 @@ variables:
 stages:
   - test
   - build
+  - package
+  - integration-test
   - deploy
 
 test:rpizw:
@@ -72,23 +74,63 @@ compile:opiz:
     - opiz
     - golang
     
-## Deploy
+package:opiz:
+  stage: package
+  dependencies:
+    - compile:opiz
+  script:
+    - cp wscgo-opiz wscgo
+    - equivs-build wscgo-opiz.cfg
+  artifacts:
+    paths:
+      - "*.deb"
+  tags:
+    - grill-tamasi
+    - equivs
+
+package:rpizw:
+  stage: package
+  dependencies:
+    - compile:rpizw
+  script:
+    - cp wscgo-rpizw wscgo
+    - equivs-build wscgo-rpizw.cfg
+  artifacts:
+    paths:
+      - "*.deb"
+  tags:
+    - grill-tamasi
+    - equivs
+
+integration-test:rpizw:
+  stage: integration-test
+  dependencies:
+    - package:rpizw
+  script:
+    - dpkg --dry-run -i wscgo-rpizw_${VERSION}_armhf.deb
+  tags:
+    - grill-tamasi
+    - rpizw
+
+integration-test:opiz:
+  stage: integration-test
+  dependencies:
+    - package:opiz
+  script:
+    - dpkg --dry-run -i wscgo-opiz_${VERSION}_armhf.deb
+  tags:
+    - grill-tamasi
+    - opiz
 
 deb:
   stage: deploy
   dependencies:
-    - compile:opiz
-    - compile:rpizw
+    - package:opiz
+    - package:rpizw
   script:
-    - equivs-build wscgo-opiz.cfg
     - curl -X PUT -T wscgo-opiz_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-opiz/${VERSION}/pool/main/w/wscgo-opiz/wscgo-opiz_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
-    - equivs-build wscgo-rpizw.cfg
     - curl -X PUT -T wscgo-rpizw_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-rpizw/${VERSION}/pool/main/w/wscgo-rpizw/wscgo-rpizw_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
-  artifacts:
-    paths:
-      - "*.deb"
   only:
     - master
   tags:
     - grill-tamasi
-    - equivs

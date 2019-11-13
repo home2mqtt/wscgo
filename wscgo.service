@@ -1,0 +1,9 @@
+[Unit]
+Description=wscgo service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/wscgo /etc/wscgo.ini
+
+[Install]
+WantedBy=multi-user.target
