@@ -102,7 +102,7 @@ package:rpizw:
     - grill-tamasi
     - equivs
 
-integration-test:rpizw
+integration-test:rpizw:
   stage: integration-test
   dependencies:
     - package:rpizw
@@ -112,7 +112,7 @@ integration-test:rpizw
     - grill-tamasi
     - rpizw
 
-integration-test:opiz
+integration-test:opiz:
   stage: integration-test
   dependencies:
     - package:opiz
