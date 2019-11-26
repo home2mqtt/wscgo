@@ -28,8 +28,8 @@ const OUTPUT = C.OUTPUT
 type WiringPiIO struct {
 }
 
-func Mcp23017Setup(expansionBase int, address int) {
-	rc := C.mcp23017Setup(C.int(expansionBase), C.int(address))
+func Mcp23017Setup(config *Mcp23017Config) {
+	rc := C.mcp23017Setup(C.int(config.ExpansionBase), C.int(config.Address))
 	if rc != C.setuprc {
 		log.Fatal("MCP23017 error: ", rc)
 	}

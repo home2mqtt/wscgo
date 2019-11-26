@@ -6,8 +6,7 @@ type IShutter interface {
 	Device
 	Open()
 	Close()
-	OpenBy(int)
-	CloseBy(int)
+	MoveBy(int)
 	Stop()
 	GetRange() int
 	AddListener(ShutterStateListener)
@@ -174,10 +173,7 @@ func (shutter *shutter) Open() {
 func (shutter *shutter) Close() {
 	shutter.setCmd(-shutter.Range)
 }
-func (shutter *shutter) OpenBy(steps int) {
-	shutter.setCmd(steps)
-}
-func (shutter *shutter) CloseBy(steps int) {
+func (shutter *shutter) MoveBy(steps int) {
 	shutter.setCmd(steps)
 }
 func (shutter *shutter) Stop() {

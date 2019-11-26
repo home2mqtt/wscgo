@@ -5,7 +5,6 @@ import (
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"gitlab.com/grill-tamasi/wscgo/devices"
-	"gitlab.com/grill-tamasi/wscgo/homeassistant"
 	"gitlab.com/grill-tamasi/wscgo/protocol"
 	"gitlab.com/grill-tamasi/wscgo/tests"
 )
@@ -18,7 +17,7 @@ func main() {
 		Range:         50,
 		DirSwitchWait: 10,
 	}
-	coverConfig := &homeassistant.CoverConfig{
+	coverConfig := &protocol.CoverConfig{
 		CommandTopic:  "test/wscgo/shutter2/cmd",
 		Name:          "Test Shutter",
 		PositionTopic: "test/wscgo/shutter2/pos",
@@ -29,13 +28,13 @@ func main() {
 	}
 
 	shutter := devices.CreateShutter(io, shutterConfig)
-	cover := homeassistant.IntegrateCover(shutter, coverConfig)
+	cover := protocol.IntegrateCover(shutter, coverConfig)
 
 	clientOpts := protocol.ConfigureClientOptions(mqttc)
 	clientOpts.SetOnConnectHandler(func(client mqtt.Client) {
 		cover.Configure(client)
-		homeassistant.PublisDiscoveryMessage(client, &homeassistant.DiscoverableNode{
-			DiscoveryPrefix: "homeassistant",
+		protocol.PublisDiscoveryMessage(client, &protocol.DiscoverableNode{
+			DiscoveryPrefix: "protocol",
 			NodeID:          "DiscoveryTest",
 		}, cover)
 	})

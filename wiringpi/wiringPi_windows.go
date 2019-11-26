@@ -19,7 +19,7 @@ const OUTPUT = 1
 type WiringPiIO struct {
 }
 
-func Mcp23017Setup(expansionBase int, address int) {
+func Mcp23017Setup(config *Mcp23017Config) {
 }
 
 func (*WiringPiIO) DigitalWrite(pin int, value bool) {

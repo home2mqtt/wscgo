@@ -16,6 +16,12 @@ type MqttConfig struct {
 
 func ConfigureClientOptions(config *MqttConfig) *mqtt.ClientOptions {
 	opts := mqtt.NewClientOptions().AddBroker(config.Host).SetAutoReconnect(true)
+	if config.User != "" {
+		opts = opts.SetUsername(config.User)
+	}
+	if config.Password != "" {
+		opts = opts.SetPassword(config.Password)
+	}
 
 	return opts
 }
