@@ -10,7 +10,7 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-func (conf *wscgoConfiguration) processConfig(category string, id string, section *ini.Section) {
+func (conf *WscgoConfiguration) processConfig(category string, id string, section *ini.Section) {
 	switch category {
 	case "mqtt":
 		section.MapTo(conf.MqttConfig)
@@ -23,9 +23,7 @@ func (conf *wscgoConfiguration) processConfig(category string, id string, sectio
 	case "shutter":
 		s := &devices.ShutterConfig{}
 		section.MapTo(s)
-		c := &protocol.CoverConfig{
-			ObjectId: id,
-		}
+		c := protocol.CreateCoverConfig(id)
 		section.MapTo(c)
 		conf.Devices = append(conf.Devices, func(io devices.IoContext) protocol.IDiscoverable {
 			shutter := devices.CreateShutter(io, s)
@@ -34,9 +32,7 @@ func (conf *wscgoConfiguration) processConfig(category string, id string, sectio
 	case "switch":
 		s := &devices.OutputConfig{}
 		section.MapTo(s)
-		c := &protocol.SwitchConfig{
-			ObjectId: id,
-		}
+		c := protocol.CreateSwitchConfig(id)
 		section.MapTo(c)
 		conf.Devices = append(conf.Devices, func(io devices.IoContext) protocol.IDiscoverable {
 			device := devices.CreateOutput(io, s)

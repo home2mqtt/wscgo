@@ -10,10 +10,10 @@ import (
 )
 
 type CoverConfig struct {
+	BasicDeviceConfig
 	CommandTopic  string `ini:"command_topic,omitempty"`
-	Name          string `ini:"name,omitempty"`
+	GroupTopic    string `ini:"opt_groupTopic"`
 	PositionTopic string `ini:"position_topic,omitempty"`
-	ObjectId      string
 }
 
 //https://www.home-assistant.io/integrations/cover.mqtt/
@@ -28,6 +28,14 @@ type coverDiscoveryInfo struct {
 type cover struct {
 	devices.IShutter
 	*CoverConfig
+}
+
+func CreateCoverConfig(id string) *CoverConfig {
+	return &CoverConfig{
+		BasicDeviceConfig: BasicDeviceConfig{
+			ObjectId: id,
+		},
+	}
 }
 
 func IntegrateCover(shutter devices.IShutter, config *CoverConfig) IDiscoverable {
@@ -47,25 +55,30 @@ func (cover *cover) GetDiscoveryInfo() interface{} {
 	}
 }
 
-func (cover *cover) Configure(client mqtt.Client) {
-	client.Subscribe(cover.CommandTopic, 0, func(client mqtt.Client, msg mqtt.Message) {
-		cmd := strings.ToUpper(string(msg.Payload()))
-		switch cmd {
-		case "OPEN":
-			cover.Open()
-		case "CLOSE":
-			cover.Close()
-		case "STOP":
-			cover.Stop()
-		default:
-			value, err := strconv.Atoi(string(msg.Payload()))
-			if err == nil {
-				cover.MoveBy(value)
-			} else {
-				log.Println("WARNING: Cover ", cover.Name, " received unkown command: ", cmd)
-			}
+func (cover *cover) onMsgReceive(client mqtt.Client, msg mqtt.Message) {
+	cmd := strings.ToUpper(string(msg.Payload()))
+	switch cmd {
+	case "OPEN":
+		cover.Open()
+	case "CLOSE":
+		cover.Close()
+	case "STOP":
+		cover.Stop()
+	default:
+		value, err := strconv.Atoi(string(msg.Payload()))
+		if err == nil {
+			cover.MoveBy(value)
+		} else {
+			log.Println("WARNING: Cover ", cover.Name, " received unkown command: ", cmd)
 		}
-	})
+	}
+}
+
+func (cover *cover) Configure(client mqtt.Client) {
+	client.Subscribe(cover.CommandTopic, 0, cover.onMsgReceive)
+	if cover.GroupTopic != "" {
+		client.Subscribe(cover.GroupTopic, 0, cover.onMsgReceive)
+	}
 	cover.AddListener(func(value int) {
 		client.Publish(cover.PositionTopic, 0, false, strconv.Itoa(value))
 	})
@@ -73,8 +86,4 @@ func (cover *cover) Configure(client mqtt.Client) {
 
 func (cover *cover) GetComponent() string {
 	return "cover"
-}
-
-func (cover *cover) GetObjectId() string {
-	return cover.ObjectId
 }

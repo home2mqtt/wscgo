@@ -11,6 +11,8 @@ type ConfigInitializer func(devices.IoContext)
 
 type WscgoConfiguration struct {
 	protocol.MqttConfig
+	devices.IoContext
+	Node    protocol.DiscoverableNode
 	Configs []ConfigInitializer
 	Devices []DeviceInitializer
 }

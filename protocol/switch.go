@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"log"
+	"strconv"
 	"strings"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -9,14 +10,13 @@ import (
 )
 
 type SwitchConfig struct {
+	BasicDeviceConfig
 	CommandTopic string
-	Name         string
-	ObjectId     string
 }
 
 type sw struct {
 	devices.IOutput
-	SwitchConfig
+	*SwitchConfig
 }
 
 //https://www.home-assistant.io/integrations/switch.mqtt/
@@ -25,7 +25,15 @@ type switchDiscoveryInfo struct {
 	Name         string `json:"name,omitempty"`
 }
 
-func IntegrateSwitch(output devices.IOutput, config SwitchConfig) IDiscoverable {
+func CreateSwitchConfig(id string) *SwitchConfig {
+	return &SwitchConfig{
+		BasicDeviceConfig: BasicDeviceConfig{
+			ObjectId: id,
+		},
+	}
+}
+
+func IntegrateSwitch(output devices.IOutput, config *SwitchConfig) IDiscoverable {
 	return &sw{
 		IOutput:      output,
 		SwitchConfig: config,
@@ -41,16 +49,18 @@ func (sw *sw) Configure(client mqtt.Client) {
 		case "OFF":
 			sw.SetValue(false)
 		default:
-			log.Println("WARNING: Switch ", sw.Name, " received unkown command: ", cmd)
+			value, err := strconv.Atoi(string(msg.Payload()))
+			if err != nil {
+				log.Println("WARNING: Switch ", sw.Name, " received unkown command: ", cmd)
+			} else {
+				sw.SetValue(value > 0)
+			}
 		}
 	})
 }
 
 func (sw *sw) GetComponent() string {
 	return "switch"
-}
-func (sw *sw) GetObjectId() string {
-	return sw.ObjectId
 }
 
 func (sw *sw) GetDiscoveryInfo() interface{} {

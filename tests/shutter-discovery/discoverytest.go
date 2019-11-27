@@ -18,10 +18,12 @@ func main() {
 		DirSwitchWait: 10,
 	}
 	coverConfig := &protocol.CoverConfig{
+		BasicDeviceConfig: protocol.BasicDeviceConfig{
+			Name:     "Test Shutter",
+			ObjectId: "a1234",
+		},
 		CommandTopic:  "test/wscgo/shutter2/cmd",
-		Name:          "Test Shutter",
 		PositionTopic: "test/wscgo/shutter2/pos",
-		ObjectId:      "a1234",
 	}
 	mqttc := &protocol.MqttConfig{
 		Host: "tcp://192.168.0.1:1883",

@@ -22,6 +22,11 @@ type DiscoverableNode struct {
 	NodeID          string
 }
 
+type BasicDeviceConfig struct {
+	Name     string `ini:"name,omitempty"`
+	ObjectId string
+}
+
 // <discovery_prefix>/<component>/[<node_id>/]<object_id>/config
 func PublisDiscoveryMessage(client mqtt.Client, node *DiscoverableNode, component IDiscoverable) error {
 	di := component.GetDiscoveryInfo()
@@ -32,4 +37,8 @@ func PublisDiscoveryMessage(client mqtt.Client, node *DiscoverableNode, componen
 	topic := node.DiscoveryPrefix + "/" + component.GetComponent() + "/" + node.NodeID + "/" + component.GetObjectId() + "/config"
 	client.Publish(topic, 0, true, c)
 	return nil
+}
+
+func (device *BasicDeviceConfig) GetObjectId() string {
+	return device.ObjectId
 }
