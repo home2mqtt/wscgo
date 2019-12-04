@@ -7,7 +7,7 @@ import (
 )
 
 type testIo struct {
-	modes  []bool
+	modes  []int
 	values []bool
 }
 
@@ -22,14 +22,14 @@ func (io *testIo) DigitalRead(pin int) bool {
 	return io.values[pin]
 }
 
-func (io *testIo) PinMode(pin int, mode bool) {
+func (io *testIo) PinMode(pin int, mode int) {
 	log.Printf("Mode of pin %d is set to %t\n", pin, mode)
 	io.modes[pin] = mode
 }
 
 func CreateTestIo(pins int) devices.IoContext {
 	return &testIo{
-		modes:  make([]bool, pins),
+		modes:  make([]int, pins),
 		values: make([]bool, pins),
 	}
 }

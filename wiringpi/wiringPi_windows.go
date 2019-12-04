@@ -30,6 +30,6 @@ func (*WiringPiIO) DigitalRead(pin int) int {
 	return LOW
 }
 
-func (*WiringPiIO) PinMode(pin int, mode bool) {
+func (*WiringPiIO) PinMode(pin int, mode int) {
 
 }

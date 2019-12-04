@@ -48,6 +48,6 @@ func (*WiringPiIO) DigitalRead(pin int) bool {
 	return HIGH == int(C.digitalRead((C.int)(pin)))
 }
 
-func (*WiringPiIO) PinMode(pin int, mode bool) {
+func (*WiringPiIO) PinMode(pin int, mode int) {
 	C.pinMode((C.int)(pin), (C.int)(mode))
 }
