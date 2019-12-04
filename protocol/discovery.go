@@ -35,7 +35,7 @@ func PublisDiscoveryMessage(client mqtt.Client, node *DiscoverableNode, componen
 		return err
 	}
 	topic := node.DiscoveryPrefix + "/" + component.GetComponent() + "/" + node.NodeID + "/" + component.GetObjectId() + "/config"
-	client.Publish(topic, 0, true, c)
+	client.Publish(topic, 0, false, c)
 	return nil
 }
 

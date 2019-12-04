@@ -35,6 +35,16 @@ func (instance *wscgoInstance) eventOnConnected(client mqtt.Client) {
 	log.Println("Connected to MQTT broker")
 	for _, d := range instance.devices {
 		d.Configure(client)
+	}
+	instance.publishDiscoveryMessages(client)
+	/* publish anything to topic 'discover' to trigger discovery messages */
+	client.Subscribe("discover", 0, func(client mqtt.Client, _ mqtt.Message) {
+		instance.publishDiscoveryMessages(client)
+	})
+}
+
+func (instance *wscgoInstance) publishDiscoveryMessages(client mqtt.Client) {
+	for _, d := range instance.devices {
 		protocol.PublisDiscoveryMessage(client, &instance.conf.Node, d)
 	}
 }
