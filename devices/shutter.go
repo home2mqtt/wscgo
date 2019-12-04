@@ -1,5 +1,7 @@
 package devices
 
+import "gitlab.com/grill-tamasi/wscgo/wiringpi"
+
 type ShutterStateListener func(int)
 
 type IShutter interface {
@@ -20,7 +22,7 @@ type ShutterConfig struct {
 }
 
 type shutter struct {
-	IoContext
+	wiringpi.IoContext
 	*ShutterConfig
 	Cmd  int
 	Wait int
@@ -36,7 +38,7 @@ type shutter struct {
 	listeners []ShutterStateListener
 }
 
-func CreateShutter(io IoContext, config *ShutterConfig) IShutter {
+func CreateShutter(io wiringpi.IoContext, config *ShutterConfig) IShutter {
 	return &shutter{
 		IoContext:     io,
 		ShutterConfig: config,
@@ -71,8 +73,8 @@ func (shutter *shutter) stop() {
 }
 
 func (shutter *shutter) Initialize() {
-	shutter.PinMode(shutter.UpPin, true)
-	shutter.PinMode(shutter.DownPin, true)
+	shutter.PinMode(shutter.UpPin, wiringpi.OUTPUT)
+	shutter.PinMode(shutter.DownPin, wiringpi.OUTPUT)
 	shutter.Prev = -1
 }
 

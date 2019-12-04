@@ -4,12 +4,6 @@ package wiringpi
 
 //import "fmt"
 
-// LOW = 0
-const LOW = 0
-
-// HIGH = 1
-const HIGH = 1
-
 // INPUT = 0
 const INPUT = 0
 
@@ -26,7 +20,7 @@ func (*WiringPiIO) DigitalWrite(pin int, value bool) {
 	//fmt.Printf("DO[%d]:%d\n", pin, value)
 }
 
-func (*WiringPiIO) DigitalRead(pin int) int {
+func (*WiringPiIO) DigitalRead(pin int) bool {
 	return LOW
 }
 

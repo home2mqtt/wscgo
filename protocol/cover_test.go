@@ -6,10 +6,11 @@ import (
 
 	"gitlab.com/grill-tamasi/wscgo/devices"
 	"gitlab.com/grill-tamasi/wscgo/tests"
+	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 )
 
 type testshutter struct {
-	devices.IoContext
+	wiringpi.IoContext
 }
 
 func (*testshutter) Tick()                                      {}

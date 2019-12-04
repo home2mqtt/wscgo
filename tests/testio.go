@@ -2,34 +2,32 @@ package tests
 
 import (
 	"log"
-
-	"gitlab.com/grill-tamasi/wscgo/devices"
 )
 
-type testIo struct {
-	modes  []int
-	values []bool
+type TestIo struct {
+	Modes  []int
+	Values []bool
 }
 
-func (io *testIo) DigitalWrite(pin int, value bool) {
-	if io.values[pin] != value {
+func (io *TestIo) DigitalWrite(pin int, value bool) {
+	if io.Values[pin] != value {
 		log.Printf("Pin %d is set to %t\n", pin, value)
 	}
-	io.values[pin] = value
+	io.Values[pin] = value
 }
 
-func (io *testIo) DigitalRead(pin int) bool {
-	return io.values[pin]
+func (io *TestIo) DigitalRead(pin int) bool {
+	return io.Values[pin]
 }
 
-func (io *testIo) PinMode(pin int, mode int) {
-	log.Printf("Mode of pin %d is set to %t\n", pin, mode)
-	io.modes[pin] = mode
+func (io *TestIo) PinMode(pin int, mode int) {
+	log.Printf("Mode of pin %d is set to %d\n", pin, mode)
+	io.Modes[pin] = mode
 }
 
-func CreateTestIo(pins int) devices.IoContext {
-	return &testIo{
-		modes:  make([]int, pins),
-		values: make([]bool, pins),
+func CreateTestIo(pins int) *TestIo {
+	return &TestIo{
+		Modes:  make([]int, pins),
+		Values: make([]bool, pins),
 	}
 }

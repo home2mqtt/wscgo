@@ -17,7 +17,7 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 	case "mcp23017":
 		c := &wiringpi.Mcp23017Config{}
 		section.MapTo(c)
-		conf.Configs = append(conf.Configs, func(devices.IoContext) {
+		conf.Configs = append(conf.Configs, func(wiringpi.IoContext) {
 			wiringpi.Mcp23017Setup(c)
 		})
 	case "shutter":
@@ -25,7 +25,7 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 		section.MapTo(s)
 		c := protocol.CreateCoverConfig(id)
 		section.MapTo(c)
-		conf.Devices = append(conf.Devices, func(io devices.IoContext) protocol.IDiscoverable {
+		conf.Devices = append(conf.Devices, func(io wiringpi.IoContext) protocol.IDiscoverable {
 			shutter := devices.CreateShutter(io, s)
 			return protocol.IntegrateCover(shutter, c)
 		})
@@ -34,7 +34,7 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 		section.MapTo(s)
 		c := protocol.CreateSwitchConfig(id)
 		section.MapTo(c)
-		conf.Devices = append(conf.Devices, func(io devices.IoContext) protocol.IDiscoverable {
+		conf.Devices = append(conf.Devices, func(io wiringpi.IoContext) protocol.IDiscoverable {
 			device := devices.CreateOutput(io, s)
 			return protocol.IntegrateSwitch(device, c)
 		})

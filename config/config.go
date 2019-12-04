@@ -1,17 +1,17 @@
 package config
 
 import (
-	"gitlab.com/grill-tamasi/wscgo/devices"
 	"gitlab.com/grill-tamasi/wscgo/protocol"
+	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 )
 
-type DeviceInitializer func(devices.IoContext) protocol.IDiscoverable
+type DeviceInitializer func(wiringpi.IoContext) protocol.IDiscoverable
 
-type ConfigInitializer func(devices.IoContext)
+type ConfigInitializer func(wiringpi.IoContext)
 
 type WscgoConfiguration struct {
 	protocol.MqttConfig
-	devices.IoContext
+	wiringpi.IoContext
 	Node    protocol.DiscoverableNode
 	Configs []ConfigInitializer
 	Devices []DeviceInitializer

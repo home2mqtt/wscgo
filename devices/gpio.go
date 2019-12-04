@@ -1,5 +1,7 @@
 package devices
 
+import "gitlab.com/grill-tamasi/wscgo/wiringpi"
+
 type IOutput interface {
 	Device
 	SetValue(bool)
@@ -10,11 +12,11 @@ type OutputConfig struct {
 }
 
 type output struct {
-	IoContext
+	wiringpi.IoContext
 	*OutputConfig
 }
 
-func CreateOutput(io IoContext, config *OutputConfig) IOutput {
+func CreateOutput(io wiringpi.IoContext, config *OutputConfig) IOutput {
 	return &output{
 		IoContext:    io,
 		OutputConfig: config,
@@ -22,7 +24,7 @@ func CreateOutput(io IoContext, config *OutputConfig) IOutput {
 }
 
 func (out *output) Initialize() {
-	out.PinMode(out.Pin, true)
+	out.PinMode(out.Pin, wiringpi.OUTPUT)
 }
 
 func (*output) Tick() {}

@@ -13,12 +13,6 @@ package wiringpi
 import "C"
 import "log"
 
-// LOW = wiringPI LOW
-const LOW = C.LOW
-
-// HIGH = wiringPI HIGH
-const HIGH = C.HIGH
-
 // INPUT = wiringPI INPUT
 const INPUT = C.INPUT
 
@@ -37,9 +31,9 @@ func Mcp23017Setup(config *Mcp23017Config) {
 }
 
 func (*WiringPiIO) DigitalWrite(pin int, value bool) {
-	v := LOW
+	v := C.LOW
 	if value {
-		v = HIGH
+		v = C.HIGH
 	}
 	C.digitalWrite((C.int)(pin), (C.int)(v))
 }
