@@ -28,7 +28,6 @@ test:rpizw:
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
   script:
-    - cd wscgo
     - go test ./...
   tags:
     - grill-tamasi
