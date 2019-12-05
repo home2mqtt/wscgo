@@ -1,7 +1,7 @@
 variables:
   REPO_NAME: gitlab.com/grill-tamasi.hu/wscgo
   GO111MODULE: "on"
-  VERSION: 0.1-alpha3
+  VERSION: 0.2-beta1
 
 # The problem is that to be able to use go get, one needs to put
 # the repository in the $GOPATH. So for example if your gitlab domain
@@ -24,12 +24,11 @@ test:rpizw:
     GO111MODULE: "on"
   before_script:
     - echo $REPO_NAME
-    - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
-    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+    - mkdir -p $GOPATH/src/
+    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
   script:
-    - cd wscgo
-    - go test
+    - go test ./...
   tags:
     - grill-tamasi
     - rpizw
@@ -40,11 +39,11 @@ compile:rpizw:
   variables:
     GO111MODULE: "on"
   before_script:
-    - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
-    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+    - mkdir -p $GOPATH/src/
+    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
   script:
-    - go build -o $CI_PROJECT_DIR/wscgo-rpizw
+    - go build -o $CI_PROJECT_DIR/wscgo-rpizw ./cmd/wscgo
   artifacts:
     paths:
       - wscgo-rpizw
@@ -58,14 +57,11 @@ compile:opiz:
   variables:
     GO111MODULE: "on"
   before_script:
-    - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
-    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+    - mkdir -p $GOPATH/src/
+    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
   script:
-    - go get github.com/eclipse/paho.mqtt.golang
-    - go get github.com/jacobsa/go-serial/serial
-    - go get gopkg.in/ini.v1
-    - go build -o $CI_PROJECT_DIR/wscgo-opiz
+    - go build -o $CI_PROJECT_DIR/wscgo-opiz ./cmd/wscgo
   artifacts:
     paths:
       - wscgo-opiz
