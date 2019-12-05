@@ -13,7 +13,7 @@ import (
 func (conf *WscgoConfiguration) processConfig(category string, id string, section *ini.Section) {
 	switch category {
 	case "mqtt":
-		section.MapTo(conf.MqttConfig)
+		section.MapTo(&conf.MqttConfig)
 	case "mcp23017":
 		c := &wiringpi.Mcp23017Config{}
 		section.MapTo(c)
