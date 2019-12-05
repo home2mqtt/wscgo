@@ -24,6 +24,7 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 		s := &devices.ShutterConfig{}
 		section.MapTo(s)
 		c := protocol.CreateCoverConfig(id)
+		section.MapTo(&c.BasicDeviceConfig)
 		section.MapTo(c)
 		conf.Devices = append(conf.Devices, func(io wiringpi.IoContext) protocol.IDiscoverable {
 			shutter := devices.CreateShutter(io, s)
@@ -33,6 +34,7 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 		s := &devices.OutputConfig{}
 		section.MapTo(s)
 		c := protocol.CreateSwitchConfig(id)
+		section.MapTo(&c.BasicDeviceConfig)
 		section.MapTo(c)
 		conf.Devices = append(conf.Devices, func(io wiringpi.IoContext) protocol.IDiscoverable {
 			device := devices.CreateOutput(io, s)

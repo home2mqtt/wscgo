@@ -1,6 +1,8 @@
 package protocol
 
 import (
+	"log"
+
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"gitlab.com/grill-tamasi/wscgo/devices"
 )
@@ -19,6 +21,7 @@ type MqttConfig struct {
 }
 
 func ConfigureClientOptions(config *MqttConfig) *mqtt.ClientOptions {
+	log.Println("Configured MQTT broker: ", config.Host)
 	opts := mqtt.NewClientOptions().AddBroker(config.Host).SetAutoReconnect(true)
 	if config.User != "" {
 		opts = opts.SetUsername(config.User)

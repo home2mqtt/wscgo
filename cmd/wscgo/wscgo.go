@@ -11,7 +11,7 @@ import (
 	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 )
 
-const version string = "0.2-beta2"
+const version string = "0.2-beta3"
 
 type wscgoInstance struct {
 	conf    *config.WscgoConfiguration
@@ -27,6 +27,7 @@ func (instance *wscgoInstance) intitializeDevices() {
 		instance.devices = append(instance.devices, d(instance.conf.IoContext))
 	}
 	for _, d := range instance.devices {
+		log.Println("Initializing ", d.GetComponent(), d.GetObjectId())
 		d.Initialize()
 	}
 }
@@ -34,6 +35,7 @@ func (instance *wscgoInstance) intitializeDevices() {
 func (instance *wscgoInstance) eventOnConnected(client mqtt.Client) {
 	log.Println("Connected to MQTT broker")
 	for _, d := range instance.devices {
+		log.Println("Configuring ", d.GetComponent(), d.GetObjectId())
 		d.Configure(client)
 	}
 	instance.publishDiscoveryMessages(client)

@@ -10,10 +10,10 @@ import (
 )
 
 type CoverConfig struct {
-	BasicDeviceConfig
-	CommandTopic  string `ini:"command_topic,omitempty"`
-	GroupTopic    string `ini:"opt_groupTopic"`
-	PositionTopic string `ini:"position_topic,omitempty"`
+	BasicDeviceConfig `ini:"Parent"`
+	CommandTopic      string `ini:"topic,omitempty"`
+	GroupTopic        string `ini:"opt_groupTopic"`
+	PositionTopic     string `ini:"position_topic,omitempty"`
 }
 
 //https://www.home-assistant.io/integrations/cover.mqtt/
@@ -34,6 +34,7 @@ func CreateCoverConfig(id string) *CoverConfig {
 	return &CoverConfig{
 		BasicDeviceConfig: BasicDeviceConfig{
 			ObjectId: id,
+			Name:     id,
 		},
 	}
 }
