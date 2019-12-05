@@ -15,10 +15,10 @@ type IShutter interface {
 }
 
 type ShutterConfig struct {
-	UpPin         int
-	DownPin       int
-	DirSwitchWait int
-	Range         int
+	UpPin         int `ini:"uppin"`
+	DownPin       int `ini:"downpin"`
+	DirSwitchWait int `ini:"dirswitchwait"`
+	Range         int `ini:"range"`
 }
 
 type shutter struct {

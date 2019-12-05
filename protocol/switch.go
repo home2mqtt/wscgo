@@ -11,7 +11,7 @@ import (
 
 type SwitchConfig struct {
 	BasicDeviceConfig
-	CommandTopic string
+	CommandTopic string `ini:"topic"`
 }
 
 type sw struct {

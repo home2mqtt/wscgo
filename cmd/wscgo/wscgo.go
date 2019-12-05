@@ -11,7 +11,7 @@ import (
 	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 )
 
-const version string = "0.2-beta3"
+const version string = "0.2-beta4"
 
 type wscgoInstance struct {
 	conf    *config.WscgoConfiguration

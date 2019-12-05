@@ -12,6 +12,8 @@ import (
 
 func (conf *WscgoConfiguration) processConfig(category string, id string, section *ini.Section) {
 	switch category {
+	case ini.DEFAULT_SECTION:
+		section.MapTo(&conf.Node)
 	case "mqtt":
 		section.MapTo(&conf.MqttConfig)
 	case "mcp23017":

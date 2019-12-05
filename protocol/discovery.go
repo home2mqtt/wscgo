@@ -18,8 +18,8 @@ type IDiscoverable interface {
 }
 
 type DiscoverableNode struct {
-	DiscoveryPrefix string
-	NodeID          string
+	DiscoveryPrefix string `ini:"discovery_prefix"`
+	NodeID          string `ini:"nodeid"`
 }
 
 type BasicDeviceConfig struct {

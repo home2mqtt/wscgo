@@ -2,7 +2,7 @@
 
 package wiringpi
 
-//import "fmt"
+import "fmt"
 
 // INPUT = 0
 const INPUT = 0
@@ -17,7 +17,7 @@ func Mcp23017Setup(config *Mcp23017Config) {
 }
 
 func (*WiringPiIO) DigitalWrite(pin int, value bool) {
-	//fmt.Printf("DO[%d]:%d\n", pin, value)
+	fmt.Printf("DO[%d]:%t\n", pin, value)
 }
 
 func (*WiringPiIO) DigitalRead(pin int) bool {

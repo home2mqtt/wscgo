@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	"gitlab.com/grill-tamasi/wscgo/protocol"
 	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 )
@@ -18,7 +20,15 @@ type WscgoConfiguration struct {
 }
 
 func defaultConfiguration() *WscgoConfiguration {
+	hostname, err := os.Hostname()
+	if err != nil {
+		hostname = "wscgo"
+	}
 	return &WscgoConfiguration{
+		Node: protocol.DiscoverableNode{
+			DiscoveryPrefix: "homeassistant",
+			NodeID:          hostname,
+		},
 		MqttConfig: protocol.MqttConfig{
 			Host: "tcp://localhost:1883",
 		},

@@ -8,7 +8,7 @@ type IOutput interface {
 }
 
 type OutputConfig struct {
-	Pin int
+	Pin int `ini:"pin"`
 }
 
 type output struct {

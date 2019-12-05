@@ -41,7 +41,7 @@ func TestUp(t *testing.T) {
 	s, io := createShutterForTest()
 	s.Initialize()
 
-	s.setCmd(10)
+	s.Open()
 	for i := 0; i < 10; i++ {
 		s.Tick()
 		checkPins("reg up", t, io, wiringpi.HIGH, wiringpi.LOW)
@@ -54,7 +54,7 @@ func TestDown(t *testing.T) {
 	s, io := createShutterForTest()
 	s.Initialize()
 
-	s.setCmd(-10)
+	s.Close()
 	for i := 0; i < 10; i++ {
 		s.Tick()
 		checkPins("reg down", t, io, wiringpi.LOW, wiringpi.HIGH)
