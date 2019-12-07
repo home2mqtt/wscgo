@@ -3,11 +3,11 @@ Priority: optional
 # Homepage: <enter URL here; no default>
 Standards-Version: 3.9.2
 
-Package: wscgo-opiz
-Version: 0.2-beta4
+Package: wscgo-rpizw
+Version: ${VERSION}
 Maintainer: Balázs Grill <balazs.grill@live.com>
 # Pre-Depends: <comma-separated list of packages>
-Depends:
+Depends: wiringpi
 # Recommends: <comma-separated list of packages>
 # Suggests: <comma-separated list of packages>
 # Provides: <comma-separated list of packages>
