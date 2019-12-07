@@ -27,6 +27,7 @@ test:rpizw:
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
+    - envsubst < cmd/wscgo/version.go.tpl > cmd/wscgo/version.go
   script:
     - go test ./...
   tags:
