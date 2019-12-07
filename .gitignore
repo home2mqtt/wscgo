@@ -1,2 +1,3 @@
 wscgo.exe
 .vscode
+cmd/wscgo/version.go

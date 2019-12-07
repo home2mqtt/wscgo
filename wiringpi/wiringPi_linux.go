@@ -19,6 +19,8 @@ const INPUT = C.INPUT
 // OUTPUT = wiringPI OUTPUT
 const OUTPUT = C.OUTPUT
 
+const PWM_OUTPUT = C.PWM_OUTPUT
+
 type WiringPiIO struct {
 }
 
@@ -44,4 +46,8 @@ func (*WiringPiIO) DigitalRead(pin int) bool {
 
 func (*WiringPiIO) PinMode(pin int, mode int) {
 	C.pinMode((C.int)(pin), (C.int)(mode))
+}
+
+func (*WiringPiIO) PwmWrite(pin int, value int) {
+	C.pwmWrite((C.int)(pin), (C.int)(value))
 }

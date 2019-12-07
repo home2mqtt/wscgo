@@ -1,7 +1,7 @@
 variables:
   REPO_NAME: gitlab.com/grill-tamasi.hu/wscgo
   GO111MODULE: "on"
-  VERSION: 0.2-beta4
+  VERSION: 0.3.0-beta1
 
 # The problem is that to be able to use go get, one needs to put
 # the repository in the $GOPATH. So for example if your gitlab domain
@@ -27,6 +27,7 @@ test:rpizw:
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
+    - envsubst < cmd/wscgo/version.go.tpl > cmd/wscgo/version.go
   script:
     - go test ./...
   tags:
@@ -42,6 +43,7 @@ compile:rpizw:
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
+    - envsubst < cmd/wscgo/version.go.tpl > cmd/wscgo/version.go
   script:
     - go build -o $CI_PROJECT_DIR/wscgo-rpizw ./cmd/wscgo
   artifacts:
@@ -60,6 +62,7 @@ compile:opiz:
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
+    - envsubst < cmd/wscgo/version.go.tpl > cmd/wscgo/version.go
   script:
     - go build -o $CI_PROJECT_DIR/wscgo-opiz ./cmd/wscgo
   artifacts:
@@ -76,6 +79,7 @@ package:opiz:
     - compile:opiz
   script:
     - cp wscgo-opiz wscgo
+    - envsubst < wscgo-opiz.cfg.tpl > wscgo-opiz.cfg
     - equivs-build wscgo-opiz.cfg
   artifacts:
     paths:
@@ -90,6 +94,7 @@ package:rpizw:
     - compile:rpizw
   script:
     - cp wscgo-rpizw wscgo
+    - envsubst < wscgo-rpizw.cfg.tpl > wscgo-rpizw.cfg
     - equivs-build wscgo-rpizw.cfg
   artifacts:
     paths:
