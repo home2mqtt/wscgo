@@ -42,6 +42,18 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 			device := devices.CreateOutput(io, s)
 			return protocol.IntegrateSwitch(device, c)
 		})
+	case "light":
+		s := &devices.DimmerConfig{
+			OnPin: -1,
+		}
+		section.MapTo(s)
+		c := protocol.CreateLightConfig(id)
+		section.MapTo(&c.BasicDeviceConfig)
+		section.MapTo(c)
+		conf.Devices = append(conf.Devices, func(io wiringpi.IoContext) protocol.IDiscoverable {
+			device := devices.CreateDimmer(io, s)
+			return protocol.IntegrateLight(device, c)
+		})
 	}
 }
 

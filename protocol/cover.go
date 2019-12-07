@@ -81,7 +81,7 @@ func (cover *cover) Configure(client mqtt.Client) {
 		client.Subscribe(cover.GroupTopic, 0, cover.onMsgReceive)
 	}
 	cover.AddListener(func(value int) {
-		client.Publish(cover.PositionTopic, 0, false, strconv.Itoa(value))
+		client.Publish(cover.PositionTopic, 0, true, strconv.Itoa(value))
 	})
 }
 
