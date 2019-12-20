@@ -51,7 +51,7 @@ func (light *light) onMsgReceive(client mqtt.Client, msg mqtt.Message) {
 	case "ON":
 		light.On()
 		light.fireBrightnessEvent(client, devices.DimmerMaxValue)
-	case "CLOSE":
+	case "OFF":
 		light.Off()
 		light.fireBrightnessEvent(client, 0)
 	default:
