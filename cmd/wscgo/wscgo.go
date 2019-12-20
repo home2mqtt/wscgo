@@ -21,6 +21,7 @@ func (instance *wscgoInstance) intitializeDevices() {
 	for _, c := range instance.conf.Configs {
 		c(instance.conf.IoContext)
 	}
+	instance.conf.IoContext.Setup()
 	for _, d := range instance.conf.Devices {
 		instance.devices = append(instance.devices, d(instance.conf.IoContext))
 	}

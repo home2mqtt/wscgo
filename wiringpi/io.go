@@ -7,6 +7,7 @@ const LOW = false
 const HIGH = true
 
 type IoContext interface {
+	Setup()
 	DigitalWrite(pin int, value bool)
 	DigitalRead(pin int) bool
 	PinMode(pin int, mode int)
