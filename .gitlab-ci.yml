@@ -1,7 +1,7 @@
 variables:
   REPO_NAME: gitlab.com/grill-tamasi.hu/wscgo
   GO111MODULE: "on"
-  VERSION: 0.3.1-beta1
+  VERSION: 0.3.2-beta1
 
 # The problem is that to be able to use go get, one needs to put
 # the repository in the $GOPATH. So for example if your gitlab domain
@@ -78,6 +78,8 @@ package:opiz:
   dependencies:
     - compile:opiz
   script:
+    - curl -L https://github.com/balazsgrill/WiringOP-Zero/releases/download/v2.0-softpwm/libwiringPi.so.2.0 --output libwiringPi.so.2.0
+    - ln -s libwiringPi.so.2.0 libwiringPi.so
     - cp wscgo-opiz wscgo
     - envsubst < wscgo-opiz.cfg.tpl > wscgo-opiz.cfg
     - equivs-build wscgo-opiz.cfg

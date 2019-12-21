@@ -5,11 +5,15 @@ package wiringpi
 // #cgo LDFLAGS: -lwiringPi
 // #include<wiringPi.h>
 // #include<mcp23017.h>
+// #include<softPwm.h>
 // #ifdef PI_MODEL_BPR
 // int setuprc = 0;
+// int onboard_hw_pwm = -1;
 // #else
 // int setuprc = 1;
+// int onboard_hw_pwm = 1;
 // #endif
+// extern int wiringPiDebug;
 import "C"
 import "log"
 
@@ -21,6 +25,8 @@ const OUTPUT = C.OUTPUT
 
 const PWM_OUTPUT = C.PWM_OUTPUT
 
+const onboard_pins = 64
+
 type WiringPiIO struct {
 }
 
@@ -29,6 +35,10 @@ func Mcp23017Setup(config *Mcp23017Config) {
 	if rc != C.setuprc {
 		log.Fatal("MCP23017 error: ", rc)
 	}
+}
+
+func (*WiringPiIO) Setup() {
+	//C.wiringPiDebug = (C.int)(1)
 	C.wiringPiSetup()
 }
 
@@ -45,9 +55,18 @@ func (*WiringPiIO) DigitalRead(pin int) bool {
 }
 
 func (*WiringPiIO) PinMode(pin int, mode int) {
-	C.pinMode((C.int)(pin), (C.int)(mode))
+	log.Printf("Mode of pin %d is set to %d\n", pin, mode)
+	if (mode == PWM_OUTPUT) && ((C.int)(pin) != C.onboard_hw_pwm) && (pin < onboard_pins) {
+		C.softPwmCreate((C.int)(pin), 0, 1024)
+	} else {
+		C.pinMode((C.int)(pin), (C.int)(mode))
+	}
 }
 
 func (*WiringPiIO) PwmWrite(pin int, value int) {
-	C.pwmWrite((C.int)(pin), (C.int)(value))
+	if ((C.int)(pin) != C.onboard_hw_pwm) && (pin < onboard_pins) {
+		C.softPwmWrite((C.int)(pin), (C.int)(value))
+	} else {
+		C.pwmWrite((C.int)(pin), (C.int)(value))
+	}
 }
