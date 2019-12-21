@@ -25,6 +25,8 @@ const OUTPUT = C.OUTPUT
 
 const PWM_OUTPUT = C.PWM_OUTPUT
 
+const onboard_pins = 64
+
 type WiringPiIO struct {
 }
 
@@ -54,7 +56,7 @@ func (*WiringPiIO) DigitalRead(pin int) bool {
 
 func (*WiringPiIO) PinMode(pin int, mode int) {
 	log.Printf("Mode of pin %d is set to %d\n", pin, mode)
-	if (mode == PWM_OUTPUT) && (pin != C.onboard_hw_pwm) {
+	if (mode == PWM_OUTPUT) && ((C.int)(pin) != C.onboard_hw_pwm) && (pin < onboard_pins) {
 		C.softPwmCreate((C.int)(pin), 0, 1024)
 	} else {
 		C.pinMode((C.int)(pin), (C.int)(mode))
@@ -62,7 +64,7 @@ func (*WiringPiIO) PinMode(pin int, mode int) {
 }
 
 func (*WiringPiIO) PwmWrite(pin int, value int) {
-	if pin != C.onboard_hw_pwm {
+	if ((C.int)(pin) != C.onboard_hw_pwm) && (pin < onboard_pins) {
 		C.softPwmWrite((C.int)(pin), (C.int)(value))
 	} else {
 		C.pwmWrite((C.int)(pin), (C.int)(value))
