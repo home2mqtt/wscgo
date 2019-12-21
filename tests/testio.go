@@ -33,6 +33,10 @@ func (io *TestIo) PwmWrite(pin int, value int) {
 	io.Pwm[pin] = value
 }
 
+func (io *TestIo) Setup() {
+
+}
+
 func CreateTestIo(pins int) *TestIo {
 	return &TestIo{
 		Modes:  make([]int, pins),
