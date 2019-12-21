@@ -78,7 +78,7 @@ package:opiz:
   dependencies:
     - compile:opiz
   script:
-    - curl https://github.com/balazsgrill/WiringOP-Zero/releases/download/v2.0-softpwm/libwiringPi.so.2.0 --output libwiringPi.so.2.0
+    - curl -L https://github.com/balazsgrill/WiringOP-Zero/releases/download/v2.0-softpwm/libwiringPi.so.2.0 --output libwiringPi.so.2.0
     - ln -s libwiringPi.so.2.0 libwiringPi.so
     - cp wscgo-opiz wscgo
     - envsubst < wscgo-opiz.cfg.tpl > wscgo-opiz.cfg
