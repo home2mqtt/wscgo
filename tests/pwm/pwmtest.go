@@ -13,7 +13,7 @@ func main() {
 	angle := 0
 	pin := 6
 
-	io.PinMode(pin, wiringpi.SOFT_PWM_OUTPUT)
+	io.PinMode(pin, wiringpi.PWM_OUTPUT)
 
 	controlTicker := time.NewTicker(100 * time.Millisecond)
 	go func() {
