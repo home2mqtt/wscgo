@@ -47,7 +47,7 @@ func (instance *wscgoInstance) eventOnConnected(client mqtt.Client) {
 
 func (instance *wscgoInstance) publishDiscoveryMessages(client mqtt.Client) {
 	for _, d := range instance.devices {
-		protocol.PublisDiscoveryMessage(client, &instance.conf.Node, d)
+		protocol.PublisDiscoveryMessage(client, &instance.conf.Node, d, instance.deviceInfo)
 	}
 }
 
@@ -74,6 +74,7 @@ func CreateWscgo(conf *config.WscgoConfiguration) *wscgoInstance {
 	opts := protocol.ConfigureClientOptions(&conf.MqttConfig)
 	opts = opts.SetOnConnectHandler(instance.eventOnConnected)
 	instance.client = mqtt.NewClient(opts)
+	instance.deviceInfo = computeDeviceInfo()
 	return instance
 }
 
