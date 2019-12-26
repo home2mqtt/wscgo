@@ -12,9 +12,10 @@ import (
 )
 
 type wscgoInstance struct {
-	conf    *config.WscgoConfiguration
-	client  mqtt.Client
-	devices []protocol.IDiscoverable
+	conf       *config.WscgoConfiguration
+	client     mqtt.Client
+	devices    []protocol.IDiscoverable
+	deviceInfo *protocol.DeviceDiscoveryInfo
 }
 
 func (instance *wscgoInstance) intitializeDevices() {
@@ -52,6 +53,18 @@ func (instance *wscgoInstance) publishDiscoveryMessages(client mqtt.Client) {
 
 func (instance *wscgoInstance) eventOnDisconnected(client mqtt.Client) {
 	log.Println("MQTT Connection lost")
+}
+
+func computeDeviceInfo() *protocol.DeviceDiscoveryInfo {
+	host, _ := os.Hostname()
+	return &protocol.DeviceDiscoveryInfo{
+		Identifiers:  []string{},
+		Connections:  []string{},
+		Manufacturer: "wscgo",
+		Model:        "wscgo",
+		Name:         "wscgo_" + host,
+		SwVersion:    version,
+	}
 }
 
 func CreateWscgo(conf *config.WscgoConfiguration) *wscgoInstance {

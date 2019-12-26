@@ -20,6 +20,7 @@ type light struct {
 }
 
 type lightDiscoveryInfo struct {
+	BasicDiscoveryInfo
 	CommandTopic           string `json:"command_topic,omitempty"`
 	Name                   string `json:"name,omitempty"`
 	BrightnessCommandTopic string `json:"brightness_command_topic,omitempty"`
@@ -77,8 +78,12 @@ func (light *light) Configure(client mqtt.Client) {
 	client.Subscribe(light.CommandTopic, 0, light.onMsgReceive)
 }
 
-func (light *light) GetDiscoveryInfo() interface{} {
+func (light *light) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{} {
 	return &lightDiscoveryInfo{
+		BasicDiscoveryInfo: BasicDiscoveryInfo{
+			UniqueID: uniqueID,
+			Device:   device,
+		},
 		Name:                   light.Name,
 		CommandTopic:           light.CommandTopic,
 		BrightnessCommandTopic: light.CommandTopic,

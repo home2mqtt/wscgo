@@ -14,7 +14,7 @@ type IDiscoverable interface {
 	MQTTProtocol
 	GetComponent() string
 	GetObjectId() string
-	GetDiscoveryInfo() interface{}
+	GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{}
 }
 
 type DiscoverableNode struct {
@@ -27,9 +27,24 @@ type BasicDeviceConfig struct {
 	ObjectId string
 }
 
+type DeviceDiscoveryInfo struct {
+	Identifiers  []string `json:"identifiers,omitempty"`
+	Connections  []string `json:"connections,omitempty"`
+	Manufacturer string   `json:"manufacturer,omitempty"`
+	Model        string   `json:"model,omitempty"`
+	Name         string   `json:"name,omitempty"`
+	SwVersion    string   `json:"sw_version,omitempty"`
+}
+
+type BasicDiscoveryInfo struct {
+	Device   *DeviceDiscoveryInfo `json:"device,omitempty"`
+	UniqueID string               `json:"unique_id,omitempty"`
+}
+
 // <discovery_prefix>/<component>/[<node_id>/]<object_id>/config
-func PublisDiscoveryMessage(client mqtt.Client, node *DiscoverableNode, component IDiscoverable) error {
-	di := component.GetDiscoveryInfo()
+func PublisDiscoveryMessage(client mqtt.Client, node *DiscoverableNode, component IDiscoverable, device *DeviceDiscoveryInfo) error {
+	uniqueid := node.NodeID + "_" + component.GetComponent() + "_" + component.GetObjectId()
+	di := component.GetDiscoveryInfo(uniqueid, device)
 	c, err := json.Marshal(di)
 	if err != nil {
 		return err
