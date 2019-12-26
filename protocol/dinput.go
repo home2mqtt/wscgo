@@ -16,6 +16,7 @@ type dinput struct {
 }
 
 type dinputDiscoveryConfig struct {
+	BasicDiscoveryInfo
 	Name       string `json:"name"`
 	StateTopic string `json:"state_topic"`
 }
@@ -50,8 +51,12 @@ func (input *dinput) GetComponent() string {
 	return "binary_sensor"
 }
 
-func (input *dinput) GetDiscoveryInfo() interface{} {
+func (input *dinput) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{} {
 	return &dinputDiscoveryConfig{
+		BasicDiscoveryInfo: BasicDiscoveryInfo{
+			UniqueID: uniqueID,
+			Device:   device,
+		},
 		Name:       input.Name,
 		StateTopic: input.StateTopic,
 	}

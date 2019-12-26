@@ -18,6 +18,7 @@ type CoverConfig struct {
 
 //https://www.home-assistant.io/integrations/cover.mqtt/
 type coverDiscoveryInfo struct {
+	BasicDiscoveryInfo
 	CommandTopic   string `json:"command_topic,omitempty"`
 	Name           string `json:"name,omitempty"`
 	PositionTopic  string `json:"position_topic,omitempty"`
@@ -46,8 +47,12 @@ func IntegrateCover(shutter devices.IShutter, config *CoverConfig) IDiscoverable
 	}
 }
 
-func (cover *cover) GetDiscoveryInfo() interface{} {
+func (cover *cover) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{} {
 	return &coverDiscoveryInfo{
+		BasicDiscoveryInfo: BasicDiscoveryInfo{
+			UniqueID: uniqueID,
+			Device:   device,
+		},
 		CommandTopic:   cover.CommandTopic,
 		Name:           cover.Name,
 		PositionTopic:  cover.PositionTopic,

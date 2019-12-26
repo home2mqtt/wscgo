@@ -34,7 +34,12 @@ func TestDiscoveryJson(t *testing.T) {
 	c := IntegrateCover(&testshutter{
 		IoContext: tests.CreateTestIo(2),
 	}, conf)
-	info := c.GetDiscoveryInfo()
+	info := c.GetDiscoveryInfo("test_"+conf.ObjectId, &DeviceDiscoveryInfo{
+		Manufacturer: "wscgo",
+		Model:        "wscgo",
+		SwVersion:    "0.0.0-test",
+		Name:         "wscgo-test",
+	})
 	data, err := json.Marshal(info)
 	if err != nil {
 		t.Fatal(err)

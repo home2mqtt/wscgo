@@ -38,7 +38,7 @@ func main() {
 		protocol.PublisDiscoveryMessage(client, &protocol.DiscoverableNode{
 			DiscoveryPrefix: "protocol",
 			NodeID:          "DiscoveryTest",
-		}, cover)
+		}, cover, nil)
 	})
 
 	client := mqtt.NewClient(clientOpts)

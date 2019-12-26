@@ -21,6 +21,7 @@ type sw struct {
 
 //https://www.home-assistant.io/integrations/switch.mqtt/
 type switchDiscoveryInfo struct {
+	BasicDiscoveryInfo
 	CommandTopic string `json:"command_topic,omitempty"`
 	Name         string `json:"name,omitempty"`
 }
@@ -63,8 +64,12 @@ func (sw *sw) GetComponent() string {
 	return "switch"
 }
 
-func (sw *sw) GetDiscoveryInfo() interface{} {
+func (sw *sw) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{} {
 	return &switchDiscoveryInfo{
+		BasicDiscoveryInfo: BasicDiscoveryInfo{
+			UniqueID: uniqueID,
+			Device:   device,
+		},
 		CommandTopic: sw.CommandTopic,
 		Name:         sw.Name,
 	}
