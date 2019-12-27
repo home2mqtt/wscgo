@@ -5,7 +5,6 @@ import (
 	"bufio"
 	"errors"
 	"io/ioutil"
-	"log"
 	"os"
 	"strings"
 )
@@ -25,7 +24,6 @@ func getModelInfo() (string, string, error) {
 		line := scanner.Text()
 		if strings.Contains(line, ":") {
 			keyvalue := strings.Split(line, ":")
-			log.Println(keyvalue)
 			if strings.ToLower(strings.TrimSpace(keyvalue[0])) == "serial" {
 				serialstring := strings.TrimSpace(keyvalue[1])
 				return model, serialstring, nil

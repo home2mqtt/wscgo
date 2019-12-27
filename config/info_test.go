@@ -1,8 +1,18 @@
 package config
 
 import (
+	"bufio"
+	"os"
 	"testing"
 )
+
+func TestCpuInfo(t *testing.T) {
+	cpuinfofile, _ := os.Open(cpuinfo)
+	scanner := bufio.NewScanner(cpuinfofile)
+	for scanner.Scan() {
+		t.Log(scanner.Text())
+	}
+}
 
 func TestModelInfo(t *testing.T) {
 	model, serial, err := getModelInfo()
