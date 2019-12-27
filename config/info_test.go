@@ -4,6 +4,21 @@ import (
 	"testing"
 )
 
+func TestModelInfo(t *testing.T) {
+	model, serial, err := getModelInfo()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(model)
+	if model == "" {
+		t.Fail()
+	}
+	t.Log(serial)
+	if serial == "" {
+		t.Fail()
+	}
+}
+
 func TestDiscoveryInfo(t *testing.T) {
 	version := "0.0.0-test"
 	info := ComputeDeviceInfo(version)
