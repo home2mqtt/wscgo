@@ -1,7 +1,7 @@
 variables:
   REPO_NAME: gitlab.com/grill-tamasi.hu/wscgo
   GO111MODULE: "on"
-  VERSION: 0.3.3-beta3
+  VERSION: 0.3.3-beta4
 
 # The problem is that to be able to use go get, one needs to put
 # the repository in the $GOPATH. So for example if your gitlab domain
@@ -29,7 +29,7 @@ test:rpizw:
     - cd $GOPATH/src/$REPO_NAME
     - envsubst < cmd/wscgo/version.go.tpl > cmd/wscgo/version.go
   script:
-    - go test ./...
+    - go test -v ./...
   tags:
     - grill-tamasi
     - rpizw
