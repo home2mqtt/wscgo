@@ -1,7 +1,7 @@
 variables:
   REPO_NAME: gitlab.com/grill-tamasi.hu/wscgo
   GO111MODULE: "on"
-  VERSION: 0.3.3-beta2
+  VERSION: 0.3.3-beta3
 
 # The problem is that to be able to use go get, one needs to put
 # the repository in the $GOPATH. So for example if your gitlab domain
@@ -39,7 +39,7 @@ compile:rpizw:
   stage: build
   variables:
     GO111MODULE: "on"
-    GOARM: 6
+    GOARM: 5
   before_script:
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
