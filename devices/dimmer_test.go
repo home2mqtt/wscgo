@@ -25,6 +25,19 @@ func createDimmerForTest() (*dimmer, *tests.TestIo) {
 	return d, io
 }
 
+func createInvertedDimmerForTest() (*dimmer, *tests.TestIo) {
+	io := tests.CreateTestIo(3)
+	c := &DimmerConfig{
+		OnPin:    0,
+		PwmPin:   1,
+		Speed:    10,
+		OnDelay:  5,
+		Inverted: true,
+	}
+	d, _ := CreateDimmer(io, c).(*dimmer)
+	return d, io
+}
+
 func TestDimmerInit(t *testing.T) {
 	d, io := createDimmerForTest()
 	d.Initialize()
@@ -64,6 +77,22 @@ func TestDimmerOn(t *testing.T) {
 	}
 }
 
+func TestDimmerOnInverted(t *testing.T) {
+	d, io := createInvertedDimmerForTest()
+	d.Initialize()
+
+	d.On()
+	for i := 0; i < 5; i++ {
+		d.Tick()
+	}
+
+	for i := 0; i < 200; i++ {
+		expected := DimmerMaxValue - min(i*10, DimmerMaxValue)
+		checkDimmerPins("On ", t, io, true, expected)
+		d.Tick()
+	}
+}
+
 func TestDimmerOff(t *testing.T) {
 	d, io := createDimmerForTest()
 	d.Initialize()
@@ -76,6 +105,22 @@ func TestDimmerOff(t *testing.T) {
 	for i := 0; i < 200; i++ {
 		expected := max(DimmerMaxValue-i*10, 0)
 		checkDimmerPins("Off ", t, io, expected > 0, expected)
+		d.Tick()
+	}
+}
+
+func TestDimmerOffInverted(t *testing.T) {
+	d, io := createInvertedDimmerForTest()
+	d.Initialize()
+	d.target = DimmerMaxValue
+	d.current = DimmerMaxValue
+	d.actuate()
+
+	d.Off()
+
+	for i := 0; i < 200; i++ {
+		expected := DimmerMaxValue - max(DimmerMaxValue-i*10, 0)
+		checkDimmerPins("Off ", t, io, expected < DimmerMaxValue, expected)
 		d.Tick()
 	}
 }

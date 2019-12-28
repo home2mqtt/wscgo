@@ -5,10 +5,11 @@ import "gitlab.com/grill-tamasi/wscgo/wiringpi"
 const DimmerMaxValue int = 1023
 
 type DimmerConfig struct {
-	PwmPin  int `ini:"pwmpin"`
-	OnPin   int `ini:"onpin"`
-	Speed   int `ini:"speed"`
-	OnDelay int `ini:"ondelay"`
+	PwmPin   int  `ini:"pwmpin"`
+	OnPin    int  `ini:"onpin"`
+	Speed    int  `ini:"speed"`
+	OnDelay  int  `ini:"ondelay"`
+	Inverted bool `ini:"inverted"`
 }
 
 type dimmer struct {
@@ -97,7 +98,11 @@ func (dimmer *dimmer) adjustCurrent() {
 }
 
 func (dimmer *dimmer) actuate() {
-	dimmer.PwmWrite(dimmer.PwmPin, dimmer.current)
+	pwmvalue := dimmer.current
+	if dimmer.Inverted {
+		pwmvalue = DimmerMaxValue - pwmvalue
+	}
+	dimmer.PwmWrite(dimmer.PwmPin, pwmvalue)
 	if dimmer.OnPin >= 0 {
 		dimmer.DigitalWrite(dimmer.OnPin, (dimmer.target > 0) || (dimmer.current > 0))
 	}
