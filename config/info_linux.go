@@ -10,7 +10,7 @@ import (
 )
 
 const modelinfo string = "/proc/device-tree/model"
-const cpuinfo string = "proc/cpuinfo"
+const cpuinfo string = "/proc/cpuinfo"
 
 func getModelInfo() (string, string, error) {
 	modebytes, err := ioutil.ReadFile(modelinfo)
