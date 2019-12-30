@@ -2,6 +2,7 @@ package config
 
 import (
 	"testing"
+	"encoding/json"
 )
 
 func TestModelInfo(t *testing.T) {
@@ -33,4 +34,6 @@ func TestDiscoveryInfo(t *testing.T) {
 	}
 	t.Log(info.Identifiers)
 	t.Log(info.Model)
+	data, _ := json.Marshal(info)
+	t.Log(string(data))
 }

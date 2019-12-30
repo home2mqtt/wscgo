@@ -55,18 +55,6 @@ func (instance *wscgoInstance) eventOnDisconnected(client mqtt.Client) {
 	log.Println("MQTT Connection lost")
 }
 
-func computeDeviceInfo() *protocol.DeviceDiscoveryInfo {
-	host, _ := os.Hostname()
-	return &protocol.DeviceDiscoveryInfo{
-		Identifiers:  []string{},
-		Connections:  []string{},
-		Manufacturer: "wscgo",
-		Model:        "wscgo",
-		Name:         "wscgo_" + host,
-		SwVersion:    version,
-	}
-}
-
 func CreateWscgo(conf *config.WscgoConfiguration) *wscgoInstance {
 	instance := &wscgoInstance{
 		conf: conf,
@@ -74,7 +62,7 @@ func CreateWscgo(conf *config.WscgoConfiguration) *wscgoInstance {
 	opts := protocol.ConfigureClientOptions(&conf.MqttConfig)
 	opts = opts.SetOnConnectHandler(instance.eventOnConnected)
 	instance.client = mqtt.NewClient(opts)
-	instance.deviceInfo = computeDeviceInfo()
+	instance.deviceInfo = config.ComputeDeviceInfo(version)
 	return instance
 }
 
