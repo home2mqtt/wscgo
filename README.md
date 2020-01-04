@@ -5,6 +5,8 @@ platforms include [Raspberry Pi Zero W](https://www.raspberrypi.org/products/ras
 and [Orange Pi Zero](http://www.orangepi.org/orangepizero/), it should work on any device where 
 [Wiring PI](http://wiringpi.com/) can be compiled.
 
+See [user guide](https://github.com/balazsgrill/wscgo/wiki/User-guide)
+
 ### Main features
 
 * Uses [Wiring PI](http://wiringpi.com/)
