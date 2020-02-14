@@ -22,6 +22,12 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 		conf.Configs = append(conf.Configs, func(wiringpi.IoContext) {
 			wiringpi.Mcp23017Setup(c)
 		})
+	case "pca9685":
+		c := &wiringpi.Pca9685Config{}
+		section.MapTo(c)
+		conf.Configs = append(conf.Configs, func(wiringpi.IoContext) {
+			wiringpi.Pca9685Setup(c)
+		})
 	case "shutter":
 		s := &devices.ShutterConfig{}
 		section.MapTo(s)
