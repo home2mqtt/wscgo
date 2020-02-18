@@ -68,7 +68,6 @@ compile:opiz:
   before_script:
     - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-opiz --output libwiringPiPca9685.a
     - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output wiringpi/pca9685.h
-    - ln -s libwiringPiPca9685.so.2.0 libwiringPiPca9685.so
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
@@ -90,7 +89,6 @@ package:opiz:
   script:
     - curl -L https://github.com/balazsgrill/WiringOP-Zero/releases/download/v2.0-pwmfix/libwiringPi.so.2.0 --output libwiringPi.so.2.0
     - ln -s libwiringPi.so.2.0 libwiringPi.so
-    - ln -s libwiringPiPca9685.so.2.0 libwiringPiPca9685.so
     - cp wscgo-opiz wscgo
     - envsubst < wscgo-opiz.cfg.tpl > wscgo-opiz.cfg
     - equivs-build wscgo-opiz.cfg
