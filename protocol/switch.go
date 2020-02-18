@@ -7,6 +7,7 @@ import (
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"gitlab.com/grill-tamasi/wscgo/devices"
+	"periph.io/x/periph/conn/gpio"
 )
 
 type SwitchConfig struct {
@@ -46,15 +47,19 @@ func (sw *sw) Configure(client mqtt.Client) {
 		cmd := strings.ToUpper(string(msg.Payload()))
 		switch cmd {
 		case "ON":
-			sw.SetValue(true)
+			sw.Out(gpio.High)
 		case "OFF":
-			sw.SetValue(false)
+			sw.Out(gpio.Low)
 		default:
 			value, err := strconv.Atoi(string(msg.Payload()))
 			if err != nil {
 				log.Println("WARNING: Switch ", sw.Name, " received unkown command: ", cmd)
 			} else {
-				sw.SetValue(value > 0)
+				if value > 0 {
+					sw.Out(gpio.High)
+				} else {
+					sw.Out(gpio.Low)
+				}
 			}
 		}
 	})

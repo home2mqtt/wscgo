@@ -5,11 +5,12 @@ import (
 
 	"gitlab.com/grill-tamasi/wscgo/tests"
 	"gitlab.com/grill-tamasi/wscgo/wiringpi"
+	"periph.io/x/periph/conn/gpio"
 )
 
-func checkPins(msg string, t *testing.T, io *tests.TestIo, up bool, down bool) {
-	if io.Values[0] != up || io.Values[1] != down {
-		t.Errorf("%s UP[exp-actal]: %t - %t, DOWN[exp-actal]: %t - %t\n", msg, up, io.Values[0], down, io.Values[1])
+func checkPins(msg string, t *testing.T, io *tests.TestIo, up gpio.Level, down gpio.Level) {
+	if io.Pins[0].L != up || io.Pins[1].L != down {
+		t.Errorf("%s UP[exp-actal]: %t - %t, DOWN[exp-actal]: %t - %t\n", msg, up, io.Pins[0].L, down, io.Pins[1].L)
 	}
 }
 
@@ -29,10 +30,10 @@ func TestInit(t *testing.T) {
 	s, io := createShutterForTest()
 
 	s.Initialize()
-	if io.Modes[0] != wiringpi.OUTPUT {
+	if io.Pins[0].L != gpio.Low {
 		t.Fatal()
 	}
-	if io.Modes[1] != wiringpi.OUTPUT {
+	if io.Pins[1].L != gpio.Low {
 		t.Fatal()
 	}
 }
@@ -85,7 +86,7 @@ func TestDirectionChange(t *testing.T) {
 
 	// Check wait
 	s.setCmd(-1)
-	for i := 0; i < s.DirSwitchWait; i++ {
+	for i := 0; i < s.config.DirSwitchWait; i++ {
 		s.Tick()
 		checkPins("waiting ", t, io, wiringpi.LOW, wiringpi.LOW)
 	}
@@ -108,7 +109,7 @@ func TestDirectionChangeWithExtraWait(t *testing.T) {
 	checkPins("req up ", t, io, wiringpi.HIGH, wiringpi.LOW)
 
 	// Extra wait
-	for i := 0; i < s.DirSwitchWait*2; i++ {
+	for i := 0; i < s.config.DirSwitchWait*2; i++ {
 		s.Tick()
 		checkPins("waiting ", t, io, wiringpi.LOW, wiringpi.LOW)
 	}
@@ -135,7 +136,7 @@ func TestDirectionChangeWithStop(t *testing.T) {
 
 	// Stop --> wait
 	s.setCmd(0)
-	for i := 0; i < s.DirSwitchWait; i++ {
+	for i := 0; i < s.config.DirSwitchWait; i++ {
 		s.Tick()
 		checkPins("waiting ", t, io, wiringpi.LOW, wiringpi.LOW)
 	}

@@ -26,3 +26,16 @@ func Pca9685Setup(config *Pca9685Config) {}
 func (w *WiringPiIO) Setup() {
 	w.TestIo = *tests.CreateTestIo(12)
 }
+
+func (*WiringPiIO) DigitalWrite(pin int, value bool) {
+}
+
+func (*WiringPiIO) DigitalRead(pin int) bool {
+	return false
+}
+
+func (*WiringPiIO) PinMode(pin int, mode int) {
+}
+
+func (*WiringPiIO) PwmWrite(pin int, value int) {
+}

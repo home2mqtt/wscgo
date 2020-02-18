@@ -16,7 +16,11 @@ package wiringpi
 // #endif
 // extern int wiringPiDebug;
 import "C"
-import "log"
+import (
+	"log"
+
+	"periph.io/x/periph/conn/gpio"
+)
 
 // INPUT = wiringPI INPUT
 const INPUT = C.INPUT
@@ -77,4 +81,11 @@ func (*WiringPiIO) PwmWrite(pin int, value int) {
 	} else {
 		C.pwmWrite((C.int)(pin), (C.int)(value))
 	}
+}
+
+func (*WiringPiIO) GetPin(pin int) gpio.PinIO {
+	if pin <= 0 {
+		return nil
+	}
+	return New(pin)
 }

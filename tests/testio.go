@@ -1,46 +1,33 @@
 package tests
 
 import (
-	"log"
+	"fmt"
+
+	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/periph/conn/gpio/gpiotest"
 )
 
 type TestIo struct {
-	Modes  []int
-	Values []bool
-	Pwm    []int
-}
-
-func (io *TestIo) DigitalWrite(pin int, value bool) {
-	if io.Values[pin] != value {
-		log.Printf("Pin %d is set to %t\n", pin, value)
-	}
-	io.Values[pin] = value
-}
-
-func (io *TestIo) DigitalRead(pin int) bool {
-	return io.Values[pin]
-}
-
-func (io *TestIo) PinMode(pin int, mode int) {
-	log.Printf("Mode of pin %d is set to %d\n", pin, mode)
-	io.Modes[pin] = mode
-}
-
-func (io *TestIo) PwmWrite(pin int, value int) {
-	if io.Pwm[pin] != value {
-		log.Printf("PWM value of pin %d is set to %d\n", pin, value)
-	}
-	io.Pwm[pin] = value
+	Pins []*gpiotest.Pin
 }
 
 func (io *TestIo) Setup() {
 
 }
 
-func CreateTestIo(pins int) *TestIo {
+func (io *TestIo) GetPin(pin int) gpio.PinIO {
+	return io.Pins[pin]
+}
+
+func CreateTestIo(numofpins int) *TestIo {
+	pins := make([]*gpiotest.Pin, numofpins)
+	for i := range pins {
+		pins[i] = &gpiotest.Pin{
+			N:   fmt.Sprintf("Test_%d", i),
+			Num: i,
+		}
+	}
 	return &TestIo{
-		Modes:  make([]int, pins),
-		Values: make([]bool, pins),
-		Pwm:    make([]int, pins),
+		Pins: pins,
 	}
 }

@@ -1,6 +1,9 @@
 package devices
 
-import "gitlab.com/grill-tamasi/wscgo/wiringpi"
+import (
+	"gitlab.com/grill-tamasi/wscgo/wiringpi"
+	"periph.io/x/periph/conn/gpio"
+)
 
 type ShutterStateListener func(int)
 
@@ -22,10 +25,11 @@ type ShutterConfig struct {
 }
 
 type shutter struct {
-	wiringpi.IoContext
-	*ShutterConfig
-	Cmd  int
-	Wait int
+	upPin   gpio.PinOut
+	downPin gpio.PinOut
+	config  *ShutterConfig
+	Cmd     int
+	Wait    int
 
 	Current int
 	Prev    int
@@ -40,14 +44,15 @@ type shutter struct {
 
 func CreateShutter(io wiringpi.IoContext, config *ShutterConfig) IShutter {
 	return &shutter{
-		IoContext:     io,
-		ShutterConfig: config,
-		Current:       0,
-		Prev:          0,
-		PrevDir:       0,
-		firstCmd:      true,
-		stopCounter:   0,
-		shouldWait:    false,
+		upPin:       io.GetPin(config.UpPin),
+		downPin:     io.GetPin(config.DownPin),
+		config:      config,
+		Current:     0,
+		Prev:        0,
+		PrevDir:     0,
+		firstCmd:    true,
+		stopCounter: 0,
+		shouldWait:  false,
 	}
 }
 
@@ -58,23 +63,22 @@ func (shutter *shutter) fireEvent() {
 }
 
 func (shutter *shutter) up() {
-	shutter.DigitalWrite(shutter.DownPin, false) // turn off down
-	shutter.DigitalWrite(shutter.UpPin, true)    // turn on up
+	shutter.downPin.Out(gpio.Low) // turn off down
+	shutter.upPin.Out(gpio.High)  // turn on up
 }
 
 func (shutter *shutter) down() {
-	shutter.DigitalWrite(shutter.UpPin, false)  // turn off up
-	shutter.DigitalWrite(shutter.DownPin, true) // turn on down
+	shutter.upPin.Out(gpio.Low)    // turn off up
+	shutter.downPin.Out(gpio.High) // turn on down
 }
 
 func (shutter *shutter) stop() {
-	shutter.DigitalWrite(shutter.UpPin, false)   // turn off up
-	shutter.DigitalWrite(shutter.DownPin, false) // turn on down
+	shutter.upPin.Out(gpio.Low)   // turn off up
+	shutter.downPin.Out(gpio.Low) // turn on down
 }
 
 func (shutter *shutter) Initialize() {
-	shutter.PinMode(shutter.UpPin, wiringpi.OUTPUT)
-	shutter.PinMode(shutter.DownPin, wiringpi.OUTPUT)
+	shutter.stop()
 	shutter.Prev = -1
 }
 
@@ -83,7 +87,7 @@ func (shutter *shutter) setCmd(steps int) {
 		//stop
 		shutter.Cmd = 0
 		if shutter.PrevDir != 0 && !shutter.firstCmd {
-			shutter.Wait = shutter.DirSwitchWait
+			shutter.Wait = shutter.config.DirSwitchWait
 		} else {
 			//shutter.PrevDir = 0
 		}
@@ -92,13 +96,13 @@ func (shutter *shutter) setCmd(steps int) {
 		if shutter.Cmd < 0 {
 			// direction change
 			shutter.Cmd = steps
-			shutter.Wait = shutter.DirSwitchWait
+			shutter.Wait = shutter.config.DirSwitchWait
 		} else {
 			shutter.Cmd += steps
 		}
 
 		if (shutter.PrevDir != 1 && shutter.PrevDir != 0 && !shutter.firstCmd) || (shutter.shouldWait && shutter.PrevDir != 1) {
-			shutter.Wait = shutter.DirSwitchWait - shutter.stopCounter
+			shutter.Wait = shutter.config.DirSwitchWait - shutter.stopCounter
 		}
 
 		shutter.PrevDir = 1
@@ -107,13 +111,13 @@ func (shutter *shutter) setCmd(steps int) {
 		if shutter.Cmd > 0 {
 			//direction change
 			shutter.Cmd = steps
-			shutter.Wait = shutter.DirSwitchWait
+			shutter.Wait = shutter.config.DirSwitchWait
 		} else {
 			shutter.Cmd += steps
 		}
 
 		if (shutter.PrevDir != -1 && shutter.PrevDir != 0 && !shutter.firstCmd) || (shutter.shouldWait && shutter.PrevDir != -1) {
-			shutter.Wait = shutter.DirSwitchWait - shutter.stopCounter
+			shutter.Wait = shutter.config.DirSwitchWait - shutter.stopCounter
 		}
 
 		shutter.PrevDir = -1
@@ -132,10 +136,10 @@ func (shutter *shutter) Tick() {
 	} else if shutter.Cmd == 0 {
 		shutter.stop()
 
-		if shutter.stopCounter <= shutter.DirSwitchWait && shutter.shouldWait {
+		if shutter.stopCounter <= shutter.config.DirSwitchWait && shutter.shouldWait {
 			shutter.stopCounter++
 		}
-		if shutter.stopCounter >= shutter.DirSwitchWait {
+		if shutter.stopCounter >= shutter.config.DirSwitchWait {
 			shutter.shouldWait = false
 		} else {
 			shutter.shouldWait = true
@@ -147,8 +151,8 @@ func (shutter *shutter) Tick() {
 			shutter.up()
 			shutter.Cmd--
 			shutter.Current++
-			if shutter.Current > shutter.Range {
-				shutter.Current = shutter.Range
+			if shutter.Current > shutter.config.Range {
+				shutter.Current = shutter.config.Range
 			}
 			shutter.PrevDir = 1
 		} else {
@@ -170,10 +174,10 @@ func (shutter *shutter) AddListener(listener ShutterStateListener) {
 }
 
 func (shutter *shutter) Open() {
-	shutter.setCmd(shutter.Range)
+	shutter.setCmd(shutter.config.Range)
 }
 func (shutter *shutter) Close() {
-	shutter.setCmd(-shutter.Range)
+	shutter.setCmd(-shutter.config.Range)
 }
 func (shutter *shutter) MoveBy(steps int) {
 	shutter.setCmd(steps)
@@ -182,5 +186,5 @@ func (shutter *shutter) Stop() {
 	shutter.setCmd(0)
 }
 func (shutter *shutter) GetRange() int {
-	return shutter.Range
+	return shutter.config.Range
 }

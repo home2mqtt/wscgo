@@ -4,12 +4,12 @@ import (
 	"testing"
 
 	"gitlab.com/grill-tamasi/wscgo/tests"
-	"gitlab.com/grill-tamasi/wscgo/wiringpi"
+	"periph.io/x/periph/conn/gpio"
 )
 
-func checkDimmerPins(msg string, t *testing.T, io *tests.TestIo, on bool, pwm int) {
-	if io.Values[0] != on || io.Pwm[1] != pwm {
-		t.Errorf("%s ON[exp-actal]: %t - %t, PWM[exp-actal]: %d - %d\n", msg, on, io.Values[0], pwm, io.Pwm[1])
+func checkDimmerPins(msg string, t *testing.T, io *tests.TestIo, on gpio.Level, pwm int) {
+	if io.Pins[0].L != on || io.Pins[1].D != scale(pwm) {
+		t.Errorf("%s ON[exp-actal]: %v - %v, PWM[exp-actal]: %v - %v\n", msg, on, io.Pins[0].L, scale(pwm), io.Pins[1].D)
 	}
 }
 
@@ -41,10 +41,10 @@ func createInvertedDimmerForTest() (*dimmer, *tests.TestIo) {
 func TestDimmerInit(t *testing.T) {
 	d, io := createDimmerForTest()
 	d.Initialize()
-	if io.Modes[0] != wiringpi.OUTPUT {
+	if io.Pins[0].L != gpio.Low {
 		t.Error("On Pin is not set to OUTPUT!")
 	}
-	if io.Modes[1] != wiringpi.PWM_OUTPUT {
+	if io.Pins[1].F != frequency {
 		t.Error("On Pin is not set to PWM!")
 	}
 }

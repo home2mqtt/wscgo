@@ -1,10 +1,13 @@
 package devices
 
-import "gitlab.com/grill-tamasi/wscgo/wiringpi"
+import (
+	"gitlab.com/grill-tamasi/wscgo/wiringpi"
+	"periph.io/x/periph/conn/gpio"
+)
 
 type IOutput interface {
 	Device
-	SetValue(bool)
+	Out(l gpio.Level) error
 }
 
 type OutputConfig struct {
@@ -12,8 +15,7 @@ type OutputConfig struct {
 }
 
 type output struct {
-	wiringpi.IoContext
-	*OutputConfig
+	gpio.PinOut
 }
 
 type IInputListener func(bool)
@@ -28,40 +30,33 @@ type InputConfig struct {
 }
 
 type input struct {
-	wiringpi.IoContext
-	*InputConfig
+	gpio.PinIn
 
 	listeners []IInputListener
-	state     bool
+	state     gpio.Level
 }
 
 func CreateOutput(io wiringpi.IoContext, config *OutputConfig) IOutput {
 	return &output{
-		IoContext:    io,
-		OutputConfig: config,
+		PinOut: io.GetPin(config.Pin),
 	}
 }
 
 func CreateInput(io wiringpi.IoContext, config *InputConfig) IInput {
 	return &input{
-		IoContext:   io,
-		InputConfig: config,
+		PinIn: io.GetPin(config.Pin),
 	}
 }
 
 func (out *output) Initialize() {
-	out.PinMode(out.Pin, wiringpi.OUTPUT)
+	out.Out(gpio.Low)
 }
 
 func (*output) Tick() {}
 
-func (out *output) SetValue(value bool) {
-	out.DigitalWrite(out.Pin, value)
-}
-
 func (input *input) Initialize() {
-	input.PinMode(input.Pin, wiringpi.INPUT)
-	input.state = input.DigitalRead(input.Pin)
+	input.In(gpio.Float, gpio.NoEdge)
+	input.state = input.Read()
 }
 
 func (input *input) AddListener(listener IInputListener) {
@@ -69,11 +64,11 @@ func (input *input) AddListener(listener IInputListener) {
 }
 
 func (input *input) Tick() {
-	state := input.DigitalRead(input.Pin)
+	state := input.Read()
 	if state != input.state {
 		input.state = state
 		for _, l := range input.listeners {
-			l(state)
+			l(state == gpio.High)
 		}
 	}
 }

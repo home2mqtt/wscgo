@@ -1,8 +1,15 @@
 package devices
 
-import "gitlab.com/grill-tamasi/wscgo/wiringpi"
+import (
+	"gitlab.com/grill-tamasi/wscgo/wiringpi"
+	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/periph/conn/physic"
+)
 
-const DimmerMaxValue int = 1023
+const DimmerResolution int = 1 << (24 - 16)
+const DimmerMaxValue int = DimmerResolution - 1
+
+const frequency physic.Frequency = 1000
 
 type DimmerConfig struct {
 	PwmPin   int  `ini:"pwmpin"`
@@ -13,8 +20,9 @@ type DimmerConfig struct {
 }
 
 type dimmer struct {
-	wiringpi.IoContext
-	*DimmerConfig
+	onPin        gpio.PinOut
+	pwmPin       gpio.PinOut
+	config       *DimmerConfig
 	current      int
 	target       int
 	delaycounter int
@@ -29,8 +37,9 @@ type IDimmer interface {
 
 func CreateDimmer(io wiringpi.IoContext, config *DimmerConfig) IDimmer {
 	return &dimmer{
-		IoContext:    io,
-		DimmerConfig: config,
+		onPin:  io.GetPin(config.OnPin),
+		pwmPin: io.GetPin(config.PwmPin),
+		config: config,
 	}
 }
 
@@ -38,9 +47,9 @@ func (dimmer *dimmer) Initialize() {
 	dimmer.current = 0
 	dimmer.target = 0
 	dimmer.delaycounter = 0
-	dimmer.PinMode(dimmer.PwmPin, wiringpi.PWM_OUTPUT)
-	if dimmer.OnPin >= 0 {
-		dimmer.PinMode(dimmer.OnPin, wiringpi.OUTPUT)
+	dimmer.pwmPin.PWM(0, frequency)
+	if dimmer.onPin != nil {
+		dimmer.onPin.Out(gpio.Low)
 	}
 }
 
@@ -64,7 +73,7 @@ func (dimmer *dimmer) SetBrightness(target int) {
 	}
 
 	if (dimmer.target != 0) && (dimmer.current == 0) {
-		dimmer.delaycounter = dimmer.OnDelay
+		dimmer.delaycounter = dimmer.config.OnDelay
 	}
 }
 
@@ -88,23 +97,31 @@ func (dimmer *dimmer) adjustCurrent() {
 		return
 	}
 	if dimmer.target > dimmer.current {
-		dimmer.current = min(dimmer.target, dimmer.current+dimmer.Speed)
+		dimmer.current = min(dimmer.target, dimmer.current+dimmer.config.Speed)
 		return
 	}
 	if dimmer.target < dimmer.current {
-		dimmer.current = max(dimmer.target, dimmer.current-dimmer.Speed)
+		dimmer.current = max(dimmer.target, dimmer.current-dimmer.config.Speed)
 		return
 	}
 }
 
+func scale(brightness int) gpio.Duty {
+	return gpio.Duty(int32(brightness) * int32(DimmerResolution))
+}
+
 func (dimmer *dimmer) actuate() {
 	pwmvalue := dimmer.current
-	if dimmer.Inverted {
+	if dimmer.config.Inverted {
 		pwmvalue = DimmerMaxValue - pwmvalue
 	}
-	dimmer.PwmWrite(dimmer.PwmPin, pwmvalue)
-	if dimmer.OnPin >= 0 {
-		dimmer.DigitalWrite(dimmer.OnPin, (dimmer.target > 0) || (dimmer.current > 0))
+	dimmer.pwmPin.PWM(scale(pwmvalue), frequency)
+	if dimmer.onPin != nil {
+		l := gpio.Low
+		if (dimmer.target > 0) || (dimmer.current > 0) {
+			l = gpio.High
+		}
+		dimmer.onPin.Out(l)
 	}
 }
 
