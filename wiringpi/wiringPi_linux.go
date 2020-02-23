@@ -40,7 +40,7 @@ func Mcp23017Setup(config *Mcp23017Config) {
 
 func Pca9685Setup(config *Pca9685Config) {
 	rc := C.pca9685Setup(C.int(config.ExpansionBase), C.int(config.Address), C.float(config.Frequency))
-	if rc != 1 {
+	if rc < 0 {
 		log.Fatal("PCA9685 error: ", rc)
 	}
 }
