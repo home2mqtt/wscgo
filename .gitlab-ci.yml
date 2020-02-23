@@ -1,7 +1,7 @@
 variables:
   REPO_NAME: gitlab.com/grill-tamasi.hu/wscgo
   GO111MODULE: "on"
-  VERSION: 0.3.3-beta6
+  VERSION: 0.4.0-beta3
 
 # The problem is that to be able to use go get, one needs to put
 # the repository in the $GOPATH. So for example if your gitlab domain
@@ -22,7 +22,10 @@ test:rpizw:
   stage: test
   variables:
     GO111MODULE: "on"
+    GOARM: 5
   before_script:
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-rpizw --output libwiringPiPca9685.a
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output wiringpi/pca9685.h
     - echo $REPO_NAME
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
@@ -41,6 +44,8 @@ compile:rpizw:
     GO111MODULE: "on"
     GOARM: 5
   before_script:
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-rpizw --output libwiringPiPca9685.a
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output wiringpi/pca9685.h
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
@@ -61,6 +66,8 @@ compile:opiz:
     GO111MODULE: "on"
     GOARM: 7
   before_script:
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-opiz --output libwiringPiPca9685.a
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output wiringpi/pca9685.h
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
@@ -80,7 +87,7 @@ package:opiz:
   dependencies:
     - compile:opiz
   script:
-    - curl -L https://github.com/balazsgrill/WiringOP-Zero/releases/download/v2.0-softpwm/libwiringPi.so.2.0 --output libwiringPi.so.2.0
+    - curl -L https://github.com/balazsgrill/WiringOP-Zero/releases/download/v2.0-pwmfix/libwiringPi.so.2.0 --output libwiringPi.so.2.0
     - ln -s libwiringPi.so.2.0 libwiringPi.so
     - cp wscgo-opiz wscgo
     - envsubst < wscgo-opiz.cfg.tpl > wscgo-opiz.cfg

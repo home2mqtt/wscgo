@@ -2,9 +2,10 @@
 
 package wiringpi
 
-// #cgo LDFLAGS: -lwiringPi
+// #cgo LDFLAGS: -L${SRCDIR}/.. -lwiringPiPca9685 -lwiringPi
 // #include<wiringPi.h>
 // #include<mcp23017.h>
+// #include "pca9685.h"
 // #include<softPwm.h>
 // #ifdef PI_MODEL_BPR
 // int setuprc = 0;
@@ -34,6 +35,13 @@ func Mcp23017Setup(config *Mcp23017Config) {
 	rc := C.mcp23017Setup(C.int(config.ExpansionBase), C.int(config.Address))
 	if rc != C.setuprc {
 		log.Fatal("MCP23017 error: ", rc)
+	}
+}
+
+func Pca9685Setup(config *Pca9685Config) {
+	rc := C.pca9685Setup(C.int(config.ExpansionBase), C.int(config.Address), C.float(config.Frequency))
+	if rc < 0 {
+		log.Fatal("PCA9685 error: ", rc)
 	}
 }
 
