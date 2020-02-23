@@ -99,7 +99,7 @@ func (dimmer *dimmer) adjustCurrent() {
 func (dimmer *dimmer) actuate() {
 	pwmvalue := dimmer.current
 	if dimmer.Inverted {
-		pwmvalue = dimmer.Resolution - 1 - pwmvalue
+		pwmvalue = (dimmer.Resolution - 1) - pwmvalue
 	}
 	dimmer.PwmWrite(dimmer.PwmPin, pwmvalue)
 	if dimmer.OnPin >= 0 {

@@ -7,6 +7,8 @@ import (
 	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 )
 
+const DimmerMaxValue int = 1023
+
 func checkDimmerPins(msg string, t *testing.T, io *tests.TestIo, on bool, pwm int) {
 	if io.Values[0] != on || io.Pwm[1] != pwm {
 		t.Errorf("%s ON[exp-actal]: %t - %t, PWM[exp-actal]: %d - %d\n", msg, on, io.Values[0], pwm, io.Pwm[1])
@@ -16,10 +18,11 @@ func checkDimmerPins(msg string, t *testing.T, io *tests.TestIo, on bool, pwm in
 func createDimmerForTest() (*dimmer, *tests.TestIo) {
 	io := tests.CreateTestIo(3)
 	c := &DimmerConfig{
-		OnPin:   0,
-		PwmPin:  1,
-		Speed:   10,
-		OnDelay: 5,
+		OnPin:      0,
+		PwmPin:     1,
+		Speed:      10,
+		OnDelay:    5,
+		Resolution: DimmerMaxValue + 1,
 	}
 	d, _ := CreateDimmer(io, c).(*dimmer)
 	return d, io
@@ -28,11 +31,12 @@ func createDimmerForTest() (*dimmer, *tests.TestIo) {
 func createInvertedDimmerForTest() (*dimmer, *tests.TestIo) {
 	io := tests.CreateTestIo(3)
 	c := &DimmerConfig{
-		OnPin:    0,
-		PwmPin:   1,
-		Speed:    10,
-		OnDelay:  5,
-		Inverted: true,
+		OnPin:      0,
+		PwmPin:     1,
+		Speed:      10,
+		OnDelay:    5,
+		Inverted:   true,
+		Resolution: DimmerMaxValue + 1,
 	}
 	d, _ := CreateDimmer(io, c).(*dimmer)
 	return d, io
