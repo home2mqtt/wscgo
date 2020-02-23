@@ -2,14 +2,13 @@ package devices
 
 import "gitlab.com/grill-tamasi/wscgo/wiringpi"
 
-const DimmerMaxValue int = 1023
-
 type DimmerConfig struct {
-	PwmPin   int  `ini:"pwmpin"`
-	OnPin    int  `ini:"onpin"`
-	Speed    int  `ini:"speed"`
-	OnDelay  int  `ini:"ondelay"`
-	Inverted bool `ini:"inverted"`
+	PwmPin     int  `ini:"pwmpin"`
+	OnPin      int  `ini:"onpin"`
+	Speed      int  `ini:"speed"`
+	OnDelay    int  `ini:"ondelay"`
+	Inverted   bool `ini:"inverted"`
+	Resolution int  `ini:"resolution"`
 }
 
 type dimmer struct {
@@ -45,7 +44,7 @@ func (dimmer *dimmer) Initialize() {
 }
 
 func (dimmer *dimmer) On() {
-	dimmer.SetBrightness(DimmerMaxValue)
+	dimmer.SetBrightness(dimmer.Resolution - 1)
 }
 
 func (dimmer *dimmer) Off() {
@@ -53,8 +52,8 @@ func (dimmer *dimmer) Off() {
 }
 
 func (dimmer *dimmer) SetBrightness(target int) {
-	if target > DimmerMaxValue {
-		dimmer.target = DimmerMaxValue
+	if target > dimmer.Resolution-1 {
+		dimmer.target = dimmer.Resolution - 1
 	} else {
 		if target < 0 {
 			dimmer.target = 0
@@ -100,7 +99,7 @@ func (dimmer *dimmer) adjustCurrent() {
 func (dimmer *dimmer) actuate() {
 	pwmvalue := dimmer.current
 	if dimmer.Inverted {
-		pwmvalue = DimmerMaxValue - pwmvalue
+		pwmvalue = dimmer.Resolution - 1 - pwmvalue
 	}
 	dimmer.PwmWrite(dimmer.PwmPin, pwmvalue)
 	if dimmer.OnPin >= 0 {
