@@ -24,6 +24,7 @@ type IDimmer interface {
 	On()
 	Off()
 	SetBrightness(value int)
+	BrightnessResolution() int
 }
 
 func CreateDimmer(io wiringpi.IoContext, config *DimmerConfig) IDimmer {
@@ -41,6 +42,10 @@ func (dimmer *dimmer) Initialize() {
 	if dimmer.OnPin >= 0 {
 		dimmer.PinMode(dimmer.OnPin, wiringpi.OUTPUT)
 	}
+}
+
+func (dimmer *dimmer) BrightnessResolution() int {
+	return dimmer.Resolution
 }
 
 func (dimmer *dimmer) On() {
