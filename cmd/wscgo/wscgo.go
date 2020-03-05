@@ -8,7 +8,8 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"gitlab.com/grill-tamasi/wscgo/config"
 	"gitlab.com/grill-tamasi/wscgo/protocol"
-	"gitlab.com/grill-tamasi/wscgo/wiringpi"
+
+	_ "gitlab.com/grill-tamasi/wscgo/integration"
 )
 
 type wscgoInstance struct {
@@ -20,11 +21,15 @@ type wscgoInstance struct {
 
 func (instance *wscgoInstance) intitializeDevices() {
 	for _, c := range instance.conf.Configs {
-		c(instance.conf.IoContext)
+		c()
 	}
-	instance.conf.IoContext.Setup()
 	for _, d := range instance.conf.Devices {
-		instance.devices = append(instance.devices, d(instance.conf.IoContext))
+		dev, err := d()
+		if err != nil {
+			log.Println(err.Error())
+		} else {
+			instance.devices = append(instance.devices, dev)
+		}
 	}
 	for _, d := range instance.devices {
 		log.Println("Initializing ", d.GetComponent(), d.GetObjectId())
@@ -98,7 +103,6 @@ func main() {
 		log.Fatal("usage: wscgo config.ini")
 	}
 	conf := config.LoadConfig(args[0])
-	conf.IoContext = &wiringpi.WiringPiIO{}
 
 	instance := CreateWscgo(conf)
 	instance.intitializeDevices()

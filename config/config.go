@@ -4,19 +4,39 @@ import (
 	"os"
 
 	"gitlab.com/grill-tamasi/wscgo/protocol"
-	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 )
 
-type DeviceInitializer func(wiringpi.IoContext) protocol.IDiscoverable
+type DeviceInitializer func() (protocol.IDiscoverable, error)
 
-type ConfigInitializer func(wiringpi.IoContext)
+type ConfigInitializer func() error
+
+type ConfigurationContext interface {
+	AddConfigInitializer(ConfigInitializer)
+	AddDeviceInitializer(DeviceInitializer)
+}
 
 type WscgoConfiguration struct {
 	protocol.MqttConfig
-	wiringpi.IoContext
 	Node    protocol.DiscoverableNode
 	Configs []ConfigInitializer
 	Devices []DeviceInitializer
+}
+
+func (config *WscgoConfiguration) AddConfigInitializer(c ConfigInitializer) {
+	config.Configs = append(config.Configs, c)
+}
+
+func (config *WscgoConfiguration) AddDeviceInitializer(d DeviceInitializer) {
+	config.Devices = append(config.Devices, d)
+}
+
+type ConfigurationSection interface {
+	FillData(interface{}) error
+	GetID() string
+}
+
+type ConfigurationPartParser interface {
+	ParseConfiguration(ConfigurationSection, ConfigurationContext) error
 }
 
 func defaultConfiguration() *WscgoConfiguration {
