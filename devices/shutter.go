@@ -1,8 +1,8 @@
 package devices
 
 import (
-	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/periph/conn/gpio/gpioreg"
 )
 
 type ShutterStateListener func(int)
@@ -18,10 +18,10 @@ type IShutter interface {
 }
 
 type ShutterConfig struct {
-	UpPin         int `ini:"uppin"`
-	DownPin       int `ini:"downpin"`
-	DirSwitchWait int `ini:"dirswitchwait"`
-	Range         int `ini:"range"`
+	UpPin         string `ini:"uppin"`
+	DownPin       string `ini:"downpin"`
+	DirSwitchWait int    `ini:"dirswitchwait"`
+	Range         int    `ini:"range"`
 }
 
 type shutter struct {
@@ -42,10 +42,10 @@ type shutter struct {
 	listeners []ShutterStateListener
 }
 
-func CreateShutter(io wiringpi.IoContext, config *ShutterConfig) IShutter {
+func CreateShutter(config *ShutterConfig) IShutter {
 	return &shutter{
-		upPin:       io.GetPin(config.UpPin),
-		downPin:     io.GetPin(config.DownPin),
+		upPin:       gpioreg.ByName(config.UpPin),
+		downPin:     gpioreg.ByName(config.DownPin),
 		config:      config,
 		Current:     0,
 		Prev:        0,

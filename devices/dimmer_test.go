@@ -7,8 +7,6 @@ import (
 	"periph.io/x/periph/conn/gpio"
 )
 
-const DimmerMaxValue int = 1023
-
 func checkDimmerPins(msg string, t *testing.T, io *tests.TestIo, on gpio.Level, pwm int) {
 	if io.Pins[0].L != on || io.Pins[1].D != scale(pwm) {
 		t.Errorf("%s ON[exp-actal]: %v - %v, PWM[exp-actal]: %v - %v\n", msg, on, io.Pins[0].L, scale(pwm), io.Pins[1].D)
@@ -18,27 +16,27 @@ func checkDimmerPins(msg string, t *testing.T, io *tests.TestIo, on gpio.Level, 
 func createDimmerForTest() (*dimmer, *tests.TestIo) {
 	io := tests.CreateTestIo(3)
 	c := &DimmerConfig{
-		OnPin:      0,
-		PwmPin:     1,
+		OnPin:      "Test_0",
+		PwmPin:     "Test_1",
 		Speed:      10,
 		OnDelay:    5,
 		Resolution: DimmerMaxValue + 1,
 	}
-	d, _ := CreateDimmer(io, c).(*dimmer)
+	d, _ := CreateDimmer(c).(*dimmer)
 	return d, io
 }
 
 func createInvertedDimmerForTest() (*dimmer, *tests.TestIo) {
 	io := tests.CreateTestIo(3)
 	c := &DimmerConfig{
-		OnPin:      0,
-		PwmPin:     1,
+		OnPin:      "Test_0",
+		PwmPin:     "Test_1",
 		Speed:      10,
 		OnDelay:    5,
 		Inverted:   true,
 		Resolution: DimmerMaxValue + 1,
 	}
-	d, _ := CreateDimmer(io, c).(*dimmer)
+	d, _ := CreateDimmer(c).(*dimmer)
 	return d, io
 }
 

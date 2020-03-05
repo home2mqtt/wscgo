@@ -1,8 +1,8 @@
 package devices
 
 import (
-	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/periph/conn/gpio/gpioreg"
 	"periph.io/x/periph/conn/physic"
 )
 
@@ -12,12 +12,12 @@ const DimmerMaxValue int = DimmerResolution - 1
 const frequency physic.Frequency = 1000
 
 type DimmerConfig struct {
-	PwmPin     int  `ini:"pwmpin"`
-	OnPin      int  `ini:"onpin"`
-	Speed      int  `ini:"speed"`
-	OnDelay    int  `ini:"ondelay"`
-	Inverted   bool `ini:"inverted"`
-	Resolution int  `ini:"resolution"`
+	PwmPin     string `ini:"pwmpin"`
+	OnPin      string `ini:"onpin"`
+	Speed      int    `ini:"speed"`
+	OnDelay    int    `ini:"ondelay"`
+	Inverted   bool   `ini:"inverted"`
+	Resolution int    `ini:"resolution"`
 }
 
 type dimmer struct {
@@ -37,10 +37,10 @@ type IDimmer interface {
 	BrightnessResolution() int
 }
 
-func CreateDimmer(io wiringpi.IoContext, config *DimmerConfig) IDimmer {
+func CreateDimmer(config *DimmerConfig) IDimmer {
 	return &dimmer{
-		onPin:  io.GetPin(config.OnPin),
-		pwmPin: io.GetPin(config.PwmPin),
+		onPin:  gpioreg.ByName(config.OnPin),
+		pwmPin: gpioreg.ByName(config.PwmPin),
 		config: config,
 	}
 }
@@ -56,11 +56,11 @@ func (dimmer *dimmer) Initialize() {
 }
 
 func (dimmer *dimmer) BrightnessResolution() int {
-	return dimmer.Resolution
+	return dimmer.config.Resolution
 }
 
 func (dimmer *dimmer) On() {
-	dimmer.SetBrightness(dimmer.Resolution - 1)
+	dimmer.SetBrightness(dimmer.config.Resolution - 1)
 }
 
 func (dimmer *dimmer) Off() {
@@ -68,8 +68,8 @@ func (dimmer *dimmer) Off() {
 }
 
 func (dimmer *dimmer) SetBrightness(target int) {
-	if target > dimmer.Resolution-1 {
-		dimmer.target = dimmer.Resolution - 1
+	if target > dimmer.config.Resolution-1 {
+		dimmer.target = dimmer.config.Resolution - 1
 	} else {
 		if target < 0 {
 			dimmer.target = 0
@@ -119,7 +119,7 @@ func scale(brightness int) gpio.Duty {
 func (dimmer *dimmer) actuate() {
 	pwmvalue := dimmer.current
 	if dimmer.config.Inverted {
-		pwmvalue = (dimmer.Resolution - 1) - pwmvalue
+		pwmvalue = (dimmer.config.Resolution - 1) - pwmvalue
 	}
 	dimmer.pwmPin.PWM(scale(pwmvalue), frequency)
 	if dimmer.onPin != nil {

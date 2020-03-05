@@ -17,12 +17,12 @@ func checkPins(msg string, t *testing.T, io *tests.TestIo, up gpio.Level, down g
 func createShutterForTest() (*shutter, *tests.TestIo) {
 	io := tests.CreateTestIo(3)
 	sc := ShutterConfig{
-		UpPin:         0,
-		DownPin:       1,
+		UpPin:         "Test_0",
+		DownPin:       "Test_1",
 		DirSwitchWait: 20,
 		Range:         10,
 	}
-	s, _ := CreateShutter(io, &sc).(*shutter)
+	s, _ := CreateShutter(&sc).(*shutter)
 	return s, io
 }
 

@@ -1,9 +1,5 @@
 package wiringpi
 
-import (
-	"periph.io/x/periph/conn/gpio"
-)
-
 // LOW = wiringPI LOW
 const LOW = false
 
@@ -12,8 +8,6 @@ const HIGH = true
 
 type IoContext interface {
 	Setup()
-
-	GetPin(pin int) gpio.PinIO
 }
 
 type ioImpl interface {

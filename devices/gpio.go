@@ -1,8 +1,8 @@
 package devices
 
 import (
-	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/periph/conn/gpio/gpioreg"
 )
 
 type IOutput interface {
@@ -11,7 +11,7 @@ type IOutput interface {
 }
 
 type OutputConfig struct {
-	Pin int `ini:"pin"`
+	Pin string `ini:"pin"`
 }
 
 type output struct {
@@ -26,7 +26,7 @@ type IInput interface {
 }
 
 type InputConfig struct {
-	Pin int `ini:"pin"`
+	Pin string `ini:"pin"`
 }
 
 type input struct {
@@ -36,15 +36,15 @@ type input struct {
 	state     gpio.Level
 }
 
-func CreateOutput(io wiringpi.IoContext, config *OutputConfig) IOutput {
+func CreateOutput(config *OutputConfig) IOutput {
 	return &output{
-		PinOut: io.GetPin(config.Pin),
+		PinOut: gpioreg.ByName(config.Pin),
 	}
 }
 
-func CreateInput(io wiringpi.IoContext, config *InputConfig) IInput {
+func CreateInput(config *InputConfig) IInput {
 	return &input{
-		PinIn: io.GetPin(config.Pin),
+		PinIn: gpioreg.ByName(config.Pin),
 	}
 }
 
