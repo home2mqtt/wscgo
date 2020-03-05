@@ -50,7 +50,8 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 		})
 	case "light":
 		s := &devices.DimmerConfig{
-			OnPin: -1,
+			OnPin:      -1,
+			Resolution: 1024,
 		}
 		section.MapTo(s)
 		c := protocol.CreateLightConfig(id)

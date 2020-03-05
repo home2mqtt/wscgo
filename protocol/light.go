@@ -51,7 +51,7 @@ func (light *light) onMsgReceive(client mqtt.Client, msg mqtt.Message) {
 	switch cmd {
 	case "ON":
 		light.On()
-		light.fireBrightnessEvent(client, devices.DimmerMaxValue)
+		light.fireBrightnessEvent(client, light.BrightnessResolution()-1)
 	case "OFF":
 		light.Off()
 		light.fireBrightnessEvent(client, 0)
@@ -87,7 +87,7 @@ func (light *light) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInf
 		Name:                   light.Name,
 		CommandTopic:           light.CommandTopic,
 		BrightnessCommandTopic: light.CommandTopic,
-		BrightnessScale:        1023,
+		BrightnessScale:        light.BrightnessResolution() - 1,
 		BrightnessStateTopic:   light.CommandTopic + "/brightness",
 		OnCommandType:          "brightness",
 	}

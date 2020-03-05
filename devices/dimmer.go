@@ -12,11 +12,12 @@ const DimmerMaxValue int = DimmerResolution - 1
 const frequency physic.Frequency = 1000
 
 type DimmerConfig struct {
-	PwmPin   int  `ini:"pwmpin"`
-	OnPin    int  `ini:"onpin"`
-	Speed    int  `ini:"speed"`
-	OnDelay  int  `ini:"ondelay"`
-	Inverted bool `ini:"inverted"`
+	PwmPin     int  `ini:"pwmpin"`
+	OnPin      int  `ini:"onpin"`
+	Speed      int  `ini:"speed"`
+	OnDelay    int  `ini:"ondelay"`
+	Inverted   bool `ini:"inverted"`
+	Resolution int  `ini:"resolution"`
 }
 
 type dimmer struct {
@@ -33,6 +34,7 @@ type IDimmer interface {
 	On()
 	Off()
 	SetBrightness(value int)
+	BrightnessResolution() int
 }
 
 func CreateDimmer(io wiringpi.IoContext, config *DimmerConfig) IDimmer {
@@ -53,8 +55,12 @@ func (dimmer *dimmer) Initialize() {
 	}
 }
 
+func (dimmer *dimmer) BrightnessResolution() int {
+	return dimmer.Resolution
+}
+
 func (dimmer *dimmer) On() {
-	dimmer.SetBrightness(DimmerMaxValue)
+	dimmer.SetBrightness(dimmer.Resolution - 1)
 }
 
 func (dimmer *dimmer) Off() {
@@ -62,8 +68,8 @@ func (dimmer *dimmer) Off() {
 }
 
 func (dimmer *dimmer) SetBrightness(target int) {
-	if target > DimmerMaxValue {
-		dimmer.target = DimmerMaxValue
+	if target > dimmer.Resolution-1 {
+		dimmer.target = dimmer.Resolution - 1
 	} else {
 		if target < 0 {
 			dimmer.target = 0
@@ -113,7 +119,7 @@ func scale(brightness int) gpio.Duty {
 func (dimmer *dimmer) actuate() {
 	pwmvalue := dimmer.current
 	if dimmer.config.Inverted {
-		pwmvalue = DimmerMaxValue - pwmvalue
+		pwmvalue = (dimmer.Resolution - 1) - pwmvalue
 	}
 	dimmer.pwmPin.PWM(scale(pwmvalue), frequency)
 	if dimmer.onPin != nil {
