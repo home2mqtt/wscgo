@@ -27,5 +27,5 @@ jobs:
     - name: Test
       run: go test -v ./..
     
-    -name: Build
+    - name: Build
       run: go build -v ./cmd/wscgo
