@@ -2,6 +2,8 @@ package config
 
 import (
 	"os"
+	"plugin"
+	"fmt"
 
 	"gitlab.com/grill-tamasi/wscgo/protocol"
 )
@@ -20,6 +22,10 @@ type WscgoConfiguration struct {
 	Node    protocol.DiscoverableNode
 	Configs []ConfigInitializer
 	Devices []DeviceInitializer
+}
+
+type WscgoPluginConfiguration struct {
+	path string `ini:"path"`
 }
 
 func (config *WscgoConfiguration) AddConfigInitializer(c ConfigInitializer) {
@@ -52,5 +58,12 @@ func defaultConfiguration() *WscgoConfiguration {
 		MqttConfig: protocol.MqttConfig{
 			Host: "tcp://localhost:1883",
 		},
+	}
+}
+
+func (pc *WscgoPluginConfiguration) Load() {
+	_ err := plugin.Open(pc.path)
+	if err != nil {
+		fmt.Errorf("Could not load plugin %s: %v",pc.path, err)
 	}
 }

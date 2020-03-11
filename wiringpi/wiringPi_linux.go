@@ -89,3 +89,8 @@ func (*WiringPiIO) GetPin(pin int) gpio.PinIO {
 	}
 	return New(pin)
 }
+
+func init() {
+	w := &WiringPiIO{}
+	w.Setup()
+}
