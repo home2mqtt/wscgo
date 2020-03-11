@@ -15,7 +15,7 @@ func getModelInfo() (string, string, error) {
 	var model string
 	if err != nil {
 		// Cannot read model file, assume generic linux
-		model = distro.OSRelease()["PRETTY_NAME"]
+		model = distro.OSRelease()["ID"]
 	}
 	model = string(modelbytes)
 

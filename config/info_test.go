@@ -14,7 +14,7 @@ func TestModelInfo(t *testing.T) {
 		t.Error("No model identification")
 	}
 	if serial == "" {
-		t.Error("No serial numeber")
+		t.Error("No serial number")
 	}
 }
 
