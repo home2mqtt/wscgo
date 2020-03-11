@@ -11,10 +11,10 @@ func TestModelInfo(t *testing.T) {
 		t.Fatal(err)
 	}
 	if model == "" {
-		t.Fail()
+		t.Error("No model identification")
 	}
 	if serial == "" {
-		t.Fail()
+		t.Error("No serial numeber")
 	}
 }
 
@@ -22,10 +22,10 @@ func TestDiscoveryInfo(t *testing.T) {
 	version := "0.0.0-test"
 	info := ComputeDeviceInfo(version)
 	if info.Identifiers[0] == "" {
-		t.Fail()
+		t.Error("No identifier")
 	}
 	if info.Model == "" {
-		t.Fail()
+		t.Error("No model name")
 	}
 	if info.SwVersion != version {
 		t.Error(info.SwVersion)
