@@ -2,6 +2,7 @@
 
 package wiringpi
 
+// #cgo LDFLAGS: -L${SRCDIR}/.. -lwiringPiPca9685 -lwiringPi
 // #include<wiringPi.h>
 // #include<mcp23017.h>
 // #include "pca9685.h"
