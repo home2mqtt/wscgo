@@ -31,7 +31,9 @@ test:rpizw:
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
   script:
-    - go test -v ./...
+    - go test -v ./devices
+    - go test -v ./protocol
+    - go test -v ./config
   tags:
     - grill-tamasi
     - rpizw

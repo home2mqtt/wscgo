@@ -2,6 +2,7 @@
 
 package wiringpi
 
+// #cgo
 // #include<wiringPi.h>
 // #include<mcp23017.h>
 // #include "pca9685.h"
