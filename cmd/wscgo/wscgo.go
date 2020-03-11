@@ -67,7 +67,7 @@ func CreateWscgo(conf *config.WscgoConfiguration) *wscgoInstance {
 	opts := protocol.ConfigureClientOptions(&conf.MqttConfig)
 	opts = opts.SetOnConnectHandler(instance.eventOnConnected)
 	instance.client = mqtt.NewClient(opts)
-	instance.deviceInfo = config.ComputeDeviceInfo(version)
+	instance.deviceInfo = config.ComputeDeviceInfo(Version)
 	return instance
 }
 
@@ -97,7 +97,7 @@ func (instance *wscgoInstance) start() {
 }
 
 func main() {
-	log.Println("wscgo version ", version)
+	log.Println("wscgo version ", Version)
 	args := os.Args[1:]
 	if len(args) != 1 {
 		log.Fatal("usage: wscgo config.ini")
