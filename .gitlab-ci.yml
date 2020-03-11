@@ -69,7 +69,7 @@ build:rpizw:
     - go build -o $CI_PROJECT_DIR/wscgo-wpi-rpizw.so -buildmode=plugin ./plugins/wiringpi
   artifacts:
     paths:
-      - wscgo-rpizw
+      - wscgo-wpi-rpizw.so
   tags:
     - grill-tamasi
     - rpizw
@@ -90,7 +90,7 @@ build:opiz:
         - go build -o $CI_PROJECT_DIR/wscgo-wpi-opiz.so -buildmode=plugin ./plugins/wiringpi
   artifacts:
     paths:
-      - wscgo-opiz
+      - wscgo-wpi-opiz.so
   tags:
     - grill-tamasi
     - opiz
