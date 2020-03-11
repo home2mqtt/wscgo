@@ -29,7 +29,7 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 	case ini.DEFAULT_SECTION:
 		section.MapTo(&conf.Node)
 	case "plugin":
-		pluginconf := &WscgoPluginConfiguration
+		pluginconf := &WscgoPluginConfiguration{}
 		section.MapTo(pluginconf)
 		pluginconf.Load()
 	case "mqtt":
