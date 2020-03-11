@@ -1,8 +1,8 @@
 package config
 
 import (
-	"testing"
 	"encoding/json"
+	"testing"
 )
 
 func TestModelInfo(t *testing.T) {
@@ -10,11 +10,9 @@ func TestModelInfo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(model)
 	if model == "" {
 		t.Fail()
 	}
-	t.Log(serial)
 	if serial == "" {
 		t.Fail()
 	}
@@ -30,10 +28,10 @@ func TestDiscoveryInfo(t *testing.T) {
 		t.Fail()
 	}
 	if info.SwVersion != version {
-		t.Fail()
+		t.Error(info.SwVersion)
 	}
-	t.Log(info.Identifiers)
-	t.Log(info.Model)
-	data, _ := json.Marshal(info)
-	t.Log(string(data))
+	_, err := json.Marshal(info)
+	if err != nil {
+		t.Error(err)
+	}
 }
