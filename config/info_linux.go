@@ -13,11 +13,13 @@ const modelinfo string = "/proc/device-tree/model"
 const cpuinfo string = "/proc/cpuinfo"
 
 func getModelInfo() (string, string, error) {
-	modebytes, err := ioutil.ReadFile(modelinfo)
+	modelbytes, err := ioutil.ReadFile(modelinfo)
+	var model string
 	if err != nil {
-		return "", "", err
+		// Cannot read model file, assume generic linux
+		model = "linux"
 	}
-	model := string(modebytes)
+	model = string(modelbytes)
 	cpuinfofile, err := os.Open(cpuinfo)
 	scanner := bufio.NewScanner(cpuinfofile)
 	for scanner.Scan() {

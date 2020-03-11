@@ -39,7 +39,6 @@ func TestDiscoveryJson(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(string(data))
 
 	var f interface{}
 	err = json.Unmarshal(data, &f)
