@@ -129,7 +129,7 @@ package:opiz:
 package:rpizw:
   stage: package
   dependencies:
-    - build:opiz
+    - build:rpizw
   script:
     - envsubst < wscgo-rpizw.cfg.tpl > wscgo-rpizw.cfg
     - equivs-build wscgo-rpizw.cfg
