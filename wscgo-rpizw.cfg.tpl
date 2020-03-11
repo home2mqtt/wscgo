@@ -21,6 +21,7 @@ Architecture: armhf
 # Readme: <README.Debian file; defaults to a generic one>
 # Extra-Files: <comma-separated list of additional files for the doc directory>
 Files: wscgo /usr/bin/
+ wscgo-wpi-rpizw.so /usr/local/lib/
  wscgo.ini /etc/
  wscgo.service /etc/systemd/system/
 #  <more pairs, if there's more than one file to include. Notice the starting space>

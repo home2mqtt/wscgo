@@ -21,11 +21,8 @@ Architecture: armhf
 # Readme: <README.Debian file; defaults to a generic one>
 # Extra-Files: <comma-separated list of additional files for the doc directory>
 Files: wscgo /usr/bin/
- wscgo-wpi-opiz.so /usr/local/lib/
  wscgo.ini /etc/
  wscgo.service /etc/systemd/system/
- libwiringPi.so.2.0 /usr/local/lib/
- libwiringPi.so /usr/local/lib/
 #  <more pairs, if there's more than one file to include. Notice the starting space>
 Description: Window-shutter controller
  Configurable home automation controller written in Go
