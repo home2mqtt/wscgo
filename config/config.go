@@ -1,9 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"plugin"
-	"fmt"
 
 	"gitlab.com/grill-tamasi/wscgo/protocol"
 )
@@ -62,8 +62,8 @@ func defaultConfiguration() *WscgoConfiguration {
 }
 
 func (pc *WscgoPluginConfiguration) Load() {
-	_ err := plugin.Open(pc.path)
+	_, err := plugin.Open(pc.path)
 	if err != nil {
-		fmt.Errorf("Could not load plugin %s: %v",pc.path, err)
+		fmt.Errorf("Could not load plugin %s: %v", pc.path, err)
 	}
 }
