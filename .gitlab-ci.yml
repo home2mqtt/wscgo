@@ -30,7 +30,6 @@ test:rpizw:
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
-    - envsubst < cmd/wscgo/version.go.tpl > cmd/wscgo/version.go
   script:
     - go test -v ./...
   tags:
@@ -113,7 +112,6 @@ package:opiz:
   stage: package
   dependencies:
     - build:opiz
-    - build:main
   script:
     - curl -L https://github.com/balazsgrill/WiringOP-Zero/releases/download/v2.0-pwmfix/libwiringPi.so.2.0 --output libwiringPi.so.2.0
     - ln -s libwiringPi.so.2.0 libwiringPi.so
@@ -130,7 +128,6 @@ package:rpizw:
   stage: package
   dependencies:
     - build:opiz
-    - build:main
   script:
     - envsubst < wscgo-rpizw.cfg.tpl > wscgo-rpizw.cfg
     - equivs-build wscgo-rpizw.cfg
