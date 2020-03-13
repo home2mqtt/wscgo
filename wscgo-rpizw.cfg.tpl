@@ -22,5 +22,5 @@ Architecture: armhf
 # Extra-Files: <comma-separated list of additional files for the doc directory>
 Files: wscgo-wpi-rpizw.so /usr/local/lib/
 #  <more pairs, if there's more than one file to include. Notice the starting space>
-Description: Window-shutter controller
+Description: Window-shutter controller - wiringPi integration for raspberry pi zero
  Configurable home automation controller written in Go

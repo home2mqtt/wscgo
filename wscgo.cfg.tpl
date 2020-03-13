@@ -3,7 +3,7 @@ Priority: optional
 # Homepage: <enter URL here; no default>
 Standards-Version: 3.9.2
 
-Package: wscgo-opiz
+Package: wscgo
 Version: ${VERSION}
 Maintainer: Balázs Grill <balazs.grill@live.com>
 # Pre-Depends: <comma-separated list of packages>

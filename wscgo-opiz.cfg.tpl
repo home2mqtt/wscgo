@@ -24,5 +24,5 @@ Files: wscgo-wpi-opiz.so /usr/local/lib/
  libwiringPi.so.2.0 /usr/local/lib/
  libwiringPi.so /usr/local/lib/
 #  <more pairs, if there's more than one file to include. Notice the starting space>
-Description: Window-shutter controller
+Description: Window-shutter controller - wiringPi integration for orange pi zero
  Configurable home automation controller written in Go
