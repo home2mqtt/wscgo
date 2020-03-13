@@ -19,4 +19,4 @@ func GetConfigurationPartParser(key string) (ConfigurationPartParser, error) {
 	return nil, errors.New("Unrecognized configuration key: " + key)
 }
 
-var configurationPartParsers map[string]ConfigurationPartParser
+var configurationPartParsers = map[string]ConfigurationPartParser{}
