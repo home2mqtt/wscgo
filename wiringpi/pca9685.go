@@ -1,6 +1,8 @@
 package wiringpi
 
 import (
+	"log"
+
 	"gitlab.com/grill-tamasi/wscgo/config"
 	"periph.io/x/periph/conn/gpio/gpioreg"
 )
@@ -27,5 +29,6 @@ func (*pca9685configPartParser) ParseConfiguration(section config.ConfigurationS
 }
 
 func init() {
-	config.RegisterConfigurationPartParser("mcp23017", &pca9685configPartParser{})
+	log.Println("Pugin: PCA9685")
+	config.RegisterConfigurationPartParser("pca9685", &pca9685configPartParser{})
 }

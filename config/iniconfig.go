@@ -38,10 +38,11 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 		parser, err := GetConfigurationPartParser(category)
 		if err != nil {
 			log.Print(err.Error())
-		}
-		err = parser.ParseConfiguration(is, conf)
-		if err != nil {
-			log.Print(err.Error())
+		} else {
+			err = parser.ParseConfiguration(is, conf)
+			if err != nil {
+				log.Print(err.Error())
+			}
 		}
 	}
 }
