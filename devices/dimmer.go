@@ -37,12 +37,23 @@ type IDimmer interface {
 	BrightnessResolution() int
 }
 
-func CreateDimmer(config *DimmerConfig) IDimmer {
-	return &dimmer{
-		onPin:  gpioreg.ByName(config.OnPin),
-		pwmPin: gpioreg.ByName(config.PwmPin),
-		config: config,
+func CreateDimmer(config *DimmerConfig) (IDimmer, error) {
+	var onpin gpio.PinIO
+	if config.OnPin != "" {
+		onpin = gpioreg.ByName(config.OnPin)
+		if onpin == nil {
+			return nil, invalidPinError(config.OnPin)
+		}
 	}
+	pwmpin := gpioreg.ByName(config.PwmPin)
+	if pwmpin == nil {
+		return nil, invalidPinError(config.PwmPin)
+	}
+	return &dimmer{
+		onPin:  onpin,
+		pwmPin: pwmpin,
+		config: config,
+	}, nil
 }
 
 func (dimmer *dimmer) Initialize() {

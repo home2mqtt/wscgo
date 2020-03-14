@@ -15,7 +15,10 @@ func (*shutterConfigPartParser) ParseConfiguration(section config.ConfigurationS
 	section.FillData(&c.BasicDeviceConfig)
 	section.FillData(c)
 	context.AddDeviceInitializer(func() (protocol.IDiscoverable, error) {
-		shutter := devices.CreateShutter(s)
+		shutter, err := devices.CreateShutter(s)
+		if err != nil {
+			return nil, err
+		}
 		return protocol.IntegrateCover(shutter, c), nil
 	})
 	return nil

@@ -15,7 +15,10 @@ func (*inputConfigPartParser) ParseConfiguration(section config.ConfigurationSec
 	section.FillData(&c.BasicDeviceConfig)
 	section.FillData(c)
 	context.AddDeviceInitializer(func() (protocol.IDiscoverable, error) {
-		device := devices.CreateInput(s)
+		device, err := devices.CreateInput(s)
+		if err != nil {
+			return nil, err
+		}
 		return protocol.IntegrateInput(device, c), nil
 	})
 	return nil
@@ -30,7 +33,10 @@ func (*outputConfigPartParser) ParseConfiguration(section config.ConfigurationSe
 	section.FillData(&c.BasicDeviceConfig)
 	section.FillData(c)
 	context.AddDeviceInitializer(func() (protocol.IDiscoverable, error) {
-		device := devices.CreateOutput(s)
+		device, err := devices.CreateOutput(s)
+		if err != nil {
+			return nil, err
+		}
 		return protocol.IntegrateSwitch(device, c), nil
 	})
 	return nil

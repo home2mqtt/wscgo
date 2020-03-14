@@ -42,10 +42,18 @@ type shutter struct {
 	listeners []ShutterStateListener
 }
 
-func CreateShutter(config *ShutterConfig) IShutter {
+func CreateShutter(config *ShutterConfig) (IShutter, error) {
+	uppin := gpioreg.ByName(config.UpPin)
+	if uppin == nil {
+		return nil, invalidPinError(config.UpPin)
+	}
+	downpin := gpioreg.ByName(config.DownPin)
+	if downpin == nil {
+		return nil, invalidPinError(config.DownPin)
+	}
 	return &shutter{
-		upPin:       gpioreg.ByName(config.UpPin),
-		downPin:     gpioreg.ByName(config.DownPin),
+		upPin:       uppin,
+		downPin:     downpin,
 		config:      config,
 		Current:     0,
 		Prev:        0,
@@ -53,7 +61,7 @@ func CreateShutter(config *ShutterConfig) IShutter {
 		firstCmd:    true,
 		stopCounter: 0,
 		shouldWait:  false,
-	}
+	}, nil
 }
 
 func (shutter *shutter) fireEvent() {

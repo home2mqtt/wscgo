@@ -20,7 +20,10 @@ func (*lightConfigurationParser) ParseConfiguration(section config.Configuration
 	section.FillData(&c.BasicDeviceConfig)
 	section.FillData(c)
 	context.AddDeviceInitializer(func() (protocol.IDiscoverable, error) {
-		device := devices.CreateDimmer(s)
+		device, err := devices.CreateDimmer(s)
+		if err != nil {
+			return nil, err
+		}
 		return protocol.IntegrateLight(device, c), nil
 	})
 	return nil

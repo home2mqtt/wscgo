@@ -22,7 +22,8 @@ func createDimmerForTest() (*dimmer, *tests.TestIo) {
 		OnDelay:    5,
 		Resolution: DimmerMaxValue + 1,
 	}
-	d, _ := CreateDimmer(c).(*dimmer)
+	id, _ := CreateDimmer(c)
+	d, _ := id.(*dimmer)
 	return d, io
 }
 
@@ -36,7 +37,8 @@ func createInvertedDimmerForTest() (*dimmer, *tests.TestIo) {
 		Inverted:   true,
 		Resolution: DimmerMaxValue + 1,
 	}
-	d, _ := CreateDimmer(c).(*dimmer)
+	id, _ := CreateDimmer(c)
+	d, _ := id.(*dimmer)
 	return d, io
 }
 

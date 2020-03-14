@@ -21,7 +21,8 @@ func createShutterForTest() (*shutter, *tests.TestIo) {
 		DirSwitchWait: 20,
 		Range:         10,
 	}
-	s, _ := CreateShutter(&sc).(*shutter)
+	is, _ := CreateShutter(&sc)
+	s, _ := is.(*shutter)
 	return s, io
 }
 

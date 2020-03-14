@@ -36,16 +36,24 @@ type input struct {
 	state     gpio.Level
 }
 
-func CreateOutput(config *OutputConfig) IOutput {
-	return &output{
-		PinOut: gpioreg.ByName(config.Pin),
+func CreateOutput(config *OutputConfig) (IOutput, error) {
+	pin := gpioreg.ByName(config.Pin)
+	if pin == nil {
+		return nil, invalidPinError(config.Pin)
 	}
+	return &output{
+		PinOut: pin,
+	}, nil
 }
 
-func CreateInput(config *InputConfig) IInput {
+func CreateInput(config *InputConfig) (IInput, error) {
+	pin := gpioreg.ByName(config.Pin)
+	if pin == nil {
+		return nil, invalidPinError(config.Pin)
+	}
 	return &input{
 		PinIn: gpioreg.ByName(config.Pin),
-	}
+	}, nil
 }
 
 func (out *output) Initialize() {
