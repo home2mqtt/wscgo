@@ -1,7 +1,7 @@
 package config
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"plugin"
 
@@ -25,7 +25,7 @@ type WscgoConfiguration struct {
 }
 
 type WscgoPluginConfiguration struct {
-	path string `ini:"path"`
+	Path string `ini:"path"`
 }
 
 func (config *WscgoConfiguration) AddConfigInitializer(c ConfigInitializer) {
@@ -62,8 +62,9 @@ func defaultConfiguration() *WscgoConfiguration {
 }
 
 func (pc *WscgoPluginConfiguration) Load() {
-	_, err := plugin.Open(pc.path)
+	log.Printf("Loading %s\n", pc.Path)
+	_, err := plugin.Open(pc.Path)
 	if err != nil {
-		fmt.Printf("Could not load plugin %s: %v", pc.path, err)
+		log.Printf("Could not load plugin \"%s\": %v", pc.Path, err)
 	}
 }
