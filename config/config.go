@@ -64,6 +64,6 @@ func defaultConfiguration() *WscgoConfiguration {
 func (pc *WscgoPluginConfiguration) Load() {
 	_, err := plugin.Open(pc.path)
 	if err != nil {
-		fmt.Errorf("Could not load plugin %s: %v", pc.path, err)
+		fmt.Printf("Could not load plugin %s: %v", pc.path, err)
 	}
 }
