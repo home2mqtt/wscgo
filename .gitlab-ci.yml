@@ -77,7 +77,7 @@ build:opiz:
   stage: build
   variables:
     GO111MODULE: "on"
-    GOARM: 7
+    GOARM: 5
   before_script:
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
