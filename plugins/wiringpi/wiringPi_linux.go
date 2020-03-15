@@ -18,8 +18,6 @@ package main
 import "C"
 import (
 	"fmt"
-
-	"periph.io/x/periph/conn/gpio"
 )
 
 // INPUT = wiringPI INPUT
