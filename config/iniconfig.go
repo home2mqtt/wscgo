@@ -31,7 +31,10 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 	case "plugin":
 		pluginconf := &WscgoPluginConfiguration{}
 		section.MapTo(pluginconf)
-		pluginconf.Load()
+		err := pluginconf.Load()
+		if err != nil {
+			log.Printf("Error loading plugin %s: %v", pluginconf.Path, err)
+		}
 	case "mqtt":
 		section.MapTo(&conf.MqttConfig)
 	default:

@@ -5,6 +5,7 @@ import (
 	"os"
 	"plugin"
 
+	"gitlab.com/grill-tamasi/wscgo/plugins"
 	"gitlab.com/grill-tamasi/wscgo/protocol"
 )
 
@@ -61,10 +62,26 @@ func defaultConfiguration() *WscgoConfiguration {
 	}
 }
 
-func (pc *WscgoPluginConfiguration) Load() {
+func (pc *WscgoPluginConfiguration) Load() error {
 	log.Printf("Loading %s\n", pc.Path)
-	_, err := plugin.Open(pc.Path)
+	p, err := plugin.Open(pc.Path)
 	if err != nil {
-		log.Printf("Could not load plugin \"%s\": %v", pc.Path, err)
+		return err
 	}
+	s, err := p.Lookup(plugins.AddonsGetterName)
+	if err != nil {
+		return err
+	}
+	f, err := s.(plugins.AddonsGetter)
+	if err != nil {
+		return err
+	}
+	addons := f()
+	for _, a := range addons {
+		err = loadAddon(a)
+		if err != nil {
+			log.Printf("Error loading addon from plugin: %v", err)
+		}
+	}
+	return nil
 }
