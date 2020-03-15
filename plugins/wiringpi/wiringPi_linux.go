@@ -43,7 +43,7 @@ func Mcp23017Setup(config *Mcp23017Config) error {
 	return nil
 }
 
-func Pca9685Setup(config *Pca9685Config) {
+func Pca9685Setup(config *Pca9685Config) error {
 	rc := C.pca9685Setup(C.int(config.ExpansionBase), C.int(config.Address), C.float(config.Frequency))
 	if rc < 0 {
 		return fmt.Errorf("PCA9685: error  %d", rc)
@@ -82,13 +82,6 @@ func (*WiringPiIO) PwmWrite(pin int, value int) {
 	} else {
 		C.pwmWrite((C.int)(pin), (C.int)(value))
 	}
-}
-
-func (*WiringPiIO) GetPin(pin int) gpio.PinIO {
-	if pin <= 0 {
-		return nil
-	}
-	return New(pin)
 }
 
 type pinRange struct {

@@ -27,7 +27,7 @@ func (*mcp23017addon) Configure(c interface{}) (plugins.IoImpl, error) {
 		return nil, errors.New("MCP23017: invalid config type")
 	}
 
-	err := wiringpiio.Mcp23017Setup(conf)
+	err := Mcp23017Setup(conf)
 	if err != nil {
 		return nil, err
 	}

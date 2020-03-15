@@ -28,7 +28,7 @@ func (*pca9685addon) Configure(c interface{}) (plugins.IoImpl, error) {
 		return nil, errors.New("PCA9685: invalid config type")
 	}
 
-	err := wiringpiio.Pca9685Setup(conf)
+	err := Pca9685Setup(conf)
 	if err != nil {
 		return nil, err
 	}
