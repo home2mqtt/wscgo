@@ -43,7 +43,7 @@ build:main:
     GO111MODULE: "on"
     GOARM: 5
   script:
-    - go build -o $CI_PROJECT_DIR/wscgo -ldflags "-X main.Version=${VERSION}" ./cmd/wscgo -trimpath
+    - go build -o $CI_PROJECT_DIR/wscgo -ldflags "-X main.Version=${VERSION}" -trimpath ./cmd/wscgo
   artifacts:
     paths:
       - wscgo
