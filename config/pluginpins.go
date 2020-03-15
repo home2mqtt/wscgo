@@ -33,7 +33,7 @@ func (wp *pluginPin) Function() string {
 	return "Plugin"
 }
 func (wp *pluginPin) In(pull gpio.Pull, edge gpio.Edge) error {
-	wp.PinMode(wp.wpiID, INPUT)
+	wp.PinMode(wp.wpiID, 0)
 	return nil
 }
 
@@ -51,12 +51,12 @@ func (wp *pluginPin) Pull() gpio.Pull {
 	return gpio.Float
 }
 func (wp *pluginPin) Out(l gpio.Level) error {
-	wp.PinMode(wp.wpiID, OUTPUT)
+	wp.PinMode(wp.wpiID, 1)
 	wp.DigitalWrite(wp.wpiID, l == gpio.High)
 	return nil
 }
 func (wp *pluginPin) PWM(duty gpio.Duty, f physic.Frequency) error {
-	wp.PinMode(wp.wpiID, PWM_OUTPUT)
+	wp.PinMode(wp.wpiID, 2)
 	wp.PwmWrite(wp.wpiID, int(duty))
 	return nil
 }
@@ -98,11 +98,13 @@ func (a *addonConfigurationPartParser) ParseConfiguration(cs ConfigurationSectio
 			}
 			gpioreg.Register(pin)
 		}
+		return nil
 	})
+	return nil
 }
 
 func loadAddon(addon plugins.Addon) error {
-	RegisterConfigurationPartParser(addon.GetIdentifier(), &addonConfigurationPartParser{
+	return RegisterConfigurationPartParser(addon.GetIdentifier(), &addonConfigurationPartParser{
 		Addon: addon,
 	})
 }
