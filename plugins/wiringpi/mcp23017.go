@@ -1,5 +1,11 @@
 package main
 
+import (
+	"errors"
+
+	"gitlab.com/grill-tamasi/wscgo/plugins"
+)
+
 type Mcp23017Config struct {
 	Address       int `ini:"address"`
 	ExpansionBase int `ini:"expansionBase"`
@@ -15,21 +21,20 @@ func (*mcp23017addon) CreateConfigStruct() interface{} {
 	return &Mcp23017Config{}
 }
 
-func (*mcp23017addon) Configure(c interface{}) (IoImpl, error) {
-	conf, err := c.(*Mcp23017Config)
-	if err != nil {
-		return nil, err
+func (*mcp23017addon) Configure(c interface{}) (plugins.IoImpl, error) {
+	conf, ok := c.(*Mcp23017Config)
+	if !ok {
+		return nil, errors.New("MCP23017: invalid config type")
 	}
 
-	err = wiringpiio.Mcp23017Setup(conf)
+	err := wiringpiio.Mcp23017Setup(conf)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pinRange{
 		WiringPiIO: wiringpiio,
-		start: c.ExpansionBase,
-		count: 16
-	}
+		start:      conf.ExpansionBase,
+		count:      16,
+	}, nil
 }
-
