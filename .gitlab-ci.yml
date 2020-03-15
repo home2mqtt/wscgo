@@ -25,7 +25,7 @@ test:rpizw:
     GOARM: 5
   before_script:
     - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-rpizw --output libwiringPiPca9685.a
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output wiringpi/pca9685.h
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output plugins/wiringpi/pca9685.h
     - echo $REPO_NAME
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
@@ -61,7 +61,7 @@ build:rpizw:
     GOARM: 5
   before_script:
     - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-rpizw --output libwiringPiPca9685.a
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output wiringpi/pca9685.h
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output plugins/wiringpi/pca9685.h
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
@@ -82,7 +82,7 @@ build:opiz:
     GOARM: 7
   before_script:
     - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-opiz --output libwiringPiPca9685.a
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output wiringpi/pca9685.h
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output plugins/wiringpi/pca9685.h
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
