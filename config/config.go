@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"log"
 	"os"
 	"plugin"
@@ -73,10 +72,7 @@ func (pc *WscgoPluginConfiguration) Load() error {
 	if err != nil {
 		return err
 	}
-	f, ok := s.(plugins.AddonsGetter)
-	if !ok {
-		return errors.New("Signature of GetAddons mismatch")
-	}
+	f := s.(func() []plugins.Addon)
 	addons := f()
 	for _, a := range addons {
 		err = loadAddon(a)
