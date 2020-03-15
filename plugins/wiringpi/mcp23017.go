@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 
 	"gitlab.com/grill-tamasi/wscgo/plugins"
 )
@@ -31,6 +32,7 @@ func (*mcp23017addon) Configure(c interface{}) (plugins.IoImpl, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("Configured MCP23017 at 0x%x\n", conf.Address)
 
 	return &pinRange{
 		WiringPiIO: wiringpiio,

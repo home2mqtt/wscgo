@@ -32,6 +32,7 @@ func (*pca9685addon) Configure(c interface{}) (plugins.IoImpl, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("Configured PCA9685 at 0x%x\n", conf.Address)
 
 	return &pinRange{
 		WiringPiIO: wiringpiio,
