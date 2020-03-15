@@ -24,8 +24,6 @@ test:rpizw:
     GO111MODULE: "on"
     GOARM: 5
   before_script:
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-rpizw --output libwiringPiPca9685.a
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output plugins/wiringpi/pca9685.h
     - echo $REPO_NAME
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
@@ -60,13 +58,13 @@ build:rpizw:
     GO111MODULE: "on"
     GOARM: 5
   before_script:
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-rpizw --output libwiringPiPca9685.a
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output plugins/wiringpi/pca9685.h
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
-    - cd $GOPATH/src/$REPO_NAME
+    - cd $GOPATH/src/$REPO_NAME/plugins/wiringpi
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-opiz --output libwiringPiPca9685.a
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output pca9685.h
   script:
-    - go build -o $CI_PROJECT_DIR/wscgo-wpi-rpizw.so -buildmode=plugin ./plugins/wiringpi
+    - go build -o $CI_PROJECT_DIR/wscgo-wpi-rpizw.so -buildmode=plugin
   artifacts:
     paths:
       - wscgo-wpi-rpizw.so
@@ -81,13 +79,13 @@ build:opiz:
     GO111MODULE: "on"
     GOARM: 7
   before_script:
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-opiz --output libwiringPiPca9685.a
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output plugins/wiringpi/pca9685.h
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
-    - cd $GOPATH/src/$REPO_NAME
+    - cd $GOPATH/src/$REPO_NAME/plugins/wiringpi
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-opiz --output libwiringPiPca9685.a
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output pca9685.h
   script:
-        - go build -o $CI_PROJECT_DIR/wscgo-wpi-opiz.so -buildmode=plugin ./plugins/wiringpi
+    - go build -o $CI_PROJECT_DIR/wscgo-wpi-opiz.so -buildmode=plugin
   artifacts:
     paths:
       - wscgo-wpi-opiz.so
