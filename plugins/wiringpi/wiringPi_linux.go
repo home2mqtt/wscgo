@@ -18,7 +18,6 @@ package main
 import "C"
 import (
 	"fmt"
-	"log"
 )
 
 // INPUT = wiringPI INPUT
@@ -79,7 +78,6 @@ func (*WiringPiIO) PwmWrite(pin int, value int) {
 	if ((C.int)(pin) != C.onboard_hw_pwm) && (pin < onboard_pins) {
 		C.softPwmWrite((C.int)(pin), (C.int)(value))
 	} else {
-		log.Printf("pwmWrite(%d, %d)\n", pin, value)
 		C.pwmWrite((C.int)(pin), (C.int)(value))
 	}
 }

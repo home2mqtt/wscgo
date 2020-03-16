@@ -1,9 +1,6 @@
 package devices
 
 import (
-	"log"
-	"reflect"
-
 	"periph.io/x/periph/conn/gpio"
 	"periph.io/x/periph/conn/gpio/gpioreg"
 	"periph.io/x/periph/conn/physic"
@@ -60,11 +57,9 @@ func CreateDimmer(config *DimmerConfig) (IDimmer, error) {
 }
 
 func (dimmer *dimmer) Initialize() error {
-	log.Println("Inititalizing dimmer")
 	dimmer.current = 0
 	dimmer.target = 0
 	dimmer.delaycounter = 0
-	log.Println(reflect.TypeOf(dimmer.pwmPin))
 	err := dimmer.pwmPin.PWM(0, frequency)
 	if err != nil {
 		return err
