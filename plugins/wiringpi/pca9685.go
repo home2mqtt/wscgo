@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 
 	"gitlab.com/grill-tamasi/wscgo/plugins"
 )
