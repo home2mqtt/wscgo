@@ -80,7 +80,7 @@ func (instance *wscgoInstance) loop() {
 			}
 		}
 	}()
-
+	log.Println("wscgo started")
 	select {}
 }
 

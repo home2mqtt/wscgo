@@ -1,6 +1,8 @@
 package devices
 
 import (
+	"log"
+
 	"periph.io/x/periph/conn/gpio"
 	"periph.io/x/periph/conn/gpio/gpioreg"
 	"periph.io/x/periph/conn/physic"
@@ -57,6 +59,7 @@ func CreateDimmer(config *DimmerConfig) (IDimmer, error) {
 }
 
 func (dimmer *dimmer) Initialize() {
+	log.Println("Inititalizing dimmer")
 	dimmer.current = 0
 	dimmer.target = 0
 	dimmer.delaycounter = 0
