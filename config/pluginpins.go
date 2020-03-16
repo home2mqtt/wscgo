@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"gitlab.com/grill-tamasi/wscgo/plugins"
@@ -64,6 +65,7 @@ func (wp *pluginPin) PWM(duty gpio.Duty, f physic.Frequency) error {
 	val := int(duty) >> (24 - wp.pwmbits)
 	wp.PinMode(wp.wpiID, 2)
 	wp.PwmWrite(wp.wpiID, val)
+	log.Printf("Setting pwm value to %d", val)
 	return nil
 }
 func (wp *pluginPin) DefaultPull() gpio.Pull {
