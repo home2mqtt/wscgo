@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -59,7 +58,7 @@ func (wp *pluginPin) Out(l gpio.Level) error {
 }
 func (wp *pluginPin) PWM(duty gpio.Duty, f physic.Frequency) error {
 	if wp.pwmbits == 0 {
-		return errors.New("PWM is not supported by pin %s", wp.Name())
+		return fmt.Errorf("PWM is not supported by pin %s", wp.Name())
 	}
 	// Scale down duty from 24 bits
 	val := int(duty) >> (24 - wp.pwmbits)
