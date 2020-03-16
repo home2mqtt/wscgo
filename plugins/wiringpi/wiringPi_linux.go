@@ -84,12 +84,17 @@ func (*WiringPiIO) PwmWrite(pin int, value int) {
 
 type pinRange struct {
 	*WiringPiIO
-	start int
-	count int
+	start  int
+	count  int
+	pwmres int
 }
 
 func (pr *pinRange) PinRange() (int, int) {
 	return pr.start, pr.count
+}
+
+func (pr *pinRange) PwmResolution() int {
+	return pr.pwmres
 }
 
 var wiringpiio = &WiringPiIO{}

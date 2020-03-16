@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -13,7 +14,8 @@ import (
 
 type pluginPin struct {
 	plugins.IoImpl
-	wpiID int
+	wpiID   int
+	pwmbits int
 }
 
 func (wp *pluginPin) String() string {
@@ -56,8 +58,13 @@ func (wp *pluginPin) Out(l gpio.Level) error {
 	return nil
 }
 func (wp *pluginPin) PWM(duty gpio.Duty, f physic.Frequency) error {
+	if wp.pwmbits == 0 {
+		return errors.New("PWM is not supported by pin %s", wp.Name())
+	}
+	// Scale down duty from 24 bits
+	val := int(duty) >> (24 - wp.pwmbits)
 	wp.PinMode(wp.wpiID, 2)
-	wp.PwmWrite(wp.wpiID, int(duty))
+	wp.PwmWrite(wp.wpiID, val)
 	return nil
 }
 func (wp *pluginPin) DefaultPull() gpio.Pull {

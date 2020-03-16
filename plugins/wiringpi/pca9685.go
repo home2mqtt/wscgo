@@ -39,5 +39,6 @@ func (*pca9685addon) Configure(c interface{}) (plugins.IoImpl, error) {
 		WiringPiIO: wiringpiio,
 		start:      conf.ExpansionBase,
 		count:      16,
+		pwmres:     12,
 	}, nil
 }

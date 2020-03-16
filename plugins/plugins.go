@@ -10,6 +10,7 @@ type IoImpl interface {
 	PinMode(pin int, mode int)
 	PwmWrite(pin int, value int)
 	PinRange() (int, int)
+	PwmResolution() int
 }
 
 type Addon interface {
