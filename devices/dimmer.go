@@ -2,6 +2,7 @@ package devices
 
 import (
 	"log"
+	"reflect"
 
 	"periph.io/x/periph/conn/gpio"
 	"periph.io/x/periph/conn/gpio/gpioreg"
@@ -63,6 +64,7 @@ func (dimmer *dimmer) Initialize() {
 	dimmer.current = 0
 	dimmer.target = 0
 	dimmer.delaycounter = 0
+	log.Println(reflect.TypeOf(dimmer.pwmPin))
 	dimmer.pwmPin.PWM(0, frequency)
 	if dimmer.onPin != nil {
 		dimmer.onPin.Out(gpio.Low)
