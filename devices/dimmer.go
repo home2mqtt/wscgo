@@ -6,9 +6,6 @@ import (
 	"periph.io/x/periph/conn/physic"
 )
 
-const DimmerResolution int = 1 << (24 - 16)
-const DimmerMaxValue int = DimmerResolution - 1
-
 const frequency physic.Frequency = 1000
 
 type DimmerConfig struct {
@@ -127,16 +124,13 @@ func (dimmer *dimmer) adjustCurrent() {
 	}
 }
 
-func scale(brightness int) gpio.Duty {
-	return gpio.Duty(int32(brightness) * int32(DimmerResolution))
-}
-
 func (dimmer *dimmer) actuate() error {
 	pwmvalue := dimmer.current
 	if dimmer.config.Inverted {
 		pwmvalue = (dimmer.config.Resolution - 1) - pwmvalue
 	}
-	err := dimmer.pwmPin.PWM(scale(pwmvalue), frequency)
+	scaling := int(gpio.DutyMax) / dimmer.BrightnessResolution()
+	err := dimmer.pwmPin.PWM(gpio.Duty(pwmvalue*scaling), frequency)
 	if err != nil {
 		return err
 	}
