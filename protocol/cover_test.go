@@ -10,8 +10,8 @@ import (
 type testshutter struct {
 }
 
-func (*testshutter) Tick()                                      {}
-func (*testshutter) Initialize()                                {}
+func (*testshutter) Tick() error                                { return nil }
+func (*testshutter) Initialize() error                          { return nil }
 func (*testshutter) Open()                                      {}
 func (*testshutter) Close()                                     {}
 func (*testshutter) MoveBy(int)                                 {}
