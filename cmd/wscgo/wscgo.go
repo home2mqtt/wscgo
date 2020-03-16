@@ -33,7 +33,10 @@ func (instance *wscgoInstance) intitializeDevices() {
 	}
 	for _, d := range instance.devices {
 		log.Println("Initializing ", d.GetComponent(), d.GetObjectId())
-		d.Initialize()
+		err := d.Initialize()
+		if err != nil {
+			log.Println(err.Error())
+		}
 	}
 }
 
@@ -76,7 +79,10 @@ func (instance *wscgoInstance) loop() {
 	go func() {
 		for range controlTicker.C {
 			for _, p := range instance.devices {
-				p.Tick()
+				err := p.Tick()
+				if err != nil {
+					log.Println(err.Error())
+				}
 			}
 		}
 	}()

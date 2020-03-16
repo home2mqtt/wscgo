@@ -56,22 +56,25 @@ func CreateInput(config *InputConfig) (IInput, error) {
 	}, nil
 }
 
-func (out *output) Initialize() {
-	out.Out(gpio.Low)
+func (out *output) Initialize() error {
+	return out.Out(gpio.Low)
 }
 
-func (*output) Tick() {}
+func (*output) Tick() error {
+	return nil
+}
 
-func (input *input) Initialize() {
-	input.In(gpio.Float, gpio.NoEdge)
+func (input *input) Initialize() error {
+	err := input.In(gpio.Float, gpio.NoEdge)
 	input.state = input.Read()
+	return err
 }
 
 func (input *input) AddListener(listener IInputListener) {
 	input.listeners = append(input.listeners, listener)
 }
 
-func (input *input) Tick() {
+func (input *input) Tick() error {
 	state := input.Read()
 	if state != input.state {
 		input.state = state
@@ -79,4 +82,5 @@ func (input *input) Tick() {
 			l(state == gpio.High)
 		}
 	}
+	return nil
 }

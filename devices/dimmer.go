@@ -59,16 +59,20 @@ func CreateDimmer(config *DimmerConfig) (IDimmer, error) {
 	}, nil
 }
 
-func (dimmer *dimmer) Initialize() {
+func (dimmer *dimmer) Initialize() error {
 	log.Println("Inititalizing dimmer")
 	dimmer.current = 0
 	dimmer.target = 0
 	dimmer.delaycounter = 0
 	log.Println(reflect.TypeOf(dimmer.pwmPin))
-	dimmer.pwmPin.PWM(0, frequency)
-	if dimmer.onPin != nil {
-		dimmer.onPin.Out(gpio.Low)
+	err := dimmer.pwmPin.PWM(0, frequency)
+	if err != nil {
+		return err
 	}
+	if dimmer.onPin != nil {
+		return dimmer.onPin.Out(gpio.Low)
+	}
+	return nil
 }
 
 func (dimmer *dimmer) BrightnessResolution() int {
@@ -132,22 +136,26 @@ func scale(brightness int) gpio.Duty {
 	return gpio.Duty(int32(brightness) * int32(DimmerResolution))
 }
 
-func (dimmer *dimmer) actuate() {
+func (dimmer *dimmer) actuate() error {
 	pwmvalue := dimmer.current
 	if dimmer.config.Inverted {
 		pwmvalue = (dimmer.config.Resolution - 1) - pwmvalue
 	}
-	dimmer.pwmPin.PWM(scale(pwmvalue), frequency)
+	err := dimmer.pwmPin.PWM(scale(pwmvalue), frequency)
+	if err != nil {
+		return err
+	}
 	if dimmer.onPin != nil {
 		l := gpio.Low
 		if (dimmer.target > 0) || (dimmer.current > 0) {
 			l = gpio.High
 		}
-		dimmer.onPin.Out(l)
+		return dimmer.onPin.Out(l)
 	}
+	return nil
 }
 
-func (dimmer *dimmer) Tick() {
+func (dimmer *dimmer) Tick() error {
 	dimmer.adjustCurrent()
-	dimmer.actuate()
+	return dimmer.actuate()
 }
