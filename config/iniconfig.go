@@ -4,73 +4,49 @@ import (
 	"log"
 	"strings"
 
-	"gitlab.com/grill-tamasi/wscgo/devices"
-	"gitlab.com/grill-tamasi/wscgo/protocol"
-	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 	"gopkg.in/ini.v1"
 )
 
+type iniConfigSection struct {
+	*ini.Section
+	id string
+}
+
+func (is *iniConfigSection) GetID() string {
+	return is.id
+}
+
+func (is *iniConfigSection) FillData(d interface{}) error {
+	return is.MapTo(d)
+}
+
 func (conf *WscgoConfiguration) processConfig(category string, id string, section *ini.Section) {
+	is := &iniConfigSection{
+		id:      id,
+		Section: section,
+	}
 	switch category {
 	case ini.DEFAULT_SECTION:
 		section.MapTo(&conf.Node)
+	case "plugin":
+		pluginconf := &WscgoPluginConfiguration{}
+		section.MapTo(pluginconf)
+		err := pluginconf.Load()
+		if err != nil {
+			log.Printf("Error loading plugin %s: %v", pluginconf.Path, err)
+		}
 	case "mqtt":
 		section.MapTo(&conf.MqttConfig)
-	case "mcp23017":
-		c := &wiringpi.Mcp23017Config{}
-		section.MapTo(c)
-		conf.Configs = append(conf.Configs, func(wiringpi.IoContext) {
-			wiringpi.Mcp23017Setup(c)
-		})
-	case "pca9685":
-		c := &wiringpi.Pca9685Config{}
-		section.MapTo(c)
-		conf.Configs = append(conf.Configs, func(wiringpi.IoContext) {
-			wiringpi.Pca9685Setup(c)
-		})
-	case "shutter":
-		s := &devices.ShutterConfig{}
-		section.MapTo(s)
-		c := protocol.CreateCoverConfig(id)
-		section.MapTo(&c.BasicDeviceConfig)
-		section.MapTo(c)
-		conf.Devices = append(conf.Devices, func(io wiringpi.IoContext) protocol.IDiscoverable {
-			shutter := devices.CreateShutter(io, s)
-			return protocol.IntegrateCover(shutter, c)
-		})
-	case "switch":
-		s := &devices.OutputConfig{}
-		section.MapTo(s)
-		c := protocol.CreateSwitchConfig(id)
-		section.MapTo(&c.BasicDeviceConfig)
-		section.MapTo(c)
-		conf.Devices = append(conf.Devices, func(io wiringpi.IoContext) protocol.IDiscoverable {
-			device := devices.CreateOutput(io, s)
-			return protocol.IntegrateSwitch(device, c)
-		})
-	case "light":
-		s := &devices.DimmerConfig{
-			OnPin:      -1,
-			Resolution: 1024,
+	default:
+		parser, err := GetConfigurationPartParser(category)
+		if err != nil {
+			log.Print(err.Error())
+		} else {
+			err = parser.ParseConfiguration(is, conf)
+			if err != nil {
+				log.Print(err.Error())
+			}
 		}
-		section.MapTo(s)
-		c := protocol.CreateLightConfig(id)
-		section.MapTo(&c.BasicDeviceConfig)
-		section.MapTo(c)
-		conf.Devices = append(conf.Devices, func(io wiringpi.IoContext) protocol.IDiscoverable {
-			device := devices.CreateDimmer(io, s)
-			return protocol.IntegrateLight(device, c)
-		})
-	case "dinput":
-		s := &devices.InputConfig{}
-		section.MapTo(s)
-		c := protocol.CreateDInputConfig(id)
-		section.MapTo(&c.BasicDeviceConfig)
-		section.MapTo(c)
-		conf.Devices = append(conf.Devices, func(io wiringpi.IoContext) protocol.IDiscoverable {
-			device := devices.CreateInput(io, s)
-			return protocol.IntegrateInput(device, c)
-		})
 	}
 }
 

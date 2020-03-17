@@ -1,7 +1,7 @@
 variables:
   REPO_NAME: gitlab.com/grill-tamasi.hu/wscgo
   GO111MODULE: "on"
-  VERSION: 0.4.0-beta3
+  VERSION: 0.5.0-build1
 
 # The problem is that to be able to use go get, one needs to put
 # the repository in the $GOPATH. So for example if your gitlab domain
@@ -24,72 +24,97 @@ test:rpizw:
     GO111MODULE: "on"
     GOARM: 5
   before_script:
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-rpizw --output libwiringPiPca9685.a
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output wiringpi/pca9685.h
     - echo $REPO_NAME
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
     - cd $GOPATH/src/$REPO_NAME
-    - envsubst < cmd/wscgo/version.go.tpl > cmd/wscgo/version.go
   script:
-    - go test -v ./...
+    - go test -v ./devices
+    - go test -v ./protocol
+    - go test -v ./config
   tags:
     - grill-tamasi
     - rpizw
     - golang  
 
-compile:rpizw:
+build:main:
   stage: build
   variables:
     GO111MODULE: "on"
     GOARM: 5
-  before_script:
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-rpizw --output libwiringPiPca9685.a
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output wiringpi/pca9685.h
-    - mkdir -p $GOPATH/src/
-    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
-    - cd $GOPATH/src/$REPO_NAME
-    - envsubst < cmd/wscgo/version.go.tpl > cmd/wscgo/version.go
   script:
-    - go build -o $CI_PROJECT_DIR/wscgo-rpizw ./cmd/wscgo
+    - go build -o $CI_PROJECT_DIR/wscgo -ldflags "-X main.Version=${VERSION}" -trimpath ./cmd/wscgo
   artifacts:
     paths:
-      - wscgo-rpizw
+      - wscgo
   tags:
     - grill-tamasi
     - rpizw
     - golang
 
-compile:opiz:
+build:rpizw:
   stage: build
   variables:
     GO111MODULE: "on"
-    GOARM: 7
+    GOARM: 5
   before_script:
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-opiz --output libwiringPiPca9685.a
-    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output wiringpi/pca9685.h
     - mkdir -p $GOPATH/src/
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
-    - cd $GOPATH/src/$REPO_NAME
-    - envsubst < cmd/wscgo/version.go.tpl > cmd/wscgo/version.go
+    - cd $GOPATH/src/$REPO_NAME/plugins/wiringpi
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-opiz --output libwiringPiPca9685.a
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output pca9685.h
   script:
-    - go build -o $CI_PROJECT_DIR/wscgo-opiz ./cmd/wscgo
+    - go build -o $CI_PROJECT_DIR/wscgo-wpi-rpizw.so -ldflags "-X main.Version=${VERSION}" -buildmode=plugin -trimpath
   artifacts:
     paths:
-      - wscgo-opiz
+      - wscgo-wpi-rpizw.so
+  tags:
+    - grill-tamasi
+    - rpizw
+    - golang
+
+build:opiz:
+  stage: build
+  variables:
+    GO111MODULE: "on"
+    GOARM: 5
+  before_script:
+    - mkdir -p $GOPATH/src/
+    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
+    - cd $GOPATH/src/$REPO_NAME/plugins/wiringpi
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-opiz --output libwiringPiPca9685.a
+    - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output pca9685.h
+  script:
+    - go build -o $CI_PROJECT_DIR/wscgo-wpi-opiz.so -ldflags "-X main.Version=${VERSION}" -buildmode=plugin -trimpath
+  artifacts:
+    paths:
+      - wscgo-wpi-opiz.so
   tags:
     - grill-tamasi
     - opiz
     - golang
-    
+  
+package:main:
+  stage: package
+  dependencies:
+    - build:main
+  script:
+    - envsubst < wscgo.cfg.tpl > wscgo.cfg
+    - equivs-build wscgo.cfg
+  artifacts:
+    paths:
+      - "*.deb"
+  tags:
+    - grill-tamasi
+    - equivs    
+
 package:opiz:
   stage: package
   dependencies:
-    - compile:opiz
+    - build:opiz
   script:
     - curl -L https://github.com/balazsgrill/WiringOP-Zero/releases/download/v2.0-pwmfix/libwiringPi.so.2.0 --output libwiringPi.so.2.0
     - ln -s libwiringPi.so.2.0 libwiringPi.so
-    - cp wscgo-opiz wscgo
     - envsubst < wscgo-opiz.cfg.tpl > wscgo-opiz.cfg
     - equivs-build wscgo-opiz.cfg
   artifacts:
@@ -102,9 +127,8 @@ package:opiz:
 package:rpizw:
   stage: package
   dependencies:
-    - compile:rpizw
+    - build:rpizw
   script:
-    - cp wscgo-rpizw wscgo
     - envsubst < wscgo-rpizw.cfg.tpl > wscgo-rpizw.cfg
     - equivs-build wscgo-rpizw.cfg
   artifacts:
@@ -134,17 +158,32 @@ integration-test:opiz:
     - grill-tamasi
     - opiz
 
-deb:
+deploy-nightly:
   stage: deploy
   dependencies:
     - package:opiz
     - package:rpizw
+    - package:main
   script:
     - curl -X PUT -T wscgo-opiz_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-opiz/${VERSION}/pool/main/w/wscgo-opiz/wscgo-opiz_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
     - curl -X PUT -T wscgo-rpizw_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-rpizw/${VERSION}/pool/main/w/wscgo-rpizw/wscgo-rpizw_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
-    - curl -X PUT -T wscgo-opiz_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/wscgo/wscgo-opiz/${VERSION}/pool/main/w/wscgo-opiz/wscgo-opiz_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
-    - curl -X PUT -T wscgo-rpizw_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/wscgo/wscgo-rpizw/${VERSION}/pool/main/w/wscgo-rpizw/wscgo-rpizw_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
+    - curl -X PUT -T wscgo_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo/${VERSION}/pool/main/w/wscgo/wscgo_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
   only:
     - master
+  tags:
+    - grill-tamasi
+
+deploy-release:
+  stage: deploy
+  dependencies:
+    - package:opiz
+    - package:rpizw
+    - package:main
+  script:
+    - curl -X PUT -T wscgo-opiz_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/wscgo/wscgo-opiz/${VERSION}/pool/main/w/wscgo-opiz/wscgo-opiz_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
+    - curl -X PUT -T wscgo-rpizw_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/wscgo/wscgo-rpizw/${VERSION}/pool/main/w/wscgo-rpizw/wscgo-rpizw_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
+    - curl -X PUT -T wscgo_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/wscgo/wscgo/${VERSION}/pool/main/w/wscgo/wscgo_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
+  only:
+    - tags
   tags:
     - grill-tamasi

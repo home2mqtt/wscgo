@@ -1,19 +1,26 @@
 package devices
 
-import "gitlab.com/grill-tamasi/wscgo/wiringpi"
+import (
+	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/periph/conn/gpio/gpioreg"
+	"periph.io/x/periph/conn/physic"
+)
+
+const frequency physic.Frequency = 1000
 
 type DimmerConfig struct {
-	PwmPin     int  `ini:"pwmpin"`
-	OnPin      int  `ini:"onpin"`
-	Speed      int  `ini:"speed"`
-	OnDelay    int  `ini:"ondelay"`
-	Inverted   bool `ini:"inverted"`
-	Resolution int  `ini:"resolution"`
+	PwmPin     string `ini:"pwmpin"`
+	OnPin      string `ini:"onpin"`
+	Speed      int    `ini:"speed"`
+	OnDelay    int    `ini:"ondelay"`
+	Inverted   bool   `ini:"inverted"`
+	Resolution int    `ini:"resolution"`
 }
 
 type dimmer struct {
-	wiringpi.IoContext
-	*DimmerConfig
+	onPin        gpio.PinOut
+	pwmPin       gpio.PinOut
+	config       *DimmerConfig
 	current      int
 	target       int
 	delaycounter int
@@ -27,29 +34,45 @@ type IDimmer interface {
 	BrightnessResolution() int
 }
 
-func CreateDimmer(io wiringpi.IoContext, config *DimmerConfig) IDimmer {
-	return &dimmer{
-		IoContext:    io,
-		DimmerConfig: config,
+func CreateDimmer(config *DimmerConfig) (IDimmer, error) {
+	var onpin gpio.PinIO
+	if config.OnPin != "" {
+		onpin = gpioreg.ByName(config.OnPin)
+		if onpin == nil {
+			return nil, invalidPinError(config.OnPin)
+		}
 	}
+	pwmpin := gpioreg.ByName(config.PwmPin)
+	if pwmpin == nil {
+		return nil, invalidPinError(config.PwmPin)
+	}
+	return &dimmer{
+		onPin:  onpin,
+		pwmPin: pwmpin,
+		config: config,
+	}, nil
 }
 
-func (dimmer *dimmer) Initialize() {
+func (dimmer *dimmer) Initialize() error {
 	dimmer.current = 0
 	dimmer.target = 0
 	dimmer.delaycounter = 0
-	dimmer.PinMode(dimmer.PwmPin, wiringpi.PWM_OUTPUT)
-	if dimmer.OnPin >= 0 {
-		dimmer.PinMode(dimmer.OnPin, wiringpi.OUTPUT)
+	err := dimmer.pwmPin.PWM(0, frequency)
+	if err != nil {
+		return err
 	}
+	if dimmer.onPin != nil {
+		return dimmer.onPin.Out(gpio.Low)
+	}
+	return nil
 }
 
 func (dimmer *dimmer) BrightnessResolution() int {
-	return dimmer.Resolution
+	return dimmer.config.Resolution
 }
 
 func (dimmer *dimmer) On() {
-	dimmer.SetBrightness(dimmer.Resolution - 1)
+	dimmer.SetBrightness(dimmer.config.Resolution - 1)
 }
 
 func (dimmer *dimmer) Off() {
@@ -57,8 +80,8 @@ func (dimmer *dimmer) Off() {
 }
 
 func (dimmer *dimmer) SetBrightness(target int) {
-	if target > dimmer.Resolution-1 {
-		dimmer.target = dimmer.Resolution - 1
+	if target > dimmer.config.Resolution-1 {
+		dimmer.target = dimmer.config.Resolution - 1
 	} else {
 		if target < 0 {
 			dimmer.target = 0
@@ -68,7 +91,7 @@ func (dimmer *dimmer) SetBrightness(target int) {
 	}
 
 	if (dimmer.target != 0) && (dimmer.current == 0) {
-		dimmer.delaycounter = dimmer.OnDelay
+		dimmer.delaycounter = dimmer.config.OnDelay
 	}
 }
 
@@ -92,27 +115,36 @@ func (dimmer *dimmer) adjustCurrent() {
 		return
 	}
 	if dimmer.target > dimmer.current {
-		dimmer.current = min(dimmer.target, dimmer.current+dimmer.Speed)
+		dimmer.current = min(dimmer.target, dimmer.current+dimmer.config.Speed)
 		return
 	}
 	if dimmer.target < dimmer.current {
-		dimmer.current = max(dimmer.target, dimmer.current-dimmer.Speed)
+		dimmer.current = max(dimmer.target, dimmer.current-dimmer.config.Speed)
 		return
 	}
 }
 
-func (dimmer *dimmer) actuate() {
+func (dimmer *dimmer) actuate() error {
 	pwmvalue := dimmer.current
-	if dimmer.Inverted {
-		pwmvalue = (dimmer.Resolution - 1) - pwmvalue
+	if dimmer.config.Inverted {
+		pwmvalue = (dimmer.config.Resolution - 1) - pwmvalue
 	}
-	dimmer.PwmWrite(dimmer.PwmPin, pwmvalue)
-	if dimmer.OnPin >= 0 {
-		dimmer.DigitalWrite(dimmer.OnPin, (dimmer.target > 0) || (dimmer.current > 0))
+	scaling := int(gpio.DutyMax) / dimmer.BrightnessResolution()
+	err := dimmer.pwmPin.PWM(gpio.Duty(pwmvalue*scaling), frequency)
+	if err != nil {
+		return err
 	}
+	if dimmer.onPin != nil {
+		l := gpio.Low
+		if (dimmer.target > 0) || (dimmer.current > 0) {
+			l = gpio.High
+		}
+		return dimmer.onPin.Out(l)
+	}
+	return nil
 }
 
-func (dimmer *dimmer) Tick() {
+func (dimmer *dimmer) Tick() error {
 	dimmer.adjustCurrent()
-	dimmer.actuate()
+	return dimmer.actuate()
 }

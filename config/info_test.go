@@ -1,8 +1,8 @@
 package config
 
 import (
-	"testing"
 	"encoding/json"
+	"testing"
 )
 
 func TestModelInfo(t *testing.T) {
@@ -10,13 +10,11 @@ func TestModelInfo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(model)
 	if model == "" {
-		t.Fail()
+		t.Error("No model identification")
 	}
-	t.Log(serial)
 	if serial == "" {
-		t.Fail()
+		t.Error("No serial number")
 	}
 }
 
@@ -24,16 +22,16 @@ func TestDiscoveryInfo(t *testing.T) {
 	version := "0.0.0-test"
 	info := ComputeDeviceInfo(version)
 	if info.Identifiers[0] == "" {
-		t.Fail()
+		t.Error("No identifier")
 	}
 	if info.Model == "" {
-		t.Fail()
+		t.Error("No model name")
 	}
 	if info.SwVersion != version {
-		t.Fail()
+		t.Error(info.SwVersion)
 	}
-	t.Log(info.Identifiers)
-	t.Log(info.Model)
-	data, _ := json.Marshal(info)
-	t.Log(string(data))
+	_, err := json.Marshal(info)
+	if err != nil {
+		t.Error(err)
+	}
 }

@@ -1,8 +1,8 @@
 // +build linux
 
-package wiringpi
+package main
 
-// #cgo LDFLAGS: -L${SRCDIR}/.. -lwiringPiPca9685 -lwiringPi
+// #cgo LDFLAGS: -L${SRCDIR} -L/usr/local/lib -lwiringPiPca9685 -lwiringPi
 // #include<wiringPi.h>
 // #include<mcp23017.h>
 // #include "pca9685.h"
@@ -16,7 +16,9 @@ package wiringpi
 // #endif
 // extern int wiringPiDebug;
 import "C"
-import "log"
+import (
+	"fmt"
+)
 
 // INPUT = wiringPI INPUT
 const INPUT = C.INPUT
@@ -31,18 +33,20 @@ const onboard_pins = 64
 type WiringPiIO struct {
 }
 
-func Mcp23017Setup(config *Mcp23017Config) {
+func Mcp23017Setup(config *Mcp23017Config) error {
 	rc := C.mcp23017Setup(C.int(config.ExpansionBase), C.int(config.Address))
 	if rc != C.setuprc {
-		log.Fatal("MCP23017 error: ", rc)
+		return fmt.Errorf("MCP23017: error  %d", rc)
 	}
+	return nil
 }
 
-func Pca9685Setup(config *Pca9685Config) {
+func Pca9685Setup(config *Pca9685Config) error {
 	rc := C.pca9685Setup(C.int(config.ExpansionBase), C.int(config.Address), C.float(config.Frequency))
 	if rc < 0 {
-		log.Fatal("PCA9685 error: ", rc)
+		return fmt.Errorf("PCA9685: error  %d", rc)
 	}
+	return nil
 }
 
 func (*WiringPiIO) Setup() {
@@ -63,7 +67,6 @@ func (*WiringPiIO) DigitalRead(pin int) bool {
 }
 
 func (*WiringPiIO) PinMode(pin int, mode int) {
-	log.Printf("Mode of pin %d is set to %d\n", pin, mode)
 	if (mode == PWM_OUTPUT) && ((C.int)(pin) != C.onboard_hw_pwm) && (pin < onboard_pins) {
 		C.softPwmCreate((C.int)(pin), 0, 1023)
 	} else {
@@ -77,4 +80,25 @@ func (*WiringPiIO) PwmWrite(pin int, value int) {
 	} else {
 		C.pwmWrite((C.int)(pin), (C.int)(value))
 	}
+}
+
+type pinRange struct {
+	*WiringPiIO
+	start  int
+	count  int
+	pwmres int
+}
+
+func (pr *pinRange) PinRange() (int, int) {
+	return pr.start, pr.count
+}
+
+func (pr *pinRange) PwmResolution() int {
+	return pr.pwmres
+}
+
+var wiringpiio = &WiringPiIO{}
+
+func init() {
+	wiringpiio.Setup()
 }

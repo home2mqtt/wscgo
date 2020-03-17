@@ -5,16 +5,13 @@ import (
 	"testing"
 
 	"gitlab.com/grill-tamasi/wscgo/devices"
-	"gitlab.com/grill-tamasi/wscgo/tests"
-	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 )
 
 type testshutter struct {
-	wiringpi.IoContext
 }
 
-func (*testshutter) Tick()                                      {}
-func (*testshutter) Initialize()                                {}
+func (*testshutter) Tick() error                                { return nil }
+func (*testshutter) Initialize() error                          { return nil }
 func (*testshutter) Open()                                      {}
 func (*testshutter) Close()                                     {}
 func (*testshutter) MoveBy(int)                                 {}
@@ -31,9 +28,7 @@ func TestDiscoveryJson(t *testing.T) {
 		CommandTopic:  "test/command",
 		PositionTopic: "test/pos",
 	}
-	c := IntegrateCover(&testshutter{
-		IoContext: tests.CreateTestIo(2),
-	}, conf)
+	c := IntegrateCover(&testshutter{}, conf)
 	info := c.GetDiscoveryInfo("test_"+conf.ObjectId, &DeviceDiscoveryInfo{
 		Manufacturer: "wscgo",
 		Model:        "wscgo",
@@ -44,7 +39,6 @@ func TestDiscoveryJson(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(string(data))
 
 	var f interface{}
 	err = json.Unmarshal(data, &f)

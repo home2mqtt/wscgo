@@ -3,11 +3,11 @@ Priority: optional
 # Homepage: <enter URL here; no default>
 Standards-Version: 3.9.2
 
-Package: wscgo-rpizw
+Package: wscgo
 Version: ${VERSION}
 Maintainer: Balázs Grill <balazs.grill@live.com>
 # Pre-Depends: <comma-separated list of packages>
-Depends: wiringpi, wscgo
+Depends:
 # Recommends: <comma-separated list of packages>
 # Suggests: <comma-separated list of packages>
 # Provides: <comma-separated list of packages>
@@ -20,7 +20,9 @@ Architecture: armhf
 # Changelog: <changelog file; defaults to a generic changelog>
 # Readme: <README.Debian file; defaults to a generic one>
 # Extra-Files: <comma-separated list of additional files for the doc directory>
-Files: wscgo-wpi-rpizw.so /usr/local/lib/
+Files: wscgo /usr/bin/
+ wscgo.ini /etc/
+ wscgo.service /etc/systemd/system/
 #  <more pairs, if there's more than one file to include. Notice the starting space>
-Description: Window-shutter controller - wiringPi integration for raspberry pi zero
+Description: Window-shutter controller
  Configurable home automation controller written in Go

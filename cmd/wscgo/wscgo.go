@@ -8,7 +8,8 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"gitlab.com/grill-tamasi/wscgo/config"
 	"gitlab.com/grill-tamasi/wscgo/protocol"
-	"gitlab.com/grill-tamasi/wscgo/wiringpi"
+
+	_ "gitlab.com/grill-tamasi/wscgo/integration"
 )
 
 type wscgoInstance struct {
@@ -20,15 +21,22 @@ type wscgoInstance struct {
 
 func (instance *wscgoInstance) intitializeDevices() {
 	for _, c := range instance.conf.Configs {
-		c(instance.conf.IoContext)
+		c()
 	}
-	instance.conf.IoContext.Setup()
 	for _, d := range instance.conf.Devices {
-		instance.devices = append(instance.devices, d(instance.conf.IoContext))
+		dev, err := d()
+		if err != nil {
+			log.Println(err.Error())
+		} else {
+			instance.devices = append(instance.devices, dev)
+		}
 	}
 	for _, d := range instance.devices {
 		log.Println("Initializing ", d.GetComponent(), d.GetObjectId())
-		d.Initialize()
+		err := d.Initialize()
+		if err != nil {
+			log.Println(err.Error())
+		}
 	}
 }
 
@@ -62,7 +70,7 @@ func CreateWscgo(conf *config.WscgoConfiguration) *wscgoInstance {
 	opts := protocol.ConfigureClientOptions(&conf.MqttConfig)
 	opts = opts.SetOnConnectHandler(instance.eventOnConnected)
 	instance.client = mqtt.NewClient(opts)
-	instance.deviceInfo = config.ComputeDeviceInfo(version)
+	instance.deviceInfo = config.ComputeDeviceInfo(Version)
 	return instance
 }
 
@@ -71,11 +79,14 @@ func (instance *wscgoInstance) loop() {
 	go func() {
 		for range controlTicker.C {
 			for _, p := range instance.devices {
-				p.Tick()
+				err := p.Tick()
+				if err != nil {
+					log.Println(err.Error())
+				}
 			}
 		}
 	}()
-
+	log.Println("wscgo started")
 	select {}
 }
 
@@ -92,13 +103,12 @@ func (instance *wscgoInstance) start() {
 }
 
 func main() {
-	log.Println("wscgo version ", version)
+	log.Println("wscgo version ", Version)
 	args := os.Args[1:]
 	if len(args) != 1 {
 		log.Fatal("usage: wscgo config.ini")
 	}
 	conf := config.LoadConfig(args[0])
-	conf.IoContext = &wiringpi.WiringPiIO{}
 
 	instance := CreateWscgo(conf)
 	instance.intitializeDevices()

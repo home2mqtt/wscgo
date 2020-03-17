@@ -2,33 +2,28 @@
 package config
 
 import (
-	"bufio"
-	"errors"
 	"io/ioutil"
-	"os"
-	"strings"
+
+	"periph.io/x/periph/host/distro"
 )
 
 const modelinfo string = "/proc/device-tree/model"
 const cpuinfo string = "/proc/cpuinfo"
 
 func getModelInfo() (string, string, error) {
-	modebytes, err := ioutil.ReadFile(modelinfo)
+	modelbytes, err := ioutil.ReadFile(modelinfo)
+	var model string
 	if err != nil {
-		return "", "", err
+		// Cannot read model file, assume generic linux
+		model = distro.OSRelease()["PRETTY_NAME"]
+	} else {
+		model = string(modelbytes)
 	}
-	model := string(modebytes)
-	cpuinfofile, err := os.Open(cpuinfo)
-	scanner := bufio.NewScanner(cpuinfofile)
-	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.Contains(line, ":") {
-			keyvalue := strings.Split(line, ":")
-			if strings.ToLower(strings.TrimSpace(keyvalue[0])) == "serial" {
-				serialstring := strings.TrimSpace(keyvalue[1])
-				return model, serialstring, nil
-			}
-		}
+
+	var serial string
+	var ok bool
+	if serial, ok = distro.CPUInfo()["serial"]; !ok {
+		serial = "Unkown"
 	}
-	return "", "", errors.New("Invalid serial number")
+	return model, serial, nil
 }

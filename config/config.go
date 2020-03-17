@@ -1,22 +1,49 @@
 package config
 
 import (
+	"log"
 	"os"
+	"plugin"
 
+	"gitlab.com/grill-tamasi/wscgo/plugins"
 	"gitlab.com/grill-tamasi/wscgo/protocol"
-	"gitlab.com/grill-tamasi/wscgo/wiringpi"
 )
 
-type DeviceInitializer func(wiringpi.IoContext) protocol.IDiscoverable
+type DeviceInitializer func() (protocol.IDiscoverable, error)
 
-type ConfigInitializer func(wiringpi.IoContext)
+type ConfigInitializer func() error
+
+type ConfigurationContext interface {
+	AddConfigInitializer(ConfigInitializer)
+	AddDeviceInitializer(DeviceInitializer)
+}
 
 type WscgoConfiguration struct {
 	protocol.MqttConfig
-	wiringpi.IoContext
 	Node    protocol.DiscoverableNode
 	Configs []ConfigInitializer
 	Devices []DeviceInitializer
+}
+
+type WscgoPluginConfiguration struct {
+	Path string `ini:"path"`
+}
+
+func (config *WscgoConfiguration) AddConfigInitializer(c ConfigInitializer) {
+	config.Configs = append(config.Configs, c)
+}
+
+func (config *WscgoConfiguration) AddDeviceInitializer(d DeviceInitializer) {
+	config.Devices = append(config.Devices, d)
+}
+
+type ConfigurationSection interface {
+	FillData(interface{}) error
+	GetID() string
+}
+
+type ConfigurationPartParser interface {
+	ParseConfiguration(ConfigurationSection, ConfigurationContext) error
 }
 
 func defaultConfiguration() *WscgoConfiguration {
@@ -33,4 +60,25 @@ func defaultConfiguration() *WscgoConfiguration {
 			Host: "tcp://localhost:1883",
 		},
 	}
+}
+
+func (pc *WscgoPluginConfiguration) Load() error {
+	log.Printf("Loading %s\n", pc.Path)
+	p, err := plugin.Open(pc.Path)
+	if err != nil {
+		return err
+	}
+	s, err := p.Lookup(plugins.AddonsGetterName)
+	if err != nil {
+		return err
+	}
+	f := s.(func() []plugins.Addon)
+	addons := f()
+	for _, a := range addons {
+		err = loadAddon(a)
+		if err != nil {
+			log.Printf("Error loading addon from plugin: %v", err)
+		}
+	}
+	return nil
 }

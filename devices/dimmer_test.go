@@ -4,51 +4,54 @@ import (
 	"testing"
 
 	"gitlab.com/grill-tamasi/wscgo/tests"
-	"gitlab.com/grill-tamasi/wscgo/wiringpi"
+	"periph.io/x/periph/conn/gpio"
 )
 
-const DimmerMaxValue int = 1023
+const DimmerMaxValue = 1023
 
-func checkDimmerPins(msg string, t *testing.T, io *tests.TestIo, on bool, pwm int) {
-	if io.Values[0] != on || io.Pwm[1] != pwm {
-		t.Errorf("%s ON[exp-actal]: %t - %t, PWM[exp-actal]: %d - %d\n", msg, on, io.Values[0], pwm, io.Pwm[1])
+func checkDimmerPins(msg string, t *testing.T, io *tests.TestIo, on gpio.Level, pwm int) {
+	scaling := int(gpio.DutyMax) / 1024
+	if io.Pins[0].L != on || io.Pins[1].D != gpio.Duty(pwm*scaling) {
+		t.Errorf("%s ON[exp-actal]: %v - %v, PWM[exp-actal]: %v - %v\n", msg, on, io.Pins[0].L, (pwm * scaling), io.Pins[1].D)
 	}
 }
 
 func createDimmerForTest() (*dimmer, *tests.TestIo) {
 	io := tests.CreateTestIo(3)
 	c := &DimmerConfig{
-		OnPin:      0,
-		PwmPin:     1,
+		OnPin:      "Test_0",
+		PwmPin:     "Test_1",
 		Speed:      10,
 		OnDelay:    5,
 		Resolution: DimmerMaxValue + 1,
 	}
-	d, _ := CreateDimmer(io, c).(*dimmer)
+	id, _ := CreateDimmer(c)
+	d, _ := id.(*dimmer)
 	return d, io
 }
 
 func createInvertedDimmerForTest() (*dimmer, *tests.TestIo) {
 	io := tests.CreateTestIo(3)
 	c := &DimmerConfig{
-		OnPin:      0,
-		PwmPin:     1,
+		OnPin:      "Test_0",
+		PwmPin:     "Test_1",
 		Speed:      10,
 		OnDelay:    5,
 		Inverted:   true,
 		Resolution: DimmerMaxValue + 1,
 	}
-	d, _ := CreateDimmer(io, c).(*dimmer)
+	id, _ := CreateDimmer(c)
+	d, _ := id.(*dimmer)
 	return d, io
 }
 
 func TestDimmerInit(t *testing.T) {
 	d, io := createDimmerForTest()
 	d.Initialize()
-	if io.Modes[0] != wiringpi.OUTPUT {
+	if io.Pins[0].L != gpio.Low {
 		t.Error("On Pin is not set to OUTPUT!")
 	}
-	if io.Modes[1] != wiringpi.PWM_OUTPUT {
+	if io.Pins[1].F != frequency {
 		t.Error("On Pin is not set to PWM!")
 	}
 }
