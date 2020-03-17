@@ -2,7 +2,7 @@
 
 wscgo is a highly configurable controller intended for home automation written in Go. Supported 
 platforms include [Raspberry Pi Zero W](https://www.raspberrypi.org/products/raspberry-pi-zero-w/) 
-and [Orange Pi Zero](http://www.orangepi.org/orangepizero/), it should work on any device supported by [periph.io](https://periph.io/
+and [Orange Pi Zero](http://www.orangepi.org/orangepizero/), it should work on any device supported by [periph.io](https://periph.io/)
 
 ![Place of wscgo](https://raw.githubusercontent.com/wiki/balazsgrill/wscgo/place-of-wscgo.png)
 
