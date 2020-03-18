@@ -7,6 +7,7 @@ import (
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"gitlab.com/grill-tamasi/wscgo/config"
+	"gitlab.com/grill-tamasi/wscgo/devices"
 	"gitlab.com/grill-tamasi/wscgo/protocol"
 
 	_ "gitlab.com/grill-tamasi/wscgo/integration"
@@ -15,8 +16,18 @@ import (
 type wscgoInstance struct {
 	conf       *config.WscgoConfiguration
 	client     mqtt.Client
-	devices    []protocol.IDiscoverable
+	devices    []devices.Device
+	protocols  []protocol.IDiscoverable
 	deviceInfo *protocol.DeviceDiscoveryInfo
+}
+
+func (instance *wscgoInstance) AddDevice(device devices.Device) {
+	instance.devices = append(instance.devices, device)
+}
+
+func (instance *wscgoInstance) AddProtocol(pro protocol.IDiscoverable) {
+	log.Println("Initializing ", pro.GetComponent(), pro.GetObjectId())
+	instance.protocols = append(instance.protocols, pro)
 }
 
 func (instance *wscgoInstance) intitializeDevices() {
@@ -24,15 +35,12 @@ func (instance *wscgoInstance) intitializeDevices() {
 		c()
 	}
 	for _, d := range instance.conf.Devices {
-		dev, err := d()
+		err := d(instance)
 		if err != nil {
 			log.Println(err.Error())
-		} else {
-			instance.devices = append(instance.devices, dev)
 		}
 	}
 	for _, d := range instance.devices {
-		log.Println("Initializing ", d.GetComponent(), d.GetObjectId())
 		err := d.Initialize()
 		if err != nil {
 			log.Println(err.Error())
@@ -42,7 +50,7 @@ func (instance *wscgoInstance) intitializeDevices() {
 
 func (instance *wscgoInstance) eventOnConnected(client mqtt.Client) {
 	log.Println("Connected to MQTT broker")
-	for _, d := range instance.devices {
+	for _, d := range instance.protocols {
 		log.Println("Configuring ", d.GetComponent(), d.GetObjectId())
 		d.Configure(client)
 	}
@@ -54,8 +62,8 @@ func (instance *wscgoInstance) eventOnConnected(client mqtt.Client) {
 }
 
 func (instance *wscgoInstance) publishDiscoveryMessages(client mqtt.Client) {
-	for _, d := range instance.devices {
-		protocol.PublisDiscoveryMessage(client, &instance.conf.Node, d, instance.deviceInfo)
+	for _, p := range instance.protocols {
+		protocol.PublisDiscoveryMessage(client, &instance.conf.Node, p, instance.deviceInfo)
 	}
 }
 

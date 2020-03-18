@@ -4,11 +4,9 @@ import (
 	"log"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"gitlab.com/grill-tamasi/wscgo/devices"
 )
 
 type MQTTProtocol interface {
-	devices.Device
 	Configure(mqtt.Client)
 }
 

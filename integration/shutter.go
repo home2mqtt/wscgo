@@ -14,12 +14,14 @@ func (*shutterConfigPartParser) ParseConfiguration(section config.ConfigurationS
 	c := protocol.CreateCoverConfig(section.GetID())
 	section.FillData(&c.BasicDeviceConfig)
 	section.FillData(c)
-	context.AddDeviceInitializer(func() (protocol.IDiscoverable, error) {
+	context.AddDeviceInitializer(func(context config.RuntimeContext) error {
 		shutter, err := devices.CreateShutter(s)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		return protocol.IntegrateCover(shutter, c), nil
+		context.AddDevice(shutter)
+		context.AddProtocol(protocol.IntegrateCover(shutter, c))
+		return nil
 	})
 	return nil
 }

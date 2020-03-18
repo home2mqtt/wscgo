@@ -19,12 +19,14 @@ func (*lightConfigurationParser) ParseConfiguration(section config.Configuration
 	c := protocol.CreateLightConfig(section.GetID())
 	section.FillData(&c.BasicDeviceConfig)
 	section.FillData(c)
-	context.AddDeviceInitializer(func() (protocol.IDiscoverable, error) {
+	context.AddDeviceInitializer(func(context config.RuntimeContext) error {
 		device, err := devices.CreateDimmer(s)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		return protocol.IntegrateLight(device, c), nil
+		context.AddDevice(device)
+		context.AddProtocol(protocol.IntegrateLight(device, c))
+		return nil
 	})
 	return nil
 }

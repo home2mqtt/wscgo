@@ -5,13 +5,19 @@ import (
 	"os"
 	"plugin"
 
+	"gitlab.com/grill-tamasi/wscgo/devices"
 	"gitlab.com/grill-tamasi/wscgo/plugins"
 	"gitlab.com/grill-tamasi/wscgo/protocol"
 )
 
-type DeviceInitializer func() (protocol.IDiscoverable, error)
+type DeviceInitializer func(RuntimeContext) error
 
 type ConfigInitializer func() error
+
+type RuntimeContext interface {
+	AddDevice(devices.Device)
+	AddProtocol(protocol.IDiscoverable)
+}
 
 type ConfigurationContext interface {
 	AddConfigInitializer(ConfigInitializer)
