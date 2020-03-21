@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"gitlab.com/grill-tamasi/wscgo/plugins"
@@ -104,6 +105,8 @@ func (a *addonConfigurationPartParser) ParseConfiguration(cs ConfigurationSectio
 			}
 			gpioreg.Register(pin)
 		}
+		log.Printf("Configued pins %d - %d for %s\n", start, start+count-1, a.GetIdentifier())
+
 		return nil
 	})
 	return nil
