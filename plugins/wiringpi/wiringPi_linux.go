@@ -7,18 +7,15 @@ package main
 // #include<mcp23017.h>
 // #include "pca9685.h"
 // #include<softPwm.h>
-// #ifdef PI_MODEL_BPR
-// int setuprc = 0;
-// int onboard_hw_pwm = -1;
-// #else
-// int setuprc = 1;
-// int onboard_hw_pwm = 1;
-// #endif
 // extern int wiringPiDebug;
 import "C"
 import (
 	"fmt"
+	"strconv"
 )
+
+var Mcp23017rc string
+var Onboardhwpwm string
 
 // INPUT = wiringPI INPUT
 const INPUT = C.INPUT
@@ -35,7 +32,11 @@ type WiringPiIO struct {
 
 func Mcp23017Setup(config *Mcp23017Config) error {
 	rc := C.mcp23017Setup(C.int(config.ExpansionBase), C.int(config.Address))
-	if rc != C.setuprc {
+	i, err := strconv.Atoi(Mcp23017rc)
+	if err != nil {
+		return err
+	}
+	if rc != i {
 		return fmt.Errorf("MCP23017: error  %d", rc)
 	}
 	return nil
@@ -66,20 +67,29 @@ func (*WiringPiIO) DigitalRead(pin int) bool {
 	return C.HIGH == C.digitalRead((C.int)(pin))
 }
 
-func (*WiringPiIO) PinMode(pin int, mode int) {
-	if (mode == PWM_OUTPUT) && ((C.int)(pin) != C.onboard_hw_pwm) && (pin < onboard_pins) {
+func (*WiringPiIO) PinMode(pin int, mode int) error {
+	i, err := strconv.Atoi(Onboardhwpwm)
+	if err != nil {
+		return err
+	}
+	if (mode == PWM_OUTPUT) && ((C.int)(pin) != i) && (pin < onboard_pins) {
 		C.softPwmCreate((C.int)(pin), 0, 1023)
 	} else {
 		C.pinMode((C.int)(pin), (C.int)(mode))
 	}
 }
 
-func (*WiringPiIO) PwmWrite(pin int, value int) {
-	if ((C.int)(pin) != C.onboard_hw_pwm) && (pin < onboard_pins) {
+func (*WiringPiIO) PwmWrite(pin int, value int) error {
+	i, err := strconv.Atoi(Onboardhwpwm)
+	if err != nil {
+		return err
+	}
+	if ((C.int)(pin) != i) && (pin < onboard_pins) {
 		C.softPwmWrite((C.int)(pin), (C.int)(value))
 	} else {
 		C.pwmWrite((C.int)(pin), (C.int)(value))
 	}
+	return nil
 }
 
 type pinRange struct {

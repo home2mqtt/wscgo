@@ -64,7 +64,7 @@ build:rpizw:
     - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-opiz --output libwiringPiPca9685.a
     - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output pca9685.h
   script:
-    - go build -o $CI_PROJECT_DIR/wscgo-wpi-rpizw.so -ldflags "-X main.Version=${VERSION}" -buildmode=plugin -trimpath
+    - go build -o $CI_PROJECT_DIR/wscgo-wpi-rpizw.so -ldflags "-X main.Mcp23017rc=1 -X main.Onboardhwpwm=1" -buildmode=plugin -trimpath
   artifacts:
     paths:
       - wscgo-wpi-rpizw.so
@@ -85,7 +85,7 @@ build:opiz:
     - curl -L https://dl.bintray.com/balazsgrill/home-build/libwiringPiPca9685.a-opiz --output libwiringPiPca9685.a
     - curl -L https://dl.bintray.com/balazsgrill/home-build/pca9685.h --output pca9685.h
   script:
-    - go build -o $CI_PROJECT_DIR/wscgo-wpi-opiz.so -ldflags "-X main.Version=${VERSION}" -buildmode=plugin -trimpath
+    - go build -o $CI_PROJECT_DIR/wscgo-wpi-opiz.so -ldflags "-X main.Mcp23017rc=0 -X main.Onboardhwpwm=-1" -buildmode=plugin -trimpath
   artifacts:
     paths:
       - wscgo-wpi-opiz.so
