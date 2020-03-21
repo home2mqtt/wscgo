@@ -77,6 +77,7 @@ func (*WiringPiIO) PinMode(pin int, mode int) error {
 	} else {
 		C.pinMode((C.int)(pin), (C.int)(mode))
 	}
+	return nil
 }
 
 func (*WiringPiIO) PwmWrite(pin int, value int) error {
