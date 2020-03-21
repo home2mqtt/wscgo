@@ -36,7 +36,7 @@ func Mcp23017Setup(config *Mcp23017Config) error {
 	if err != nil {
 		return err
 	}
-	if rc != i {
+	if rc != (C.int)(i) {
 		return fmt.Errorf("MCP23017: error  %d", rc)
 	}
 	return nil
@@ -72,7 +72,7 @@ func (*WiringPiIO) PinMode(pin int, mode int) error {
 	if err != nil {
 		return err
 	}
-	if (mode == PWM_OUTPUT) && ((C.int)(pin) != i) && (pin < onboard_pins) {
+	if (mode == PWM_OUTPUT) && (pin != int(i)) && (pin < onboard_pins) {
 		C.softPwmCreate((C.int)(pin), 0, 1023)
 	} else {
 		C.pinMode((C.int)(pin), (C.int)(mode))
@@ -84,7 +84,7 @@ func (*WiringPiIO) PwmWrite(pin int, value int) error {
 	if err != nil {
 		return err
 	}
-	if ((C.int)(pin) != i) && (pin < onboard_pins) {
+	if (pin != int(i)) && (pin < onboard_pins) {
 		C.softPwmWrite((C.int)(pin), (C.int)(value))
 	} else {
 		C.pwmWrite((C.int)(pin), (C.int)(value))
