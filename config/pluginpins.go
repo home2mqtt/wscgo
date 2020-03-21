@@ -113,6 +113,7 @@ func (a *addonConfigurationPartParser) ParseConfiguration(cs ConfigurationSectio
 }
 
 func loadAddon(addon plugins.Addon) error {
+	log.Println("Registering addon: " + addon.GetIdentifier())
 	return RegisterConfigurationPartParser(addon.GetIdentifier(), &addonConfigurationPartParser{
 		Addon: addon,
 	})

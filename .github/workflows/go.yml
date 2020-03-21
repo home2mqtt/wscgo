@@ -31,4 +31,4 @@ jobs:
         go test -v ./config
     
     - name: Build
-      run: go build -v -ldflags "-X main.Version=0.5.1.build1" -trimpath ./cmd/wscgo
+      run: go build -v -ldflags "-X main.Version=0.5.1.build2" -trimpath ./cmd/wscgo

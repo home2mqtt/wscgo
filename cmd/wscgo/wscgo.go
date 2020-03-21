@@ -32,7 +32,10 @@ func (instance *wscgoInstance) AddProtocol(pro protocol.IDiscoverable) {
 
 func (instance *wscgoInstance) intitializeDevices() {
 	for _, c := range instance.conf.Configs {
-		c()
+		err := c()
+		if err != nil {
+			log.Println(err.Error())
+		}
 	}
 	for _, d := range instance.conf.Devices {
 		err := d(instance)
