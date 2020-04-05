@@ -1,4 +1,4 @@
-module gitlab.com/grill-tamasi/wscgo
+module github.com/grill-tamasi/wscgo
 
 go 1.13
 
@@ -8,7 +8,7 @@ require (
 	golang.org/x/net v0.0.0-20191101175033-0deb6923b6d9 // indirect
 	gopkg.in/ini.v1 v1.49.0
 	periph.io/x/periph v3.6.2+incompatible
-	gitlab.com/grill-tamasi/wscgo/plugins v0.5.0
+	github.com/grill-tamasi/wscgo/plugins v0.5.0
 )
 
-replace gitlab.com/grill-tamasi/wscgo/plugins => ./plugins
+replace github.com/grill-tamasi/wscgo/plugins => ./plugins

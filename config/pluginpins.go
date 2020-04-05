@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"gitlab.com/grill-tamasi/wscgo/plugins"
+	"github.com/grill-tamasi/wscgo/plugins"
 	"periph.io/x/periph/conn/gpio"
 	"periph.io/x/periph/conn/gpio/gpioreg"
 	"periph.io/x/periph/conn/physic"

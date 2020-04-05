@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"gitlab.com/grill-tamasi/wscgo/devices"
+	"github.com/grill-tamasi/wscgo/devices"
 )
 
 type SensorConfig struct {

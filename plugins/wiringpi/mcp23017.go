@@ -4,7 +4,7 @@ import (
 	"errors"
 	"log"
 
-	"gitlab.com/grill-tamasi/wscgo/plugins"
+	"github.com/grill-tamasi/wscgo/plugins"
 )
 
 type Mcp23017Config struct {

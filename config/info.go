@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"gitlab.com/grill-tamasi/wscgo/protocol"
+	"github.com/grill-tamasi/wscgo/protocol"
 )
 
 func ComputeDeviceInfo(version string) *protocol.DeviceDiscoveryInfo {

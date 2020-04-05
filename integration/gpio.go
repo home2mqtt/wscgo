@@ -1,9 +1,9 @@
 package integration
 
 import (
-	"gitlab.com/grill-tamasi/wscgo/config"
-	"gitlab.com/grill-tamasi/wscgo/devices"
-	"gitlab.com/grill-tamasi/wscgo/protocol"
+	"github.com/grill-tamasi/wscgo/config"
+	"github.com/grill-tamasi/wscgo/devices"
+	"github.com/grill-tamasi/wscgo/protocol"
 )
 
 type inputConfigPartParser struct{}
