@@ -43,3 +43,22 @@ jobs:
         GOARCH: "arm"
         GOARM: "5"
       run: go build -v -ldflags "-X main.Version=0.5.1-$TIME" -trimpath -o wscgo ./cmd/wscgo
+
+    - uses: actions/upload-artifact@v1
+      with:
+        name: wscgo
+        path: wscgo
+
+    - run: apt install -y envsubst equivs-build
+    
+    - name: Package
+      env:
+        VERSION: "0.5.1-${{ steps.current-time.outputs.formattedTime }}"
+      run: |
+        envsubst < wscgo.cfg.tpl > wscgo.cfg
+        equivs-build wscgo.cfg
+    
+    - uses: actions/upload-artifact@v1
+      with:
+        name: debian-package
+        path: wscgo_${VERSION}_armhf.deb
