@@ -61,4 +61,4 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: debian-package
-        path: wscgo_${VERSION}_armhf.deb
+        path: "*.deb"
