@@ -49,7 +49,7 @@ jobs:
         name: wscgo
         path: wscgo
 
-    - run: apt install -y envsubst equivs-build
+    - run: sudo apt-get install -y gettext-base equivs
     
     - name: Package
       env:
