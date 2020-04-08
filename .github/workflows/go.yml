@@ -8,7 +8,7 @@ jobs:
     steps:
 
     - name: Get current time
-      uses: srfrnk/current-time@master
+      uses: srfrnk/current-time@v1.1.0
       id: current-time
       with:
         format: YYYYMMDDHHss
@@ -42,4 +42,4 @@ jobs:
         GOOS: "linux"
         GOARCH: "arm"
         GOARM: "5"
-      run: go build -v -ldflags "-X main.Version=0.5.1-$TIME" -trimpath ./cmd/wscgo -o wscgo
+      run: go build -v -ldflags "-X main.Version=0.5.1-$TIME" -trimpath -o wscgo ./cmd/wscgo
