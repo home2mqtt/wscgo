@@ -57,7 +57,7 @@ jobs:
       run: |
         envsubst < wscgo.cfg.tpl > wscgo.cfg
         equivs-build wscgo.cfg
-        ls *.deb
+        ls
     
     - uses: actions/upload-artifact@v1
       with:
