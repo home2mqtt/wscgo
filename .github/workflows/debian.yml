@@ -35,9 +35,7 @@ jobs:
         envsubst < debian/changelog.tpl > debian/changelog
         dpkg-buildpackage --target-arch armhf --host-arch armhf -b
     
-    - uses: actions/upload-artifact@v2-preview
-      env:
-        VERSION: "0.5.1-${{ steps.current-time.outputs.formattedTime }}"
+    - uses: actions/upload-artifact@v1
       with:
         name: debian-package
-        path: "../*.deb"
+        path: "../wscgo_0.5.1-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
