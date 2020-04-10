@@ -1,6 +1,16 @@
 #!/usr/bin/make -f
-%:
-	dh $@
+clean:
+	rm wscgo
 
-override_dh_auto_install:
-	$(MAKE) DESTDIR=$$(pwd)/debian/wscgo prefix=/usr install
+build:
+	go build -v -ldflags "-X main.Version=0.5.1-build4" -trimpath -o wscgo ./cmd/wscgo
+
+binary:
+	mkdir -p debian/wscgo
+	mkdir -p debian/wscgo/usr/bin
+	mkdir -p debian/wscgo/etc/systemd/system
+	sudo cp wscgo debian/wscgo/usr/bin/
+	sudo cp wscgo.ini debian/wscgo/etc/
+	sudo cp wscgo.service debian/wscgo/etc/systemd/system/
+	dh_gencontrol
+	dh_builddeb

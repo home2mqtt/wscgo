@@ -7,6 +7,6 @@ Build-Depends: debhelper (>= 9)
 
 Package: wscgo
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends:
 Description: Window-shutter controller
  Configurable home automation controller written in Go.

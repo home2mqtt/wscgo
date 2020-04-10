@@ -38,7 +38,7 @@ jobs:
         GOARM: "5"
       run: |
         echo "Version: $VERSION"
-        debuild -us -uc
+        dpkg-buildpackage --target-arch armhf -b
         ls
     
     - uses: actions/upload-artifact@v1
