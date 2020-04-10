@@ -39,9 +39,9 @@ jobs:
       run: |
         echo "Version: $VERSION"
         dpkg-buildpackage --target-arch armhf --host-arch armhf -b
-        ls debian
+        ls ..
     
     - uses: actions/upload-artifact@v1
       with:
         name: debian-package
-        path: "debian/*.deb"
+        path: "../wscgo_0.5.1_armhf.deb"
