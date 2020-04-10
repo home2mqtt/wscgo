@@ -38,10 +38,10 @@ jobs:
         GOARM: "5"
       run: |
         echo "Version: $VERSION"
-        dpkg-buildpackage --target-arch armhf -b
-        ls
+        dpkg-buildpackage --target-arch armhf --host-arch armhf -b
+        ls debian
     
     - uses: actions/upload-artifact@v1
       with:
         name: debian-package
-        path: "*.deb"
+        path: "debian/*.deb"
