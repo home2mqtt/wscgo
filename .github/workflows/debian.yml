@@ -37,6 +37,7 @@ jobs:
         GOARCH: "arm"
         GOARM: "5"
       run: |
+        echo "Version: $VERSION"
         debuild -us -uc
         ls
     
