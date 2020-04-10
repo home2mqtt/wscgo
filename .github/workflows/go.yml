@@ -49,14 +49,13 @@ jobs:
         name: wscgo
         path: wscgo
 
-    - run: sudo apt-get install -y gettext-base equivs
+    - run: sudo apt-get install -y build-essential devscripts debhelper
     
     - name: Package
       env:
         VERSION: "0.5.1-${{ steps.current-time.outputs.formattedTime }}"
       run: |
-        envsubst < wscgo.cfg.tpl > wscgo.cfg
-        equivs-build wscgo.cfg
+        debuild -us -uc
         ls
     
     - uses: actions/upload-artifact@v1
