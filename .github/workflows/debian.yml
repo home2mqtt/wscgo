@@ -1,0 +1,43 @@
+name: Debian
+on: [push]
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Get current time
+      uses: srfrnk/current-time@v1.1.0
+      id: current-time
+      with:
+        format: YYYYMMDDHHss
+
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Create tarbal
+      run: | 
+        cd ..
+        tar -czvf wscgo_0.5.1.orig.tar.gz wscgo
+        cd wscgo
+
+    - run: sudo apt-get install -y build-essential devscripts debhelper
+    
+    - name: Package
+      env:
+        VERSION: "0.5.1-${{ steps.current-time.outputs.formattedTime }}"
+      run: |
+        debuild -us -uc
+        ls
+    
+    - uses: actions/upload-artifact@v1
+      with:
+        name: debian-package
+        path: "*.deb"
