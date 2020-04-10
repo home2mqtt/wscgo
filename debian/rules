@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 clean:
-	rm wscgo
+	rm -f wscgo
 
 build:
 	go build -v -ldflags "-X main.Version=0.5.1-build4" -trimpath -o wscgo ./cmd/wscgo
