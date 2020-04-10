@@ -28,7 +28,7 @@ jobs:
         tar -czvf wscgo_0.5.1.orig.tar.gz wscgo
         cd wscgo
 
-    - run: sudo apt-get install -y build-essential devscripts debhelper
+    - run: sudo apt-get install -y build-essential devscripts debhelper gettext-base
     
     - name: Package
       env:
@@ -38,10 +38,12 @@ jobs:
         GOARM: "5"
       run: |
         echo "Version: $VERSION"
+        envsubst < debian/changelog.tpl > debian/changelog
         dpkg-buildpackage --target-arch armhf --host-arch armhf -b
-        ls ..
     
     - uses: actions/upload-artifact@v1
+      env:
+        VERSION: "0.5.1-${{ steps.current-time.outputs.formattedTime }}"
       with:
         name: debian-package
-        path: "../wscgo_0.5.1_armhf.deb"
+        path: "../wscgo_${VERSION}_armhf.deb"

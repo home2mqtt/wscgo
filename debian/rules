@@ -3,7 +3,7 @@ clean:
 	rm -f wscgo
 
 build:
-	go build -v -ldflags "-X main.Version=0.5.1-build4" -trimpath -o wscgo ./cmd/wscgo
+	go build -v -ldflags "-X main.Version=$(VERSION)" -trimpath -o wscgo ./cmd/wscgo
 
 binary:
 	mkdir -p debian/wscgo

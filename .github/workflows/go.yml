@@ -22,12 +22,6 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
-    - name: Create tarbal
-      run: | 
-        cd ..
-        tar -czvf wscgo_0.5.1.orig.tar.gz wscgo
-        cd wscgo
-
     - name: Get dependencies
       run: |
         go get -v -t -d ./...
@@ -44,11 +38,11 @@ jobs:
     
     - name: Build
       env:
-        TIME: "${{ steps.current-time.outputs.formattedTime }}"
+        VERSION: "0.5.1-${{ steps.current-time.outputs.formattedTime }}"
         GOOS: "linux"
         GOARCH: "arm"
         GOARM: "5"
-      run: go build -v -ldflags "-X main.Version=0.5.1-$TIME" -trimpath -o wscgo ./cmd/wscgo
+      run: go build -v -ldflags "-X main.Version=$TIME" -trimpath -o wscgo ./cmd/wscgo
 
     - uses: actions/upload-artifact@v1
       with:
