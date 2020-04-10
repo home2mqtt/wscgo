@@ -33,6 +33,9 @@ jobs:
     - name: Package
       env:
         VERSION: "0.5.1-${{ steps.current-time.outputs.formattedTime }}"
+        GOOS: "linux"
+        GOARCH: "arm"
+        GOARM: "5"
       run: |
         debuild -us -uc
         ls

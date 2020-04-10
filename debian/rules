@@ -3,4 +3,4 @@
 	dh $@
 
 override_dh_auto_install:
-	$(MAKE) DESTDIR=$$(pwd)/debian/hithere prefix=/usr install
+	$(MAKE) DESTDIR=$$(pwd)/debian/wscgo prefix=/usr install
