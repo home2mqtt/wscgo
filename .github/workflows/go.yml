@@ -23,7 +23,7 @@ jobs:
       uses: actions/checkout@v2
 
     - id: dotenv
-      uses: ./.github/actions/dotenv-action
+      uses: falti/dotenv-action@master
 
     - name: Get dependencies
       run: |
