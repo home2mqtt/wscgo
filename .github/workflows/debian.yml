@@ -45,8 +45,36 @@ jobs:
     
     - name: CI publish package
       #if: github.ref == 'refs/heads/master'
-      run: curl -X PUT -T ../wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb -u${{ secrets.BINTRAY_USER }}:${{ secrets:BINTRAY_APIKEY }} "https://api.bintray.com/content/balazsgrill/home/wscgo/${VERSION}/pool/main/w/wscgo/wscgo_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
-    
-    - name: Release package
+      uses: bpicode/github-action-upload-bintray@master
+      with:
+        file: ../wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb
+        api_user: balazsgrill
+        api_key: ${{ secrets.BINTRAY_APIKEY }} # An API key can be obtained from the user profile page.
+        repository_user: balazsgrill
+        repository: home
+        package: wscgo
+        version: '${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}'
+        upload_path: pool/main/w # Typical for debian repository layout
+        publish: 1
+        calculate_metadata: true # Schedule metadata calcuation after upload
+        deb_distribution: unstable
+        deb_component: main
+        deb_architecture: armhf
+
+    - name: CI publish package
       if: startsWith(github.ref, 'refs/tags/v')
-      run: curl -X PUT -T ../wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb -u${{ secrets.BINTRAY_USER }}:${{ secrets:BINTRAY_APIKEY }} "https://api.bintray.com/content/balazsgrill/wscgo/wscgo/${VERSION}/pool/main/w/wscgo/wscgo_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
+      uses: bpicode/github-action-upload-bintray@master
+      with:
+        file: ../wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb
+        api_user: balazsgrill
+        api_key: ${{ secrets.BINTRAY_APIKEY }} # An API key can be obtained from the user profile page.
+        repository_user: balazsgrill
+        repository: wscgo
+        package: wscgo
+        version: '${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}'
+        upload_path: pool/main/w # Typical for debian repository layout
+        publish: 1
+        calculate_metadata: true # Schedule metadata calcuation after upload
+        deb_distribution: unstable
+        deb_component: main
+        deb_architecture: armhf
