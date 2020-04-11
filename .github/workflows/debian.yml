@@ -37,17 +37,18 @@ jobs:
         echo "Version: $VERSION"
         envsubst < debian/changelog.tpl > debian/changelog
         dpkg-buildpackage --target-arch armhf --host-arch armhf -b
+        cp ../wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb ./
     
     - uses: actions/upload-artifact@v1
       with:
         name: debian-package
-        path: "../wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
+        path: "wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
     
     - name: CI publish package
       #if: github.ref == 'refs/heads/master'
       uses: bpicode/github-action-upload-bintray@master
       with:
-        file: "../wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
+        file: "wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
         api_user: balazsgrill
         api_key: "${{ secrets.BINTRAY_APIKEY }}" # An API key can be obtained from the user profile page.
         repository_user: balazsgrill
@@ -65,7 +66,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/v')
       uses: bpicode/github-action-upload-bintray@master
       with:
-        file: "../wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
+        file: "wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
         api_user: balazsgrill
         api_key: "${{ secrets.BINTRAY_APIKEY }}" # An API key can be obtained from the user profile page.
         repository_user: balazsgrill
