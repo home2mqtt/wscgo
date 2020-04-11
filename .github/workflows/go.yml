@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+    - id: dotenv
+      uses: ./.github/actions/dotenv-action
+
     - name: Get current time
       uses: srfrnk/current-time@v1.1.0
       id: current-time
@@ -38,11 +41,10 @@ jobs:
     
     - name: Build
       env:
-        VERSION: "0.5.1-${{ steps.current-time.outputs.formattedTime }}"
         GOOS: "linux"
         GOARCH: "arm"
         GOARM: "5"
-      run: go build -v -ldflags "-X main.Version=$TIME" -trimpath -o wscgo ./cmd/wscgo
+      run: go build -v -ldflags "-X main.Version=${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}" -trimpath -o wscgo ./cmd/wscgo
 
     - uses: actions/upload-artifact@v1
       with:
