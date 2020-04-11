@@ -45,7 +45,7 @@ jobs:
         path: "wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
     
     - name: CI publish package
-      #if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master'
       uses: bpicode/github-action-upload-bintray@master
       with:
         file: "wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
