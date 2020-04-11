@@ -12,45 +12,10 @@ variables:
 
 
 stages:
-  - test
   - build
   - package
   - integration-test
   - deploy
-
-test:rpizw:
-  stage: test
-  variables:
-    GO111MODULE: "on"
-    GOARM: 5
-  before_script:
-    - echo $REPO_NAME
-    - mkdir -p $GOPATH/src/
-    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$(dirname $REPO_NAME)
-    - cd $GOPATH/src/$REPO_NAME
-  script:
-    - go test -v ./devices
-    - go test -v ./protocol
-    - go test -v ./config
-  tags:
-    - grill-tamasi
-    - rpizw
-    - golang  
-
-build:main:
-  stage: build
-  variables:
-    GO111MODULE: "on"
-    GOARM: 5
-  script:
-    - go build -o $CI_PROJECT_DIR/wscgo -ldflags "-X main.Version=${VERSION}" -trimpath ./cmd/wscgo
-  artifacts:
-    paths:
-      - wscgo
-  tags:
-    - grill-tamasi
-    - rpizw
-    - golang
 
 build:rpizw:
   stage: build
@@ -93,20 +58,6 @@ build:opiz:
     - grill-tamasi
     - opiz
     - golang
-  
-package:main:
-  stage: package
-  dependencies:
-    - build:main
-  script:
-    - envsubst < wscgo.cfg.tpl > wscgo.cfg
-    - equivs-build wscgo.cfg
-  artifacts:
-    paths:
-      - "*.deb"
-  tags:
-    - grill-tamasi
-    - equivs    
 
 package:opiz:
   stage: package
@@ -167,7 +118,6 @@ deploy-nightly:
   script:
     - curl -X PUT -T wscgo-opiz_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-opiz/${VERSION}/pool/main/w/wscgo-opiz/wscgo-opiz_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
     - curl -X PUT -T wscgo-rpizw_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo-rpizw/${VERSION}/pool/main/w/wscgo-rpizw/wscgo-rpizw_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
-    - curl -X PUT -T wscgo_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/home/wscgo/${VERSION}/pool/main/w/wscgo/wscgo_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
   only:
     - master
   tags:
@@ -182,7 +132,6 @@ deploy-release:
   script:
     - curl -X PUT -T wscgo-opiz_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/wscgo/wscgo-opiz/${VERSION}/pool/main/w/wscgo-opiz/wscgo-opiz_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
     - curl -X PUT -T wscgo-rpizw_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/wscgo/wscgo-rpizw/${VERSION}/pool/main/w/wscgo-rpizw/wscgo-rpizw_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
-    - curl -X PUT -T wscgo_${VERSION}_armhf.deb -u$BINTRAY_USER:$BINTRAY_APIKEY "https://api.bintray.com/content/balazsgrill/wscgo/wscgo/${VERSION}/pool/main/w/wscgo/wscgo_${VERSION}_armhf.deb;deb_distribution=unstable;deb_component=main;deb_architecture=armhf;publish=1"
   only:
     - tags
   tags:

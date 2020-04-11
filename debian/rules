@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+clean:
+	rm -f wscgo
+
+build:
+	go build -v -ldflags "-X main.Version=$(VERSION)" -trimpath -o wscgo ./cmd/wscgo
+
+binary:
+	mkdir -p debian/wscgo
+	mkdir -p debian/wscgo/usr/bin
+	mkdir -p debian/wscgo/etc/systemd/system
+	sudo cp wscgo debian/wscgo/usr/bin/
+	sudo cp wscgo.ini debian/wscgo/etc/
+	sudo cp wscgo.service debian/wscgo/etc/systemd/system/
+	dh_gencontrol
+	dh_builddeb
