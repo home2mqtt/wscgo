@@ -7,9 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - id: dotenv
-      uses: ./.github/actions/dotenv-action
-
     - name: Get current time
       uses: srfrnk/current-time@v1.1.0
       id: current-time
@@ -24,6 +21,9 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
+
+    - id: dotenv
+      uses: ./.github/actions/dotenv-action
 
     - name: Get dependencies
       run: |
