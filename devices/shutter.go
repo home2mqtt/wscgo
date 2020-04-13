@@ -103,13 +103,11 @@ func (shutter *shutter) stop() error {
 }
 
 func (shutter *shutter) Initialize() error {
-	println("Shutter initialized (isInverted: ", shutter.config.Inverted, ")")
 	shutter.Prev = -1
 	return shutter.stop()
 }
 
 func (shutter *shutter) setCmd(steps int) {
-	println("Command received ", steps)
 	if steps == 0 {
 		//stop
 		shutter.Cmd = 0
