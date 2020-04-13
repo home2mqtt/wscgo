@@ -22,6 +22,7 @@ type ShutterConfig struct {
 	DownPin       string `ini:"downpin"`
 	DirSwitchWait int    `ini:"dirswitchwait"`
 	Range         int    `ini:"range"`
+	Inverted      bool   `ini:"inverted"`
 }
 
 type shutter struct {
@@ -64,6 +65,13 @@ func CreateShutter(config *ShutterConfig) (IShutter, error) {
 	}, nil
 }
 
+func (shutter *shutter) getRealLevel(level gpio.Level) gpio.Level {
+	if shutter.config.Inverted {
+		return !level
+	}
+	return level
+}
+
 func (shutter *shutter) fireEvent() {
 	for _, listener := range shutter.listeners {
 		go listener(shutter.Current)
@@ -71,27 +79,27 @@ func (shutter *shutter) fireEvent() {
 }
 
 func (shutter *shutter) up() error {
-	err := shutter.downPin.Out(gpio.Low) // turn off down
+	err := shutter.downPin.Out(shutter.getRealLevel(gpio.Low)) // turn off down
 	if err != nil {
 		return err
 	}
-	return shutter.upPin.Out(gpio.High) // turn on up
+	return shutter.upPin.Out(shutter.getRealLevel(gpio.High)) // turn on up
 }
 
 func (shutter *shutter) down() error {
-	err := shutter.upPin.Out(gpio.Low) // turn off up
+	err := shutter.upPin.Out(shutter.getRealLevel(gpio.Low)) // turn off up
 	if err != nil {
 		return err
 	}
-	return shutter.downPin.Out(gpio.High) // turn on down
+	return shutter.downPin.Out(shutter.getRealLevel(gpio.High)) // turn on down
 }
 
 func (shutter *shutter) stop() error {
-	err := shutter.upPin.Out(gpio.Low) // turn off up
+	err := shutter.upPin.Out(shutter.getRealLevel(gpio.Low)) // turn off up
 	if err != nil {
 		return err
 	}
-	return shutter.downPin.Out(gpio.Low) // turn on down
+	return shutter.downPin.Out(shutter.getRealLevel(gpio.Low)) // turn on down
 }
 
 func (shutter *shutter) Initialize() error {
