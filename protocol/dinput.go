@@ -1,8 +1,8 @@
 package protocol
 
 import (
+	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/grill-tamasi/wscgo/devices"
 )
 
 type DInputConfig struct {

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/grill-tamasi/wscgo/devices"
+	"github.com/balazsgrill/wscgo/devices"
 )
 
 type testshutter struct {

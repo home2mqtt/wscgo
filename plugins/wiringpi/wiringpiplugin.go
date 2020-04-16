@@ -1,6 +1,6 @@
 package main
 
-import "github.com/grill-tamasi/wscgo/plugins"
+import "github.com/balazsgrill/wscgo/plugins"
 
 func GetAddons() []plugins.Addon {
 	return []plugins.Addon{

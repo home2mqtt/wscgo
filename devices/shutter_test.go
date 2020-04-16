@@ -3,7 +3,7 @@ package devices
 import (
 	"testing"
 
-	"github.com/grill-tamasi/wscgo/tests"
+	"github.com/balazsgrill/wscgo/tests"
 	"periph.io/x/periph/conn/gpio"
 )
 

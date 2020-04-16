@@ -1,3 +1,3 @@
-module github.com/grill-tamasi/wscgo/plugins
+module github.com/balazsgrill/wscgo/plugins
 
 go 1.13

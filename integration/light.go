@@ -1,9 +1,9 @@
 package integration
 
 import (
-	"github.com/grill-tamasi/wscgo/config"
-	"github.com/grill-tamasi/wscgo/devices"
-	"github.com/grill-tamasi/wscgo/protocol"
+	"github.com/balazsgrill/wscgo/config"
+	"github.com/balazsgrill/wscgo/devices"
+	"github.com/balazsgrill/wscgo/protocol"
 )
 
 type lightConfigurationParser struct {

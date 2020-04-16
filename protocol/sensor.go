@@ -3,8 +3,8 @@ package protocol
 import (
 	"fmt"
 
+	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/grill-tamasi/wscgo/devices"
 )
 
 type SensorConfig struct {

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"log"
 
-	"github.com/grill-tamasi/wscgo/plugins"
+	"github.com/balazsgrill/wscgo/plugins"
 )
 
 type Pca9685Config struct {

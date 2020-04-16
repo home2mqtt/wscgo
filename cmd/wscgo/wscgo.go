@@ -5,12 +5,12 @@ import (
 	"os"
 	"time"
 
+	"github.com/balazsgrill/wscgo/config"
+	"github.com/balazsgrill/wscgo/devices"
+	"github.com/balazsgrill/wscgo/protocol"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/grill-tamasi/wscgo/config"
-	"github.com/grill-tamasi/wscgo/devices"
-	"github.com/grill-tamasi/wscgo/protocol"
 
-	_ "github.com/grill-tamasi/wscgo/integration"
+	_ "github.com/balazsgrill/wscgo/integration"
 )
 
 type wscgoInstance struct {

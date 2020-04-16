@@ -5,9 +5,9 @@ import (
 	"os"
 	"plugin"
 
-	"github.com/grill-tamasi/wscgo/devices"
-	"github.com/grill-tamasi/wscgo/plugins"
-	"github.com/grill-tamasi/wscgo/protocol"
+	"github.com/balazsgrill/wscgo/devices"
+	"github.com/balazsgrill/wscgo/plugins"
+	"github.com/balazsgrill/wscgo/protocol"
 )
 
 type DeviceInitializer func(RuntimeContext) error
