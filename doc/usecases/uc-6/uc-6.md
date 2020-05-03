@@ -12,6 +12,9 @@ Some relay boards<sup>[(1)][1]</sup> have low-active inputs which require invert
 [mqtt]
 host = tcp://127.0.0.1:1883
 
+[plugin]
+path = /usr/local/lib/wscgo-wpi-rpizw.so
+
 [mcp23017]
 address = 0x20
 expansionBase = 100

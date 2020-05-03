@@ -19,9 +19,24 @@ clientid = uniqueclientid123
 
 ## IO extenders
 
-Currently only MCP23017 is supported. More is coming soon.
+### WiringPi plugin
+
+IO extenders are accessible via platform-dependent plugin using WiringPi.
 
 ```ini
+# Rasperry Pi Zero
+[plugin]
+path = /usr/local/lib/wscgo-wpi-rpizw.so
+
+# Orange Pi Zero
+[plugin]
+path = /usr/local/lib/wscgo-wpi-opiz.so
+```
+
+### MCP23017
+
+```ini
+# Creates Pins 100-115
 [mcp23017]
 address = 0x20
 expansionBase = 100
@@ -69,7 +84,7 @@ Example:
 ```ini
 [dinput:1]
 name = Button
-topic = home/f1/button1
+state_topic = home/f1/button1
 pin = 102
 ```
 

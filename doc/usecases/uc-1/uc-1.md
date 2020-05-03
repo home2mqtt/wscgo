@@ -5,6 +5,9 @@
 ## Configuration
 
 ```ini
+[mqtt]
+host = tcp://127.0.0.1:1883
+
 [switch:0]
 name = Relay
 topic = home/relay/0
