@@ -22,7 +22,7 @@ jobs:
     - name: Install cross-compiling tools
       run: |
         sudo apt update
-        sudo apt-get install -y gcc-arm-linux-gnueabi
+        sudo apt-get install -y gcc-arm-linux-gnueabihf
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
