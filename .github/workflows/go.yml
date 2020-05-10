@@ -13,6 +13,9 @@ jobs:
       with:
         format: YYYYMMDDHHss
 
+    - name: Install cross-compiling tools
+      run: sudo apt install -y gcc-arm-linux-gnueabi
+
     - name: Set up Go 1.13
       uses: actions/setup-go@v1
       with:
@@ -45,6 +48,7 @@ jobs:
         GOARCH: "arm"
         GOARM: "5"
         CGO_ENABLED: "1"
+        CC: "arm-linux-gnueabi-gcc"
       run: go build -v -ldflags "-X main.Version=${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}" -trimpath -o wscgo ./cmd/wscgo
 
     - uses: actions/upload-artifact@v1

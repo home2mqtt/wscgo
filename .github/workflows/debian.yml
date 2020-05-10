@@ -19,6 +19,9 @@ jobs:
         go-version: 1.13
       id: go
 
+    - name: Install cross-compiling tools
+      run: sudo apt install -y gcc-arm-linux-gnueabi
+
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
@@ -34,6 +37,7 @@ jobs:
         GOARCH: "arm"
         GOARM: "5"
         CGO_ENABLED: "1"
+        CC: "arm-linux-gnueabi-gcc"
       run: |
         echo "Version: $VERSION"
         envsubst < debian/changelog.tpl > debian/changelog
