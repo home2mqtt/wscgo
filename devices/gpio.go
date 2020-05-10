@@ -41,6 +41,7 @@ func CreateOutput(config *OutputConfig) (IOutput, error) {
 	if pin == nil {
 		return nil, invalidPinError(config.Pin)
 	}
+	pin = CachedPin(pin, 100)
 	return &output{
 		PinOut: pin,
 	}, nil

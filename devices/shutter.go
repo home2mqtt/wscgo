@@ -48,10 +48,12 @@ func CreateShutter(config *ShutterConfig) (IShutter, error) {
 	if uppin == nil {
 		return nil, invalidPinError(config.UpPin)
 	}
+	uppin = CachedPin(uppin, 100)
 	downpin := gpioreg.ByName(config.DownPin)
 	if downpin == nil {
 		return nil, invalidPinError(config.DownPin)
 	}
+	downpin = CachedPin(downpin, 100)
 	return &shutter{
 		upPin:       uppin,
 		downPin:     downpin,

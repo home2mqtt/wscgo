@@ -13,3 +13,4 @@ name = Button
 state_topic = home/relay/0
 pin = GPIO23
 ```
+

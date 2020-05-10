@@ -13,3 +13,6 @@ name = Relay
 topic = home/relay/0
 pin = GPIO23
 ```
+
+> Relay by [arduinomodules](https://arduinomodules.info/ky-019-5v-relay-module/)\
+> Bulb by [alfreddagenais](https://github.com/alfreddagenais/fritzing-components/)

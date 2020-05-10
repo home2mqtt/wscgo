@@ -41,11 +41,13 @@ func CreateDimmer(config *DimmerConfig) (IDimmer, error) {
 		if onpin == nil {
 			return nil, invalidPinError(config.OnPin)
 		}
+		onpin = CachedPin(onpin, 1000)
 	}
 	pwmpin := gpioreg.ByName(config.PwmPin)
 	if pwmpin == nil {
 		return nil, invalidPinError(config.PwmPin)
 	}
+	pwmpin = CachedPin(pwmpin, 1000)
 	return &dimmer{
 		onPin:  onpin,
 		pwmPin: pwmpin,

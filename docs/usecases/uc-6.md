@@ -2,7 +2,7 @@
 
 Some relay boards<sup>[(1)][1]</sup> have low-active inputs which require inverted output logic.
 
-> :warning: Low-active modules requires driven sink output, don't connect 5V boards directly to Raspberry Pi!
+> WARNING! Low-active modules requires driven sink output, don't connect 5V boards directly to Raspberry Pi!
 
 ![Shutter connection schematic](./shutter_connection_bb.png)
 
