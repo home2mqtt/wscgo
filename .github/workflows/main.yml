@@ -1,4 +1,4 @@
-name: Debian
+name: Main
 on: [push]
 jobs:
 
@@ -30,6 +30,12 @@ jobs:
     - id: dotenv
       uses: falti/dotenv-action@v0.2.3
 
+    - name: Test
+      run: |
+        go test -v ./devices
+        go test -v ./protocol
+        go test -v ./config
+
     - name: Package
       env:
         VERSION: "${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}"
@@ -44,6 +50,11 @@ jobs:
         dpkg-buildpackage --target-arch armhf --host-arch armhf -b
         cp ../wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb ./
     
+    - uses: actions/upload-artifact@v1
+      with:
+        name: binary
+        path: "wscgo"
+
     - uses: actions/upload-artifact@v1
       with:
         name: debian-package
