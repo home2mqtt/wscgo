@@ -33,6 +33,7 @@ jobs:
         GOOS: "linux"
         GOARCH: "arm"
         GOARM: "5"
+        CGO_ENABLED: "1"
       run: |
         echo "Version: $VERSION"
         envsubst < debian/changelog.tpl > debian/changelog

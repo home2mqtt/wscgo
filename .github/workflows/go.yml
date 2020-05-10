@@ -44,6 +44,7 @@ jobs:
         GOOS: "linux"
         GOARCH: "arm"
         GOARM: "5"
+        CGO_ENABLED: "1"
       run: go build -v -ldflags "-X main.Version=${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}" -trimpath -o wscgo ./cmd/wscgo
 
     - uses: actions/upload-artifact@v1
