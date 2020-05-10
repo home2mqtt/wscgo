@@ -1,8 +1,7 @@
 # wscgo
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/balazsgrill/wscgo)](https://goreportcard.com/report/github.com/balazsgrill/wscgo)
-![Build status](https://github.com/balazsgrill/wscgo/workflows/Go/badge.svg)
-![Build status](https://github.com/balazsgrill/wscgo/workflows/Debian/badge.svg)
+![Build status](https://github.com/balazsgrill/wscgo/workflows/Main/badge.svg)
 
 wscgo is a highly configurable controller intended for home automation written in Go. Supported 
 platforms include [Raspberry Pi Zero W](https://www.raspberrypi.org/products/raspberry-pi-zero-w/) 

@@ -9,6 +9,7 @@ import (
 	"github.com/balazsgrill/wscgo/devices"
 	"github.com/balazsgrill/wscgo/protocol"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/google/periph/host"
 
 	_ "github.com/balazsgrill/wscgo/integration"
 )
@@ -119,6 +120,7 @@ func main() {
 	if len(args) != 1 {
 		log.Fatal("usage: wscgo config.ini")
 	}
+	_, err := host.Init()
 	conf := config.LoadConfig(args[0])
 
 	instance := CreateWscgo(conf)
