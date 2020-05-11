@@ -9,6 +9,7 @@ package pca9685
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math"
 	"time"
 
@@ -108,6 +109,7 @@ func (p *pin) PWM(duty gpio.Duty, freq physic.Frequency) error {
 	if scaled > dutyMax {
 		scaled = dutyMax
 	}
+	log.Printf("PWM value is set to 0x%x\n", scaled)
 	return p.dev.SetPwm(p.channel, 0, scaled)
 }
 
