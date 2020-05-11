@@ -7,23 +7,19 @@ import (
 	"periph.io/x/periph/conn/gpio"
 )
 
-const DimmerMaxValue = 1023
-
-func checkDimmerPins(msg string, t *testing.T, io *tests.TestIo, on gpio.Level, pwm int) {
-	scaling := int(gpio.DutyMax) / 1024
-	if io.Pins[0].L != on || io.Pins[1].D != gpio.Duty(pwm*scaling) {
-		t.Errorf("%s ON[exp-actal]: %v - %v, PWM[exp-actal]: %v - %v\n", msg, on, io.Pins[0].L, (pwm * scaling), io.Pins[1].D)
+func checkDimmerPins(msg string, t *testing.T, io *tests.TestIo, on gpio.Level, pwm gpio.Duty) {
+	if io.Pins[0].L != on || io.Pins[1].D != pwm {
+		t.Errorf("%s ON[exp-actal]: %v - %v, PWM[exp-actal]: %v - %v\n", msg, on, io.Pins[0].L, pwm, io.Pins[1].D)
 	}
 }
 
 func createDimmerForTest() (*dimmer, *tests.TestIo) {
 	io := tests.CreateTestIo(3)
 	c := &DimmerConfig{
-		OnPin:      "Test_0",
-		PwmPin:     "Test_1",
-		Speed:      10,
-		OnDelay:    5,
-		Resolution: DimmerMaxValue + 1,
+		OnPin:   "Test_0",
+		PwmPin:  "Test_1",
+		Speed:   8192,
+		OnDelay: 5,
 	}
 	id, _ := CreateDimmer(c)
 	d, _ := id.(*dimmer)
@@ -33,12 +29,11 @@ func createDimmerForTest() (*dimmer, *tests.TestIo) {
 func createInvertedDimmerForTest() (*dimmer, *tests.TestIo) {
 	io := tests.CreateTestIo(3)
 	c := &DimmerConfig{
-		OnPin:      "Test_0",
-		PwmPin:     "Test_1",
-		Speed:      10,
-		OnDelay:    5,
-		Inverted:   true,
-		Resolution: DimmerMaxValue + 1,
+		OnPin:    "Test_0",
+		PwmPin:   "Test_1",
+		Speed:    8192,
+		OnDelay:  5,
+		Inverted: true,
 	}
 	id, _ := CreateDimmer(c)
 	d, _ := id.(*dimmer)
@@ -78,7 +73,7 @@ func TestDimmerOn(t *testing.T) {
 	}
 
 	for i := 0; i < 200; i++ {
-		expected := min(i*10, DimmerMaxValue)
+		expected := min(gpio.Duty(i)*gpio.Duty(d.config.Speed), gpio.DutyMax)
 		checkDimmerPins("On ", t, io, true, expected)
 		d.Tick()
 	}
@@ -94,7 +89,7 @@ func TestDimmerOnInverted(t *testing.T) {
 	}
 
 	for i := 0; i < 200; i++ {
-		expected := DimmerMaxValue - min(i*10, DimmerMaxValue)
+		expected := gpio.DutyMax - min(gpio.Duty(i)*gpio.Duty(d.config.Speed), gpio.DutyMax)
 		checkDimmerPins("On ", t, io, true, expected)
 		d.Tick()
 	}
@@ -103,14 +98,14 @@ func TestDimmerOnInverted(t *testing.T) {
 func TestDimmerOff(t *testing.T) {
 	d, io := createDimmerForTest()
 	d.Initialize()
-	d.target = DimmerMaxValue
-	d.current = DimmerMaxValue
+	d.target = gpio.DutyMax
+	d.current = gpio.DutyMax
 	d.actuate()
 
 	d.Off()
 
-	for i := 0; i < 200; i++ {
-		expected := max(DimmerMaxValue-i*10, 0)
+	for i := 0; i < 2000; i++ {
+		expected := max(gpio.DutyMax-gpio.Duty(i)*gpio.Duty(d.config.Speed), 0)
 		checkDimmerPins("Off ", t, io, expected > 0, expected)
 		d.Tick()
 	}
@@ -119,15 +114,15 @@ func TestDimmerOff(t *testing.T) {
 func TestDimmerOffInverted(t *testing.T) {
 	d, io := createInvertedDimmerForTest()
 	d.Initialize()
-	d.target = DimmerMaxValue
-	d.current = DimmerMaxValue
+	d.target = gpio.DutyMax
+	d.current = gpio.DutyMax
 	d.actuate()
 
 	d.Off()
 
-	for i := 0; i < 200; i++ {
-		expected := DimmerMaxValue - max(DimmerMaxValue-i*10, 0)
-		checkDimmerPins("Off ", t, io, expected < DimmerMaxValue, expected)
+	for i := 0; i < 2000; i++ {
+		expected := gpio.DutyMax - max(gpio.DutyMax-gpio.Duty(i)*gpio.Duty(d.config.Speed), 0)
+		checkDimmerPins("Off ", t, io, expected < gpio.DutyMax, expected)
 		d.Tick()
 	}
 }

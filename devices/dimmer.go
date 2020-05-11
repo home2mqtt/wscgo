@@ -9,20 +9,19 @@ import (
 const frequency physic.Frequency = 1000
 
 type DimmerConfig struct {
-	PwmPin     string `ini:"pwmpin"`
-	OnPin      string `ini:"onpin"`
-	Speed      int    `ini:"speed"`
-	OnDelay    int    `ini:"ondelay"`
-	Inverted   bool   `ini:"inverted"`
-	Resolution int    `ini:"resolution"`
+	PwmPin   string `ini:"pwmpin"`
+	OnPin    string `ini:"onpin"`
+	Speed    int32  `ini:"speed"`
+	OnDelay  int    `ini:"ondelay"`
+	Inverted bool   `ini:"inverted"`
 }
 
 type dimmer struct {
 	onPin        gpio.PinOut
 	pwmPin       gpio.PinOut
 	config       *DimmerConfig
-	current      int
-	target       int
+	current      gpio.Duty
+	target       gpio.Duty
 	delaycounter int
 }
 
@@ -30,8 +29,7 @@ type IDimmer interface {
 	Device
 	On()
 	Off()
-	SetBrightness(value int)
-	BrightnessResolution() int
+	SetBrightness(value gpio.Duty)
 }
 
 func CreateDimmer(config *DimmerConfig) (IDimmer, error) {
@@ -69,21 +67,17 @@ func (dimmer *dimmer) Initialize() error {
 	return nil
 }
 
-func (dimmer *dimmer) BrightnessResolution() int {
-	return dimmer.config.Resolution
-}
-
 func (dimmer *dimmer) On() {
-	dimmer.SetBrightness(dimmer.config.Resolution - 1)
+	dimmer.SetBrightness(gpio.DutyMax - 1)
 }
 
 func (dimmer *dimmer) Off() {
 	dimmer.SetBrightness(0)
 }
 
-func (dimmer *dimmer) SetBrightness(target int) {
-	if target > dimmer.config.Resolution-1 {
-		dimmer.target = dimmer.config.Resolution - 1
+func (dimmer *dimmer) SetBrightness(target gpio.Duty) {
+	if target > gpio.DutyMax-1 {
+		dimmer.target = gpio.DutyMax - 1
 	} else {
 		if target < 0 {
 			dimmer.target = 0
@@ -97,14 +91,14 @@ func (dimmer *dimmer) SetBrightness(target int) {
 	}
 }
 
-func min(v1 int, v2 int) int {
+func min(v1 gpio.Duty, v2 gpio.Duty) gpio.Duty {
 	if v1 > v2 {
 		return v2
 	}
 	return v1
 }
 
-func max(v1 int, v2 int) int {
+func max(v1 gpio.Duty, v2 gpio.Duty) gpio.Duty {
 	if v1 < v2 {
 		return v2
 	}
@@ -117,11 +111,11 @@ func (dimmer *dimmer) adjustCurrent() {
 		return
 	}
 	if dimmer.target > dimmer.current {
-		dimmer.current = min(dimmer.target, dimmer.current+dimmer.config.Speed)
+		dimmer.current = min(dimmer.target, dimmer.current+gpio.Duty(dimmer.config.Speed))
 		return
 	}
 	if dimmer.target < dimmer.current {
-		dimmer.current = max(dimmer.target, dimmer.current-dimmer.config.Speed)
+		dimmer.current = max(dimmer.target, dimmer.current-gpio.Duty(dimmer.config.Speed))
 		return
 	}
 }
@@ -129,10 +123,9 @@ func (dimmer *dimmer) adjustCurrent() {
 func (dimmer *dimmer) actuate() error {
 	pwmvalue := dimmer.current
 	if dimmer.config.Inverted {
-		pwmvalue = (dimmer.config.Resolution - 1) - pwmvalue
+		pwmvalue = gpio.DutyMax - pwmvalue
 	}
-	scaling := int(gpio.DutyMax) / dimmer.BrightnessResolution()
-	err := dimmer.pwmPin.PWM(gpio.Duty(pwmvalue*scaling), frequency)
+	err := dimmer.pwmPin.PWM(pwmvalue, frequency)
 	if err != nil {
 		return err
 	}
