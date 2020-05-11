@@ -4,16 +4,13 @@ import (
 	"github.com/balazsgrill/wscgo/config"
 	"github.com/balazsgrill/wscgo/devices"
 	"github.com/balazsgrill/wscgo/protocol"
-	"periph.io/x/periph/conn/gpio"
 )
 
 type lightConfigurationParser struct {
 }
 
 func (*lightConfigurationParser) ParseConfiguration(section config.ConfigurationSection, context config.ConfigurationContext) error {
-	s := &devices.DimmerConfig{
-		Resolution: gpio.DutyMax,
-	}
+	s := &devices.DimmerConfig{}
 	if err := section.FillData(s); err != nil {
 		return err
 	}

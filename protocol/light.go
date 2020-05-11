@@ -1,12 +1,14 @@
 package protocol
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
 
 	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"periph.io/x/periph/conn/gpio"
 )
 
 type LightConfig struct {
@@ -24,7 +26,7 @@ type lightDiscoveryInfo struct {
 	CommandTopic           string `json:"command_topic,omitempty"`
 	Name                   string `json:"name,omitempty"`
 	BrightnessCommandTopic string `json:"brightness_command_topic,omitempty"`
-	BrightnessScale        int    `json:"brightness_scale"`
+	BrightnessScale        int32  `json:"brightness_scale"`
 	BrightnessStateTopic   string `json:"brightness_state_topic,omitempty"`
 	OnCommandType          string `json:"on_command_type,omitempty"`
 	StateTopic             string `json:"state_topic,omitempty"`
@@ -51,23 +53,23 @@ func (light *light) onMsgReceive(client mqtt.Client, msg mqtt.Message) {
 	switch cmd {
 	case "ON":
 		light.On()
-		light.fireBrightnessEvent(client, light.BrightnessResolution()-1)
+		light.fireBrightnessEvent(client, gpio.DutyMax-1)
 	case "OFF":
 		light.Off()
 		light.fireBrightnessEvent(client, 0)
 	default:
-		value, err := strconv.Atoi(string(msg.Payload()))
+		value, err := strconv.ParseInt(string(msg.Payload()), 10, 32)
 		if err == nil {
-			light.SetBrightness(value)
-			light.fireBrightnessEvent(client, value)
+			light.SetBrightness(gpio.Duty(value))
+			light.fireBrightnessEvent(client, gpio.Duty(value))
 		} else {
 			log.Println("WARNING: Light ", light.Name, " received unkown command: ", cmd)
 		}
 	}
 }
 
-func (light *light) fireBrightnessEvent(client mqtt.Client, brightness int) {
-	client.Publish(light.CommandTopic+"/brightness", 0, false, strconv.Itoa(brightness))
+func (light *light) fireBrightnessEvent(client mqtt.Client, brightness gpio.Duty) {
+	client.Publish(light.CommandTopic+"/brightness", 0, false, fmt.Sprintf("%d", brightness))
 }
 
 func (light *light) GetComponent() string {
@@ -87,7 +89,7 @@ func (light *light) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInf
 		Name:                   light.Name,
 		CommandTopic:           light.CommandTopic,
 		BrightnessCommandTopic: light.CommandTopic,
-		BrightnessScale:        light.BrightnessResolution() - 1,
+		BrightnessScale:        int32(gpio.DutyMax) - 1,
 		BrightnessStateTopic:   light.CommandTopic + "/brightness",
 		OnCommandType:          "brightness",
 	}
