@@ -4,10 +4,9 @@ import (
 	"log"
 
 	"github.com/balazsgrill/wscgo/config"
-	pcapins "github.com/balazsgrill/wscgo/periph/pca9685"
+	"github.com/balazsgrill/wscgo/periph/pca9685"
 	"periph.io/x/periph/conn/i2c/i2creg"
 	"periph.io/x/periph/conn/physic"
-	"periph.io/x/periph/experimental/devices/pca9685"
 )
 
 type pca9685ConfigParser struct{}
@@ -37,7 +36,7 @@ func (*pca9685ConfigParser) ParseConfiguration(section config.ConfigurationSecti
 			return err
 		}
 		log.Printf("Configured pca9685 at 0x%x", c.Address)
-		return pcapins.RegisterPins(dev)
+		return dev.RegisterPins()
 	})
 	return nil
 }

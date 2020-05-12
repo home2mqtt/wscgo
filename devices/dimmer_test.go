@@ -1,6 +1,7 @@
 package devices
 
 import (
+	"log"
 	"testing"
 
 	"github.com/balazsgrill/wscgo/tests"
@@ -38,6 +39,12 @@ func createInvertedDimmerForTest() (*dimmer, *tests.TestIo) {
 	id, _ := CreateDimmer(c)
 	d, _ := id.(*dimmer)
 	return d, io
+}
+
+func TestScale(t *testing.T) {
+	value := gpio.DutyMax
+	log.Printf("%d", value)
+	log.Printf("%d", value>>8)
 }
 
 func TestDimmerInit(t *testing.T) {

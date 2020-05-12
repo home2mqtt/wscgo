@@ -1,15 +1,12 @@
 // Copyright 2020 The Periph Authors. All rights reserved.
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
-//
-// This file is copied from periph until a release is published
 
 package pca9685
 
 import (
 	"errors"
 	"fmt"
-	"log"
 	"math"
 	"time"
 
@@ -17,7 +14,6 @@ import (
 	"periph.io/x/periph/conn/gpio/gpioreg"
 	"periph.io/x/periph/conn/physic"
 	gpiopin "periph.io/x/periph/conn/pin"
-	"periph.io/x/periph/experimental/devices/pca9685"
 )
 
 const (
@@ -25,12 +21,12 @@ const (
 )
 
 type pin struct {
-	dev     *pca9685.Dev
+	dev     *Dev
 	channel int
 }
 
 // CreatePin creates a gpio handle for the given channel.
-func CreatePin(d *pca9685.Dev, channel int) (gpio.PinIO, error) {
+func (d *Dev) CreatePin(channel int) (gpio.PinIO, error) {
 	if channel < 0 || channel >= 16 {
 		return nil, errors.New("PCA9685: Valid channel range is 0..15")
 	}
@@ -43,13 +39,24 @@ func CreatePin(d *pca9685.Dev, channel int) (gpio.PinIO, error) {
 // RegisterPins makes PWM channels available as PWM pins in the pin registry
 //
 // Pin names have the following format: PCA9685_<HexAddress>_<channel> (e.g. PCA9685_40_11)
-func RegisterPins(d *pca9685.Dev) error {
+func (d *Dev) RegisterPins() error {
 	for i := 0; i < 16; i++ {
-		pin, err := CreatePin(d, i)
+		pin, err := d.CreatePin(i)
 		if err != nil {
 			return err
 		}
 		if err = gpioreg.Register(pin); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// UnregisterPins remove all previously created pin handles of this device from the GPIO registry
+func (d *Dev) UnregisterPins() error {
+	for i := 0; i < 16; i++ {
+		err := gpioreg.Unregister(d.pinName(i))
+		if err != nil {
 			return err
 		}
 	}
@@ -64,8 +71,12 @@ func (p *pin) Halt() error {
 	return p.Out(gpio.Low)
 }
 
+func (d *Dev) pinName(channel int) string {
+	return fmt.Sprintf("PCA9685_%x_%d", d.dev.Addr, channel)
+}
+
 func (p *pin) Name() string {
-	return fmt.Sprintf("PCA9685_%d", p.channel)
+	return p.dev.pinName(p.channel)
 }
 
 func (p *pin) Number() int {
@@ -104,12 +115,20 @@ func (p *pin) PWM(duty gpio.Duty, freq physic.Frequency) error {
 	if err := p.dev.SetPwmFreq(freq); err != nil {
 		return err
 	}
-	// PWM duty scaled down from 24 to 16 bits
-	scaled := duty >> 8
+
+	if duty == gpio.DutyMax {
+		return p.dev.SetFullOn(p.channel)
+	}
+
+	if duty == 0 {
+		return p.dev.SetFullOff(p.channel)
+	}
+
+	// PWM duty scaled down from 24 to 12 bits
+	scaled := duty >> 12
 	if scaled > dutyMax {
 		scaled = dutyMax
 	}
-	log.Printf("PWM value is set to 0x%x\n", scaled)
 	return p.dev.SetPwm(p.channel, 0, scaled)
 }
 
