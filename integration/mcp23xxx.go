@@ -8,7 +8,9 @@ import (
 	"periph.io/x/periph/conn/i2c/i2creg"
 )
 
-type mcp23xxxConfigParser struct{}
+type mcp23xxxConfigParser struct {
+	variant mcp23xxx.Variant
+}
 
 type Mcp23xxxConfig struct {
 	Address int `ini:"address"`
@@ -36,5 +38,7 @@ func (*mcp23xxxConfigParser) ParseConfiguration(section config.ConfigurationSect
 }
 
 func init() {
-	config.RegisterConfigurationPartParser("mcp23017", &mcp23xxxConfigParser{})
+	config.RegisterConfigurationPartParser("mcp23017", &mcp23xxxConfigParser{
+		variant: mcp23xxx.MCP23017,
+	})
 }

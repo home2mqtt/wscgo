@@ -31,7 +31,7 @@ func (*pca9685ConfigParser) ParseConfiguration(section config.ConfigurationSecti
 		if err != nil {
 			return err
 		}
-		err = dev.SetPwmFreq(physic.Frequency(c.Frequency))
+		err = dev.SetPwmFreq(physic.Frequency(c.Frequency) * physic.Hertz)
 		if err != nil {
 			return err
 		}

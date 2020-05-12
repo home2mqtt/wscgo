@@ -6,7 +6,7 @@ import (
 	"periph.io/x/periph/conn/physic"
 )
 
-const frequency physic.Frequency = 1000
+const frequency physic.Frequency = physic.KiloHertz
 
 type DimmerConfig struct {
 	PwmPin   string `ini:"pwmpin"`
