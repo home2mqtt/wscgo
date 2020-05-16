@@ -8,17 +8,13 @@
 [mqtt]
 host = tcp://127.0.0.1:1883
 
-[plugin]
-path = /usr/local/lib/wscgo-wpi-rpizw.so
-
 [mcp23017]
 address = 0x20
-expansionBase = 100
 
 [switch:0]
 name = Relay
 topic = home/relay/0
-pin = 100
+pin = MCP23017_20_PORTA_0
 ```
 
 > Relay by [arduinomodules](https://arduinomodules.info/ky-019-5v-relay-module/)\

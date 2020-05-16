@@ -8,15 +8,11 @@
 [mqtt]
 host = tcp://127.0.0.1:1883
 
-[plugin]
-path = /usr/local/lib/wscgo-wpi-rpizw.so
-
 [mcp23017]
 address = 0x20
-expansionBase = 100
 
 [dinput:0]
 name = Button
 state_topic = home/relay/0
-pin = 100
+pin = MCP23017_20_PORTA_0
 ```

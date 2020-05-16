@@ -12,19 +12,15 @@ Some relay boards<sup>[(1)][1]</sup> have low-active inputs which require invert
 [mqtt]
 host = tcp://127.0.0.1:1883
 
-[plugin]
-path = /usr/local/lib/wscgo-wpi-rpizw.so
-
 [mcp23017]
 address = 0x20
-expansionBase = 100
 
 [shutter:0]
 name = testShutter
 topic = test/shutter/0
 position_topic = test/shutter/0/state
-uppin = 100
-downpin = 101
+uppin = MCP23017_20_PORTA_0
+downpin = MCP23017_20_PORTA_1
 dirswitchwait = 20
 range = 120
 inverted = true
