@@ -1,12 +1,9 @@
 package config
 
 import (
-	"log"
 	"os"
-	"plugin"
 
 	"github.com/balazsgrill/wscgo/devices"
-	"github.com/balazsgrill/wscgo/plugins"
 	"github.com/balazsgrill/wscgo/protocol"
 )
 
@@ -66,25 +63,4 @@ func defaultConfiguration() *WscgoConfiguration {
 			Host: "tcp://localhost:1883",
 		},
 	}
-}
-
-func (pc *WscgoPluginConfiguration) Load() error {
-	log.Printf("Loading %s\n", pc.Path)
-	p, err := plugin.Open(pc.Path)
-	if err != nil {
-		return err
-	}
-	s, err := p.Lookup(plugins.AddonsGetterName)
-	if err != nil {
-		return err
-	}
-	f := s.(func() []plugins.Addon)
-	addons := f()
-	for _, a := range addons {
-		err = loadAddon(a)
-		if err != nil {
-			log.Printf("Error loading addon from plugin: %v", err)
-		}
-	}
-	return nil
 }
