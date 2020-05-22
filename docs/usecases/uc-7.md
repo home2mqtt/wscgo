@@ -1,4 +1,4 @@
-# UC-8 Dimmed light without galvanic isolation
+# UC-8 Dimmed light with galvanic isolation
 
 In this scenario the power supply of the raspberry pi and the LED is galvanically isolated.
 

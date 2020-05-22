@@ -9,6 +9,14 @@ wscgo /etc/wscgo.ini
 
 ## MQTT
 
+| Paramerer | Unit | Description |
+| --- | --- | --- |
+| host | urk | URL of MQTT broker |
+| user | string | (optional) username to use for authentication |
+| password | string | (optional) password to use for authentication |
+| clientid | string | (optional) client ID. Randomly generated if omitted |
+
+
 ```ini
 [mqtt]
 host = tcp://192.168.0.1:1883
@@ -19,30 +27,33 @@ clientid = uniqueclientid123
 
 ## IO extenders
 
-### WiringPi plugin
-
-IO extenders are accessible via platform-dependent plugin using WiringPi.
-
-```ini
-# Rasperry Pi Zero
-[plugin]
-path = /usr/local/lib/wscgo-wpi-rpizw.so
-
-# Orange Pi Zero
-[plugin]
-path = /usr/local/lib/wscgo-wpi-opiz.so
-```
-
 ### MCP23017
 
 ```ini
-# Creates Pins 100-115
+# Creates Pins MCP23017_<AddressHex>_PORT<A|B>_<0-7> e.g. MCP23017_20_PORTA_1
 [mcp23017]
 address = 0x20
-expansionBase = 100
+```
+
+### PCA9685
+
+```ini
+# Initializes device with the given frequency and creates pins
+# PCA9685_<AddressHex>_<0-15> e.g. PCA9685_40_0
+[pca9685]
+address = 0x40
+frequency = 1000
 ```
 
 ## Supported devices
+
+### Pin IDs
+
+Pins are identified by string IDs as detected on the running platform or registered via IO extender configurations.
+
+On raspberry Pi, IO headers available are detected.
+* See [GPIO of BCM283x](https://godoc.org/periph.io/x/periph/host/bcm283x#Pin) 
+* and [Headers exposed on RPi](https://godoc.org/periph.io/x/periph/host/rpi)
 
 ### Digital output
 
@@ -79,7 +90,7 @@ Presented to Home assistant as a [switch](https://www.home-assistant.io/integrat
 | --- | --- | --- |
 | name | string | Device name |
 | topic | string | Mqtt topic to report state |
-| pin | int | wiringpi pin |
+| pin | string | pin ID |
 
 State payload
 * ON
@@ -107,11 +118,11 @@ Presented to Home assistant as a [binary sensor](https://www.home-assistant.io/i
 | name | string | Device name |
 | topic | string | Mqtt topic to receive commands |
 | position_topic | string | Mqtt topic to report estimated position |
-| uppin | int | pin to open shutter |
-| downpin | int | pin to close shutter |
+| uppin | string | pin ID to open shutter |
+| downpin | string | pin ID to close shutter |
 | dirswitchwait | int (100ms) | minimal time to wait between direction change |
 | range | int (100ms) | Time needed to fully close/open shutter - used to estimate position |
-| opt_groupTopic | string | (optional) additional topic intended to receive commands. The same topic may be set to multple shutters |
+| inverted | bool | (optional, default is false) indicates to use low-active logic for output |
 
 Command payload:
 * OPEN
@@ -131,8 +142,8 @@ Example:
 name = Window 1
 topic = home/f1/shutter/4
 position_topic = home/f1/shutter/4/state
-uppin = 103
-downpin = 104
+uppin = MCP23017_27_PORTA_0
+downpin = MCP23017_27_PORTA_1
 dirswitchwait = 20
 range = 120
 ```
@@ -141,14 +152,17 @@ Presented to Home assistant as a [cover](https://www.home-assistant.io/integrati
 
 ### Dimmable light
 
+* [UC-7 Dimmed LED light with external PSU and galvanic isolation](uc-7.md) 
+* [UC-8 Dimmed LED light with common ground](uc-8.md)
+
 | Paramerer | Unit | Description |
 | --- | --- | --- |
 | name | string | Device name |
 | topic | string | Mqtt topic to receive commands |
-| onpin | int | (optional) wiringpi pin to enable or disable light |
-| pwmpin | int | wiringpi pin to use as PWM output |
+| onpin | string | (optional) pin ID to enable or disable power source of the light |
+| pwmpin | string | pin ID to use as PWM output |
 | ondelay | int (100 ms) | (optional, default is 0) Delay after setting onpin to high and before raising pwm output to allow the external PSU to settle |
-| inverted | bool | (optional, default is false) if set, PWM output is inverted |
+| inverted | bool | (optional, default is false) if set, PWM output configured as low-active |
 | speed | int | Maximum PWM value change by tick (100ms) |
 
 Command payload:
@@ -167,10 +181,6 @@ inverted=true
 ```
 
 Presented to Home assistant as a [light](https://www.home-assistant.io/integrations/light.mqtt).
-
-#### Note on PWM output
-
-Wscgo tries to determine whether hardware PWM is available on the used pin, otherwise it falls back to software PWM. Via IO extenders, software PWM is disabled.
 
 ## Using with Home Assistant
 
