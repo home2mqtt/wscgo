@@ -11,7 +11,7 @@ wscgo /etc/wscgo.ini
 
 | Paramerer | Unit | Description |
 | --- | --- | --- |
-| host | urk | URL of MQTT broker |
+| host | url | URL of MQTT broker |
 | user | string | (optional) username to use for authentication |
 | password | string | (optional) password to use for authentication |
 | clientid | string | (optional) client ID. Randomly generated if omitted |
@@ -27,12 +27,25 @@ clientid = uniqueclientid123
 
 ## IO extenders
 
-### MCP23017
+### MCP23xxx
+
+Supported members of MCP23xxx family: 
+* I2C: MCP23008, MCP23009, MCP23016, MCP23017, MCP23018
+* SPI: MCP23S08, MCP23S09, MCP23S17, MCP23S18
+
+| Paramerer | Unit | Description |
+| --- | --- | --- |
+| address | int | (Only for I2C device) I2C address |
 
 ```ini
 # Creates Pins MCP23017_<AddressHex>_PORT<A|B>_<0-7> e.g. MCP23017_20_PORTA_1
 [mcp23017]
 address = 0x20
+```
+
+```ini
+# Creates Pins MCP23S17_PORT<A|B>_<0-7> e.g. MCP23S17_PORTA_1
+[mcp23s17]
 ```
 
 ### PCA9685
