@@ -1,6 +1,9 @@
 package devices
 
-import "periph.io/x/periph/experimental/devices/ccs811"
+import (
+	"periph.io/x/periph/conn/i2c/i2creg"
+	"periph.io/x/periph/experimental/devices/ccs811"
+)
 
 type ICCS811 interface {
 	Device
@@ -30,7 +33,7 @@ func CreateCCS811(config *CCS811Config) (ICCS811, error) {
 		UseThreshold:       false,
 	}
 
-	bus, err := getI2CBus(config.Bus)
+	bus, err := i2creg.Open(config.Bus)
 	if err != nil {
 		return nil, err
 	}
