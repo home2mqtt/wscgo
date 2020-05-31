@@ -5,11 +5,13 @@ import (
 	"periph.io/x/periph/conn/gpio/gpioreg"
 )
 
+// IOutput poin configured as active output
 type IOutput interface {
 	Device
 	Out(l gpio.Level) error
 }
 
+// OutputConfig hods the configuration for an IOutput device
 type OutputConfig struct {
 	Pin string `ini:"pin"`
 }
@@ -18,13 +20,16 @@ type output struct {
 	gpio.PinOut
 }
 
+// IInputListener function is called on changes of input
 type IInputListener func(bool)
 
+// IInput denotes a pin configued for digital input
 type IInput interface {
 	Device
 	AddListener(IInputListener)
 }
 
+// InputConfig holds configuration for an IIinput device
 type InputConfig struct {
 	Pin string `ini:"pin"`
 }
@@ -36,6 +41,7 @@ type input struct {
 	state     gpio.Level
 }
 
+// CreateOutput configures an IOutput device
 func CreateOutput(config *OutputConfig) (IOutput, error) {
 	pin := gpioreg.ByName(config.Pin)
 	if pin == nil {
@@ -47,6 +53,7 @@ func CreateOutput(config *OutputConfig) (IOutput, error) {
 	}, nil
 }
 
+// CreateInput configures an IInputDevice
 func CreateInput(config *InputConfig) (IInput, error) {
 	pin := gpioreg.ByName(config.Pin)
 	if pin == nil {

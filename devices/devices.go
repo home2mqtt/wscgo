@@ -2,6 +2,7 @@ package devices
 
 import "fmt"
 
+// Device is the interface of a periodically operated peripheral controlled by wscgo.
 type Device interface {
 	Tick() error
 	Initialize() error

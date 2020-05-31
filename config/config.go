@@ -7,6 +7,7 @@ import (
 	"github.com/balazsgrill/wscgo/protocol"
 )
 
+// DeviceInitializer is function capable of initializing a device
 type DeviceInitializer func(RuntimeContext) error
 
 type ConfigInitializer func() error

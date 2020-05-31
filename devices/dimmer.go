@@ -8,6 +8,7 @@ import (
 
 const frequency physic.Frequency = physic.KiloHertz
 
+// DimmerConfig is the configuration structure for a dimmer device
 type DimmerConfig struct {
 	PwmPin   string `ini:"pwmpin"`
 	OnPin    string `ini:"onpin"`
@@ -25,6 +26,7 @@ type dimmer struct {
 	delaycounter int
 }
 
+// IDimmer is a device representing a dimmed light
 type IDimmer interface {
 	Device
 	On()
@@ -32,6 +34,7 @@ type IDimmer interface {
 	SetBrightness(value gpio.Duty)
 }
 
+// CreateDimmer configures a dimmer device
 func CreateDimmer(config *DimmerConfig) (IDimmer, error) {
 	var onpin gpio.PinIO
 	if config.OnPin != "" {
