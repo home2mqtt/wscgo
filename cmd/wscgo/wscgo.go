@@ -23,7 +23,9 @@ func main() {
 	}
 	conf := config.LoadConfig(args[0])
 
-	instance := &integration.WscgoInstance{}
+	instance := &integration.WscgoInstance{
+		Version: Version,
+	}
 	instance.Configure(conf)
 	instance.Start()
 	instance.Loop()

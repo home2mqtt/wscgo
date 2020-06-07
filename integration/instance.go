@@ -11,6 +11,8 @@ import (
 )
 
 type WscgoInstance struct {
+	Version string
+
 	client     mqtt.Client
 	devices    []devices.Device
 	protocols  []protocol.IDiscoverable
@@ -28,8 +30,8 @@ func (instance *WscgoInstance) AddProtocol(pro protocol.IDiscoverable) {
 }
 
 func (instance *WscgoInstance) Configure(conf *config.WscgoConfiguration) {
-	instance.SetMqttClientOptions(protocol.ConfigureClientOptions(&conf.MqttConfig))
 	instance.nodeInfo = &conf.Node
+	instance.SetMqttClientOptions(&conf.MqttConfig)
 	for _, c := range conf.Configs {
 		err := c()
 		if err != nil {
@@ -73,10 +75,14 @@ func (instance *WscgoInstance) eventOnDisconnected(client mqtt.Client) {
 	log.Println("MQTT Connection lost")
 }
 
-func (instance *WscgoInstance) SetMqttClientOptions(opts *mqtt.ClientOptions) {
+func (instance *WscgoInstance) SetMqttClientOptions(conf *protocol.MqttConfig) {
 	if instance.client != nil {
 		instance.client.Disconnect(100)
 	}
+	opts := protocol.ConfigureClientOptions(conf)
+	opts = opts.SetOnConnectHandler(instance.eventOnConnected)
+	instance.client = mqtt.NewClient(opts)
+	instance.deviceInfo = config.ComputeDeviceInfo(instance.Version)
 	instance.client = mqtt.NewClient(opts)
 }
 
