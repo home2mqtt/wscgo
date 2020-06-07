@@ -28,6 +28,7 @@ func (instance *WscgoInstance) AddProtocol(pro protocol.IDiscoverable) {
 }
 
 func (instance *WscgoInstance) Configure(conf *config.WscgoConfiguration) {
+	instance.SetMqttClientOptions(protocol.ConfigureClientOptions(&conf.MqttConfig))
 	instance.nodeInfo = &conf.Node
 	for _, c := range conf.Configs {
 		err := c()
