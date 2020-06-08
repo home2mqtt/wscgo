@@ -43,6 +43,7 @@ func (conf *WscgoConfiguration) processConfig(category string, id string, sectio
 	}
 }
 
+// LoadConfig loads a configuration ini file
 func LoadConfig(filename string) *WscgoConfiguration {
 	cfg, err := ini.Load(filename)
 	if err != nil {

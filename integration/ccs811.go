@@ -48,7 +48,7 @@ func (*ccs811ConfigPartParser) ParseConfiguration(section config.ConfigurationSe
 		Topic:             c.VOCTopic,
 		UnitOfMeasurement: "ppb",
 	}
-	context.AddDeviceInitializer(func(context config.RuntimeContext) error {
+	context.AddDeviceInitializer(config.SLDevice, func(context config.RuntimeContext) error {
 		device, err := devices.CreateCCS811(d)
 		if err != nil {
 			return err

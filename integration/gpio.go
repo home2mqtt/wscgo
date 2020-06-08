@@ -14,7 +14,7 @@ func (*inputConfigPartParser) ParseConfiguration(section config.ConfigurationSec
 	c := protocol.CreateDInputConfig(section.GetID())
 	section.FillData(&c.BasicDeviceConfig)
 	section.FillData(c)
-	context.AddDeviceInitializer(func(context config.RuntimeContext) error {
+	context.AddDeviceInitializer(config.SLDevice, func(context config.RuntimeContext) error {
 		device, err := devices.CreateInput(s)
 		if err != nil {
 			return err
@@ -34,7 +34,7 @@ func (*outputConfigPartParser) ParseConfiguration(section config.ConfigurationSe
 	c := protocol.CreateSwitchConfig(section.GetID())
 	section.FillData(&c.BasicDeviceConfig)
 	section.FillData(c)
-	context.AddDeviceInitializer(func(context config.RuntimeContext) error {
+	context.AddDeviceInitializer(config.SLDevice, func(context config.RuntimeContext) error {
 		device, err := devices.CreateOutput(s)
 		if err != nil {
 			return err

@@ -29,7 +29,7 @@ func (p *mcp23xxxConfigParser) ParseConfiguration(section config.ConfigurationSe
 	}
 	switch p.variant {
 	case mcp23xxx.MCP23008, mcp23xxx.MCP23009, mcp23xxx.MCP23016, mcp23xxx.MCP23017, mcp23xxx.MCP23018:
-		context.AddConfigInitializer(func() error {
+		context.AddDeviceInitializer(config.SLExtender, func(config.RuntimeContext) error {
 			bus, err := i2creg.Open("")
 			if err != nil {
 				return err
@@ -43,7 +43,7 @@ func (p *mcp23xxxConfigParser) ParseConfiguration(section config.ConfigurationSe
 		})
 		return nil
 	case mcp23xxx.MCP23S08, mcp23xxx.MCP23S09, mcp23xxx.MCP23S17, mcp23xxx.MCP23S18:
-		context.AddConfigInitializer(func() error {
+		context.AddDeviceInitializer(config.SLExtender, func(config.RuntimeContext) error {
 			bus, err := spireg.Open("")
 			if err != nil {
 				return err

@@ -14,7 +14,7 @@ func (*shutterConfigPartParser) ParseConfiguration(section config.ConfigurationS
 	c := protocol.CreateCoverConfig(section.GetID())
 	section.FillData(&c.BasicDeviceConfig)
 	section.FillData(c)
-	context.AddDeviceInitializer(func(context config.RuntimeContext) error {
+	context.AddDeviceInitializer(config.SLDevice, func(context config.RuntimeContext) error {
 		shutter, err := devices.CreateShutter(s)
 		if err != nil {
 			return err

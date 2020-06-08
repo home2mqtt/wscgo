@@ -6,6 +6,7 @@ import (
 	"github.com/balazsgrill/wscgo/protocol"
 )
 
+// ComputeDeviceInfo extracts discovery metadata from the host system
 func ComputeDeviceInfo(version string) *protocol.DeviceDiscoveryInfo {
 	model, serial, _ := getModelInfo()
 	host, _ := os.Hostname()

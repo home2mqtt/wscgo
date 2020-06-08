@@ -22,7 +22,7 @@ func (*pca9685ConfigParser) ParseConfiguration(section config.ConfigurationSecti
 	if err != nil {
 		return err
 	}
-	context.AddConfigInitializer(func() error {
+	context.AddDeviceInitializer(config.SLExtender, func(config.RuntimeContext) error {
 		bus, err := i2creg.Open("")
 		if err != nil {
 			return err

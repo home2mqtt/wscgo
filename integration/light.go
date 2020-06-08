@@ -17,7 +17,7 @@ func (*lightConfigurationParser) ParseConfiguration(section config.Configuration
 	c := protocol.CreateLightConfig(section.GetID())
 	section.FillData(&c.BasicDeviceConfig)
 	section.FillData(c)
-	context.AddDeviceInitializer(func(context config.RuntimeContext) error {
+	context.AddDeviceInitializer(config.SLDevice, func(context config.RuntimeContext) error {
 		device, err := devices.CreateDimmer(s)
 		if err != nil {
 			return err
