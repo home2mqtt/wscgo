@@ -4,9 +4,9 @@ import (
 	"log"
 
 	"github.com/balazsgrill/wscgo/config"
-	"github.com/balazsgrill/wscgo/periph/pca9685"
 	"periph.io/x/periph/conn/i2c/i2creg"
 	"periph.io/x/periph/conn/physic"
+	"periph.io/x/periph/experimental/devices/pca9685"
 )
 
 type pca9685ConfigParser struct{}
