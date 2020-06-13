@@ -5,12 +5,16 @@ import (
 	"periph.io/x/periph/experimental/devices/ccs811"
 )
 
+// ICCS811 denotes a CCS811 environmental sensor
 type ICCS811 interface {
 	Device
+	// ECO2 returns the sensor interface to the "equivalent CO2" measurement value
 	ECO2() ISensor
+	// VOC returns the sensor interface to the "Total Volatile Organic Compound" measuremenr value
 	VOC() ISensor
 }
 
+// CCS811Config holds the configuration data of a sensor
 type CCS811Config struct {
 	Address  int    `ini:"address"`
 	Bus      string `ini:"i2cbus"`
@@ -25,6 +29,7 @@ type ccs811Device struct {
 	measureCount int
 }
 
+// CreateCCS811 configures connection the sensor
 func CreateCCS811(config *CCS811Config) (ICCS811, error) {
 	opts := &ccs811.Opts{
 		Addr:               uint16(config.Address),

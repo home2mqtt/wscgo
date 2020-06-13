@@ -5,8 +5,10 @@ import (
 	"periph.io/x/periph/conn/gpio/gpioreg"
 )
 
+// ShutterStateListener is the signature for state callback
 type ShutterStateListener func(int)
 
+// IShutter is the interface of a shutter device
 type IShutter interface {
 	Device
 	Open()
@@ -17,6 +19,7 @@ type IShutter interface {
 	AddListener(ShutterStateListener)
 }
 
+// ShutterConfig holds the configuration values for a shutter
 type ShutterConfig struct {
 	UpPin         string `ini:"uppin"`
 	DownPin       string `ini:"downpin"`
@@ -43,6 +46,7 @@ type shutter struct {
 	listeners []ShutterStateListener
 }
 
+// CreateShutter configures a shutter device
 func CreateShutter(config *ShutterConfig) (IShutter, error) {
 	uppin := gpioreg.ByName(config.UpPin)
 	if uppin == nil {

@@ -1,9 +1,13 @@
 package devices
 
+// ISensorValueListener is the signature to the callback called on measurements
 type ISensorValueListener func(float64)
 
+// ISensor is the interface of a single value sensor
 type ISensor interface {
+	// AddListener registers a measurement callback
 	AddListener(ISensorValueListener)
+	// Unit returns the human-readable representation of the measurement unit
 	Unit() string
 }
 

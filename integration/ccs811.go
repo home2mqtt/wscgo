@@ -10,9 +10,9 @@ type ccs811ConfigPartParser struct{}
 
 type ccs811SensorConfiguration struct {
 	protocol.BasicDeviceConfig
-	Name      string `json:"name,omitempty"`
-	ECO2Topic string `json:"eco2topic,omitempty"`
-	VOCTopic  string `json:"voctopic,omitempty"`
+	Name      string `ini:"name,omitempty"`
+	ECO2Topic string `ini:"eco2topic,omitempty"`
+	VOCTopic  string `ini:"voctopic,omitempty"`
 }
 
 func (*ccs811ConfigPartParser) ParseConfiguration(section config.ConfigurationSection, context config.ConfigurationContext) error {

@@ -7,6 +7,7 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
+// SensorConfig is the protocol configuration of a sensor
 type SensorConfig struct {
 	BasicDeviceConfig
 	UnitOfMeasurement string

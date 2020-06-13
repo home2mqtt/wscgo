@@ -17,6 +17,9 @@ type cachedGpio struct {
 	duty  gpio.Duty
 }
 
+// CachedPin creates a PinIO wrapper which reduces writing the same value to the wrapped object
+//
+// This object is used to reduce unnecessary I2C traffic
 func CachedPin(pin gpio.PinIO, reinforce int) gpio.PinIO {
 	return &cachedGpio{
 		pin:       pin,

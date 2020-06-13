@@ -9,6 +9,7 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
+// CoverConfig is the protocol configuration of a cover (a.k.a. shutter)
 type CoverConfig struct {
 	BasicDeviceConfig `ini:"Parent"`
 	CommandTopic      string `ini:"topic,omitempty"`
@@ -31,6 +32,7 @@ type cover struct {
 	*CoverConfig
 }
 
+// CreateCoverConfig creates a CoverConfig structure with default values
 func CreateCoverConfig(id string) *CoverConfig {
 	return &CoverConfig{
 		BasicDeviceConfig: BasicDeviceConfig{
@@ -40,6 +42,7 @@ func CreateCoverConfig(id string) *CoverConfig {
 	}
 }
 
+// IntegrateCover initializes protocol on top of the given device
 func IntegrateCover(shutter devices.IShutter, config *CoverConfig) IDiscoverable {
 	return &cover{
 		IShutter:    shutter,
