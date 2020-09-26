@@ -12,7 +12,3 @@ Install
 ```
 sudo apt install wscgo
 ```
-
-Install wiringpi binary and plugin for appropriate platform:
-* Orange Pi Zero: `sudo apt install wscgo-opiz`
-* Raspberry Pi Zero W: `sudo apt install wscgo-rpizw`
