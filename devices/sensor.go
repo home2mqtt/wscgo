@@ -11,20 +11,21 @@ type ISensor interface {
 	Unit() string
 }
 
-type baseSensor struct {
+// BaseSensor is a default implementation of the ISensor interface
+type BaseSensor struct {
 	listeners []ISensorValueListener
-	unit      string
+	VUnit     string
 }
 
-func (bs *baseSensor) Unit() string {
-	return bs.unit
+func (bs *BaseSensor) Unit() string {
+	return bs.VUnit
 }
 
-func (bs *baseSensor) AddListener(listener ISensorValueListener) {
+func (bs *BaseSensor) AddListener(listener ISensorValueListener) {
 	bs.listeners = append(bs.listeners, listener)
 }
 
-func (bs *baseSensor) notifyListeners(value float64) {
+func (bs *BaseSensor) NotifyListeners(value float64) {
 	for _, l := range bs.listeners {
 		l(value)
 	}
