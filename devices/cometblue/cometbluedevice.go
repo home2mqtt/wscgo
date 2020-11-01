@@ -51,6 +51,11 @@ func (d *blueCometDevice) connect() error {
 		if err != nil {
 			return err
 		}
+		err = dev.Authenticate()
+		if err != nil {
+			dev.Close()
+			return err
+		}
 		d.dev = dev
 	}
 	return nil

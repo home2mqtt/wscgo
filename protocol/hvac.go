@@ -15,13 +15,13 @@ type hvacDiscoveryInfo struct {
 
 	ActionTopic string `json:"action_topic,omitempty"`
 
-	CurrentTemperatureTopic string  `json:"current_temperature_topic,omitempty"`
-	TemperatreCommandTopic  string  `json:"temperature_command_topic,omitempty"`
-	TemperatureUnit         string  `json:"temperature_unit,omitempty"`
-	TemperatureStateTopic   string  `json:"temperature_state_topic,omitempty"`
-	MaxTemp                 float64 `json:"max_temp,omitempty"`
-	MinTemp                 float64 `json:"min_temp,omitempty"`
-	TempStep                float64 `json:"temp_step,omitempty"`
+	CurrentTemperatureTopic string `json:"current_temperature_topic,omitempty"`
+	TemperatreCommandTopic  string `json:"temperature_command_topic,omitempty"`
+	//TemperatureUnit         string  `json:"temperature_unit,omitempty"`
+	TemperatureStateTopic string  `json:"temperature_state_topic,omitempty"`
+	MaxTemp               float64 `json:"max_temp,omitempty"`
+	MinTemp               float64 `json:"min_temp,omitempty"`
+	TempStep              float64 `json:"temp_step,omitempty"`
 }
 
 // HVACConfig contains configuration parameters for a HVAC device
@@ -84,9 +84,9 @@ func (h *hvac) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) in
 		CurrentTemperatureTopic: h.CurrentTemperatureTopic,
 		TemperatreCommandTopic:  h.TemperatreCommandTopic,
 		TemperatureStateTopic:   h.TemperatureStateTopic,
-		TemperatureUnit:         "C",
-		MaxTemp:                 r.Max,
-		MinTemp:                 r.Min,
-		TempStep:                r.Step,
+		//TemperatureUnit:         "C",
+		MaxTemp:  r.Max,
+		MinTemp:  r.Min,
+		TempStep: r.Step,
 	}
 }
