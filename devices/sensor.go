@@ -27,6 +27,6 @@ func (bs *BaseSensor) AddListener(listener ISensorValueListener) {
 
 func (bs *BaseSensor) NotifyListeners(value float64) {
 	for _, l := range bs.listeners {
-		l(value)
+		go l(value)
 	}
 }

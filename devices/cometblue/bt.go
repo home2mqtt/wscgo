@@ -24,6 +24,7 @@ var cbContextInstance CometBlueContext
 func (c *CometBlueContext) init() error {
 	var err error
 	c.once.Do(func() {
+		log.Println("Initializing bluetooth")
 		d, err := dev.NewDevice("default")
 		if err != nil {
 			return

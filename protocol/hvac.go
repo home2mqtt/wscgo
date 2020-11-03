@@ -27,9 +27,9 @@ type hvacDiscoveryInfo struct {
 // HVACConfig contains configuration parameters for a HVAC device
 type HVACConfig struct {
 	BasicDeviceConfig       `ini:"Parent"`
-	CurrentTemperatureTopic string `json:"current_temperature_topic,omitempty"`
-	TemperatreCommandTopic  string `json:"temperature_command_topic,omitempty"`
-	TemperatureStateTopic   string `json:"temperature_state_topic,omitempty"`
+	CurrentTemperatureTopic string `ini:"current_temperature_topic,omitempty"`
+	TemperatreCommandTopic  string `ini:"temperature_command_topic,omitempty"`
+	TemperatureStateTopic   string `ini:"temperature_state_topic,omitempty"`
 }
 
 type hvac struct {

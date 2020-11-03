@@ -3,6 +3,8 @@
 package cometblue
 
 import (
+	"sync"
+
 	"github.com/balazsgrill/wscgo/devices"
 )
 
@@ -28,6 +30,7 @@ type blueCometDevice struct {
 	targettemp  devices.BaseSensor
 	target      float32
 	targetset   bool
+	lock        sync.Mutex
 }
 
 func CreateCometblue(config *CometblueConfig) devices.IThermostat {
@@ -73,6 +76,8 @@ func (d *blueCometDevice) communicationError() {
 }
 
 func (d *blueCometDevice) Tick() error {
+	d.lock.Lock()
+	defer d.lock.Unlock()
 	if d.counter > 0 {
 		d.counter--
 	} else {
@@ -81,6 +86,7 @@ func (d *blueCometDevice) Tick() error {
 			d.counter = recoverDuration
 			return err
 		}
+		// Write target temperature to device
 		if d.targetset {
 			err = d.dev.WriteTargetTemperature(d.target)
 			if err != nil {
@@ -90,14 +96,18 @@ func (d *blueCometDevice) Tick() error {
 			d.targetset = false
 		}
 
+		// Read temperature values
 		t, err := d.dev.ReadTemperatures()
 		if err != nil {
 			d.communicationError()
 			return err
 		}
-		d.counter = d.config.Duration
+
+		// Publish results
 		d.temperature.NotifyListeners(float64(t.Current))
 		d.temperature.NotifyListeners(float64(t.Target))
+
+		d.counter = d.config.Duration
 	}
 	return nil
 }
@@ -111,8 +121,11 @@ func (d *blueCometDevice) Temperature() devices.ISensor {
 }
 
 func (d *blueCometDevice) SetTargetTemperature(value float64) {
+	d.lock.Lock()
+	defer d.lock.Unlock()
 	d.target = float32(value)
 	d.targetset = true
+	d.counter = 0
 }
 
 func (d *blueCometDevice) TemperatureRange() devices.ThermostatRange {

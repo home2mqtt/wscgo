@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -54,7 +55,13 @@ func (sensor *sensor) GetComponent() string {
 // ConfigureSensorListener configures the sensor to publish a message on each measured sensor value
 func ConfigureSensorListener(sensor devices.ISensor, topic string, client mqtt.Client) {
 	sensor.AddListener(func(value float64) {
-		client.Publish(topic, 0, false, fmt.Sprintf("%g", value))
+		log.Printf("Sending %f to %s\n", value, topic)
+		t := client.Publish(topic, 0, false, fmt.Sprintf("%f", value))
+		t.Wait()
+		err := t.Error()
+		if err != nil {
+			log.Printf("Publish failed: %v\n", err)
+		}
 	})
 }
 
