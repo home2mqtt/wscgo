@@ -11,3 +11,4 @@
 | [UC-7](uc-7.md) | Dimmed LED light with separate PSU | Supported since 0.5.3 |
 | [UC-8](uc-8.md) | Dimmed LED light with common PSU | Supported since 0.5.3 |
 | [UC-9](uc-9.md) | CCS811 Air quality sensor | Undocumented |
+| [UC-10](uc-10.md) | Blue Comet thermostatic valve | Supported since 0.5.4 |
