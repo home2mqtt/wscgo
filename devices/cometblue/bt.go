@@ -10,6 +10,7 @@ import (
 	"github.com/go-ble/ble/examples/lib/dev"
 )
 
+// CometBlueContext holds static information to control CB devices
 type CometBlueContext struct {
 	once sync.Once
 
@@ -51,6 +52,7 @@ func (c *CometBlueContext) init() error {
 	return err
 }
 
+// GetCBContext retrieve singleton CometBlueContext instance and makes sure that Bluetooth is initialized
 func GetCBContext() *CometBlueContext {
 	err := cbContextInstance.init()
 	if err != nil {

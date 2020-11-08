@@ -12,7 +12,7 @@ type cometblueConfigurationParser struct {
 }
 
 func (*cometblueConfigurationParser) ParseConfiguration(section config.ConfigurationSection, context config.ConfigurationContext) error {
-	s := &cometblue.CometblueConfig{}
+	s := &cometblue.Config{}
 	if err := section.FillData(s); err != nil {
 		return err
 	}
@@ -20,7 +20,7 @@ func (*cometblueConfigurationParser) ParseConfiguration(section config.Configura
 	section.FillData(&c.BasicDeviceConfig)
 	section.FillData(c)
 	context.AddDeviceInitializer(config.SLDevice, func(context config.RuntimeContext) error {
-		device := cometblue.CreateCometblue(s)
+		device := cometblue.Create(s)
 		context.AddDevice(device)
 		context.AddProtocol(protocol.IntegrateHVAC(device, c))
 		return nil

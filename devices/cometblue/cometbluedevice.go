@@ -17,14 +17,15 @@ var cbrange devices.ThermostatRange = devices.ThermostatRange{
 	Step: 0.5,
 }
 
-type CometblueConfig struct {
+// Config holds configuration values of CometBlue device
+type Config struct {
 	Mac      string `ini:"mac"`
 	Duration int    `ini:"duration"`
 }
 
-type blueCometDevice struct {
-	config      *CometblueConfig
-	dev         *CometblueClient
+type device struct {
+	config      *Config
+	dev         *Client
 	counter     int
 	temperature devices.BaseSensor
 	targettemp  devices.BaseSensor
@@ -33,8 +34,9 @@ type blueCometDevice struct {
 	lock        sync.Mutex
 }
 
-func CreateCometblue(config *CometblueConfig) devices.IThermostat {
-	return &blueCometDevice{
+// Create CometBlue thermostate interface
+func Create(config *Config) devices.IThermostat {
+	return &device{
 		config:  config,
 		dev:     nil,
 		counter: 0,
@@ -48,7 +50,7 @@ func CreateCometblue(config *CometblueConfig) devices.IThermostat {
 	}
 }
 
-func (d *blueCometDevice) connect() error {
+func (d *device) connect() error {
 	if d.dev == nil {
 		dev, err := Dial(d.config.Mac)
 		if err != nil {
@@ -59,23 +61,24 @@ func (d *blueCometDevice) connect() error {
 			dev.Close()
 			return err
 		}
+		dev.Handler = d.temperatureHandler
 		d.dev = dev
 	}
 	return nil
 }
 
-func (d *blueCometDevice) Initialize() error {
+func (d *device) Initialize() error {
 	d.counter = d.config.Duration
 	return d.connect()
 }
 
-func (d *blueCometDevice) communicationError() {
+func (d *device) communicationError() {
 	d.dev.Close()
 	d.dev = nil
 	d.counter = recoverDuration
 }
 
-func (d *blueCometDevice) Tick() error {
+func (d *device) Tick() error {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 	if d.counter > 0 {
@@ -96,31 +99,26 @@ func (d *blueCometDevice) Tick() error {
 			d.targetset = false
 		}
 
-		// Read temperature values
-		t, err := d.dev.ReadTemperatures()
-		if err != nil {
-			d.communicationError()
-			return err
-		}
-
-		// Publish results
-		d.temperature.NotifyListeners(float64(t.Current))
-		d.temperature.NotifyListeners(float64(t.Target))
-
 		d.counter = d.config.Duration
 	}
 	return nil
 }
 
-func (d *blueCometDevice) TargetTemperature() devices.ISensor {
+func (d *device) temperatureHandler(t Temperatures) {
+	// Publish results
+	d.temperature.NotifyListeners(float64(t.Current))
+	d.targettemp.NotifyListeners(float64(t.Target))
+}
+
+func (d *device) TargetTemperature() devices.ISensor {
 	return &d.targettemp
 }
 
-func (d *blueCometDevice) Temperature() devices.ISensor {
+func (d *device) Temperature() devices.ISensor {
 	return &d.temperature
 }
 
-func (d *blueCometDevice) SetTargetTemperature(value float64) {
+func (d *device) SetTargetTemperature(value float64) {
 	d.lock.Lock()
 	defer d.lock.Unlock()
 	d.target = float32(value)
@@ -128,6 +126,6 @@ func (d *blueCometDevice) SetTargetTemperature(value float64) {
 	d.counter = 0
 }
 
-func (d *blueCometDevice) TemperatureRange() devices.ThermostatRange {
+func (d *device) TemperatureRange() devices.ThermostatRange {
 	return cbrange
 }
