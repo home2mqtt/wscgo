@@ -18,7 +18,6 @@ const unusedbyte byte = 0x80
 // Client provides API to control a CometBlue device
 type Client struct {
 	client      ble.Client
-	service     *ble.Service
 	pin         *ble.Characteristic
 	battery     *ble.Characteristic
 	temperature *ble.Characteristic
@@ -43,38 +42,28 @@ func Dial(address string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	//p, err := client.DiscoverProfile(true)
-	//p.
-	services, err := client.DiscoverServices([]ble.UUID{bt.ThermostatService})
-	if err != nil {
+	var ctemp *ble.Characteristic
+	var cbatt *ble.Characteristic
+	var cpin *ble.Characteristic
+	p, err := client.DiscoverProfile(true)
+	if ctemp = p.FindCharacteristic(&ble.Characteristic{UUID: bt.TemperaturesChar}); ctemp == nil {
 		client.CancelConnection()
-		return nil, err
+		return nil, errors.New("Couldn't find Temperature characteristic")
 	}
-	if len(services) != 1 {
+	if cbatt = p.FindCharacteristic(&ble.Characteristic{UUID: bt.BatteryChar}); cbatt == nil {
 		client.CancelConnection()
-		return nil, errors.New("Couldn't read Service")
+		return nil, errors.New("Couldn't find Battery characteristic")
 	}
-	// Returned list of characteristics seems to be in order by UUID not by request
-	characteristics, err := client.DiscoverCharacteristics([]ble.UUID{
-		bt.TemperaturesChar,
-		bt.BatteryChar,
-		bt.PinChar,
-	}, services[0])
-	if err != nil {
+	if cpin = p.FindCharacteristic(&ble.Characteristic{UUID: bt.PinChar}); cpin == nil {
 		client.CancelConnection()
-		return nil, err
-	}
-	if len(characteristics) != 3 {
-		client.CancelConnection()
-		return nil, errors.New("Couldn't read Characteristics")
+		return nil, errors.New("Couldn't find PIN characteristic")
 	}
 
 	c := &Client{
 		client:      client,
-		service:     services[0],
-		pin:         characteristics[2],
-		battery:     characteristics[1],
-		temperature: characteristics[0],
+		pin:         cpin,
+		battery:     cbatt,
+		temperature: ctemp,
 	}
 	// Discover descriptors to fill CCCD
 	_, err = client.DiscoverDescriptors(nil, c.temperature)
