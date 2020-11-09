@@ -21,7 +21,6 @@ type Client struct {
 	pin         *ble.Characteristic
 	battery     *ble.Characteristic
 	temperature *ble.Characteristic
-	Handler     TemperatureHandler
 }
 
 // Temperatures data struct for a temperature measurement
@@ -29,9 +28,6 @@ type Temperatures struct {
 	Current float32
 	Target  float32
 }
-
-// TemperatureHandler is called to process a temperature measurement
-type TemperatureHandler func(t Temperatures)
 
 // Dial attempts to connect to a CometBlue device
 func Dial(address string) (*Client, error) {
@@ -65,27 +61,7 @@ func Dial(address string) (*Client, error) {
 		battery:     cbatt,
 		temperature: ctemp,
 	}
-	// Discover descriptors to fill CCCD
-	_, err = client.DiscoverDescriptors(nil, c.temperature)
-	if err != nil {
-		client.CancelConnection()
-		return nil, err
-	}
-	err = client.Subscribe(c.temperature, true, c.temperatureNotificationHandler)
-	if err != nil {
-		client.CancelConnection()
-		return nil, err
-	}
 	return c, nil
-}
-
-func (client *Client) temperatureNotificationHandler(data []byte) {
-	if client.Handler != nil {
-		client.Handler(Temperatures{
-			Current: float32(data[0]) * 0.5,
-			Target:  float32(data[1]) * 0.5,
-		})
-	}
 }
 
 // Authenticate writes in default PIN

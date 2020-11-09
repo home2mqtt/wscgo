@@ -204,18 +204,14 @@ Presented to Home assistant as a [light](https://www.home-assistant.io/integrati
 | name | string | Device name |
 | mac | string | BLE MAC address of the thermostat |
 | duration | int (100ms) | Time to wait between reading state of thermostat |
-| current_temperature_topic | string | Mqtt topic to publish current temperature measured by the thermostat |
-| temperature_state_topic | string | Mqtt topic to publish actual target temperature of the thermostat |
-| temperature_command_topic | string | Mqtt topic to receive requests to change target temperature |
+| topic | string | Base MQTT topic for this device |
 
 ```ini
 [cometblue:1]
 name = Comet Blue 1
 mac = 11:22:33:44:55:66
 duration = 600
-current_temperature_topic = home/cb1/current
-temperature_state_topic = home/cb1/state
-temperature_command_topic = home/cb1/set
+topic = home/cb1
 ```
 
 Presented to Home assistant as a [HVAC device](https://www.home-assistant.io/integrations/climate.mqtt/).

@@ -61,7 +61,6 @@ func (d *device) connect() error {
 			dev.Close()
 			return err
 		}
-		dev.Handler = d.temperatureHandler
 		d.dev = dev
 	}
 	return nil
@@ -73,9 +72,13 @@ func (d *device) Initialize() error {
 }
 
 func (d *device) communicationError() {
+	d.disconnect()
+	d.counter = recoverDuration
+}
+
+func (d *device) disconnect() {
 	d.dev.Close()
 	d.dev = nil
-	d.counter = recoverDuration
 }
 
 func (d *device) Tick() error {
@@ -89,6 +92,13 @@ func (d *device) Tick() error {
 			d.counter = recoverDuration
 			return err
 		}
+
+		t, err := d.dev.ReadTemperatures()
+		if err != nil {
+			d.communicationError()
+			return err
+		}
+
 		// Write target temperature to device
 		if d.targetset {
 			err = d.dev.WriteTargetTemperature(d.target)
@@ -96,15 +106,19 @@ func (d *device) Tick() error {
 				d.communicationError()
 				return err
 			}
+			t.Target = d.target
 			d.targetset = false
 		}
 
+		d.processTemperature(t)
+
+		d.disconnect()
 		d.counter = d.config.Duration
 	}
 	return nil
 }
 
-func (d *device) temperatureHandler(t Temperatures) {
+func (d *device) processTemperature(t Temperatures) {
 	// Publish results
 	d.temperature.NotifyListeners(float64(t.Current))
 	d.targettemp.NotifyListeners(float64(t.Target))
