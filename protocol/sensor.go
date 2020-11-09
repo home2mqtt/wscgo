@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -29,6 +30,7 @@ type sensor struct {
 	*SensorConfig
 }
 
+// CreateSensorConfig provides the defaule configuration values for a sensor device
 func CreateSensorConfig(id string) *SensorConfig {
 	return &SensorConfig{
 		BasicDeviceConfig: BasicDeviceConfig{
@@ -38,6 +40,7 @@ func CreateSensorConfig(id string) *SensorConfig {
 	}
 }
 
+// IntegrateSensor creates integration of the given sensor
 func IntegrateSensor(sensordev devices.ISensor, config *SensorConfig) IDiscoverable {
 	return &sensor{
 		ISensor:      sensordev,
@@ -49,10 +52,21 @@ func (sensor *sensor) GetComponent() string {
 	return "sensor"
 }
 
-func (sensor *sensor) Configure(client mqtt.Client) {
+// ConfigureSensorListener configures the sensor to publish a message on each measured sensor value
+func ConfigureSensorListener(sensor devices.ISensor, topic string, client mqtt.Client) {
 	sensor.AddListener(func(value float64) {
-		client.Publish(sensor.Topic, 0, false, fmt.Sprintf("%g", value))
+		log.Printf("Sending %f to %s\n", value, topic)
+		t := client.Publish(topic, 0, false, fmt.Sprintf("%f", value))
+		t.Wait()
+		err := t.Error()
+		if err != nil {
+			log.Printf("Publish failed: %v\n", err)
+		}
 	})
+}
+
+func (sensor *sensor) Configure(client mqtt.Client) {
+	ConfigureSensorListener(sensor, sensor.Topic, client)
 }
 
 func (sensor *sensor) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{} {

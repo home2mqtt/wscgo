@@ -24,8 +24,8 @@ type CCS811Config struct {
 type ccs811Device struct {
 	dev          *ccs811.Dev
 	config       *CCS811Config
-	eco2         baseSensor
-	voc          baseSensor
+	eco2         BaseSensor
+	voc          BaseSensor
 	measureCount int
 }
 
@@ -51,11 +51,11 @@ func CreateCCS811(config *CCS811Config) (ICCS811, error) {
 		dev:          dev,
 		config:       config,
 		measureCount: config.Duration,
-		eco2: baseSensor{
-			unit: "ppm",
+		eco2: BaseSensor{
+			VUnit: "ppm",
 		},
-		voc: baseSensor{
-			unit: "ppb",
+		voc: BaseSensor{
+			VUnit: "ppb",
 		},
 	}, nil
 }
@@ -68,8 +68,8 @@ func (dev *ccs811Device) Tick() error {
 		if err != nil {
 			return err
 		}
-		(&dev.eco2).notifyListeners(float64(values.ECO2))
-		(&dev.voc).notifyListeners(float64(values.VOC))
+		(&dev.eco2).NotifyListeners(float64(values.ECO2))
+		(&dev.voc).NotifyListeners(float64(values.VOC))
 	} else {
 		dev.measureCount--
 	}

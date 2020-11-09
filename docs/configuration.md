@@ -70,8 +70,8 @@ On raspberry Pi, IO headers available are detected.
 
 ### Digital output
 
-* [UC-1: Switch](usecases/uc-1/uc-1.md)
-* [UC-2: Switch (with IO extender)](usecases/uc-2/uc-2.md)
+* [UC-1: Switch](usecases/uc-1.md)
+* [UC-2: Switch (with IO extender)](usecases/uc-2.md)
 
 | Paramerer | Unit | Description |
 | --- | --- | --- |
@@ -96,8 +96,8 @@ Presented to Home assistant as a [switch](https://www.home-assistant.io/integrat
 
 ### Digital input
 
-* [UC-3: Button](usecases/uc-3/uc-3.md)
-* [UC-4: Button (with IO extender)](usecases/uc-4/uc-4.md)
+* [UC-3: Button](usecases/uc-3.md)
+* [UC-4: Button (with IO extender)](usecases/uc-4.md)
 
 | Paramerer | Unit | Description |
 | --- | --- | --- |
@@ -122,8 +122,8 @@ Presented to Home assistant as a [binary sensor](https://www.home-assistant.io/i
 
 ### Shutter
 
-* [UC-5: Shutters](usecases/uc-5/uc-5.md)
-* [UC-6: Shutters (inverted output)](usecases/uc-6/uc-6.md)
+* [UC-5: Shutters](usecases/uc-5.md)
+* [UC-6: Shutters (inverted output)](usecases/uc-6.md)
 
 
 | Paramerer | Unit | Description |
@@ -165,8 +165,8 @@ Presented to Home assistant as a [cover](https://www.home-assistant.io/integrati
 
 ### Dimmable light
 
-* [UC-7 Dimmed LED light with external PSU and galvanic isolation](uc-7.md) 
-* [UC-8 Dimmed LED light with common ground](uc-8.md)
+* [UC-7 Dimmed LED light with external PSU and galvanic isolation](usecases/uc-7.md) 
+* [UC-8 Dimmed LED light with common ground](usecases/uc-8.md)
 
 | Paramerer | Unit | Description |
 | --- | --- | --- |
@@ -194,6 +194,27 @@ inverted=true
 ```
 
 Presented to Home assistant as a [light](https://www.home-assistant.io/integrations/light.mqtt).
+
+### Comet Blue
+
+* [UC-10 Blue Comet thermostatic valve](usecases/uc-10.md)
+
+| Paramerer | Unit | Description |
+| --- | --- | --- |
+| name | string | Device name |
+| mac | string | BLE MAC address of the thermostat |
+| duration | int (100ms) | Time to wait between reading state of thermostat |
+| topic | string | Base MQTT topic for this device |
+
+```ini
+[cometblue:1]
+name = Comet Blue 1
+mac = 11:22:33:44:55:66
+duration = 600
+topic = home/cb1
+```
+
+Presented to Home assistant as a [HVAC device](https://www.home-assistant.io/integrations/climate.mqtt/).
 
 ## Using with Home Assistant
 

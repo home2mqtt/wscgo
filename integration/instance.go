@@ -75,7 +75,6 @@ func (instance *WscgoInstance) SetMqttClientOptions(conf *protocol.MqttConfig) {
 	}
 	opts := protocol.ConfigureClientOptions(conf)
 	opts = opts.SetOnConnectHandler(instance.eventOnConnected)
-	instance.client = mqtt.NewClient(opts)
 	instance.deviceInfo = config.ComputeDeviceInfo(instance.Version)
 	instance.client = mqtt.NewClient(opts)
 }
