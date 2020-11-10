@@ -89,7 +89,7 @@ Example:
 [switch:0]
 name = Entry hall light
 topic = home/f1/entry/light
-pin = 101
+pin = MCP23017_27_PORTA_0
 ```
 
 Presented to Home assistant as a [switch](https://www.home-assistant.io/integrations/switch.mqtt)
@@ -115,7 +115,7 @@ Example:
 [dinput:1]
 name = Button
 state_topic = home/f1/button1
-pin = 102
+pin = MCP23017_27_PORTA_0
 ```
 
 Presented to Home assistant as a [binary sensor](https://www.home-assistant.io/integrations/binary_sensor.mqtt)
