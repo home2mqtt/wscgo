@@ -1,6 +1,8 @@
 package devices
 
 import (
+	"sync"
+
 	"periph.io/x/periph/conn/gpio"
 	"periph.io/x/periph/conn/gpio/gpioreg"
 )
@@ -13,6 +15,8 @@ type IShutter interface {
 	Device
 	Open()
 	Close()
+	OpenOrStop()
+	CloseOrStop()
 	MoveBy(int)
 	Stop()
 	GetRange() int
@@ -29,6 +33,8 @@ type ShutterConfig struct {
 }
 
 type shutter struct {
+	lock sync.Mutex
+
 	upPin   gpio.PinOut
 	downPin gpio.PinOut
 	config  *ShutterConfig
@@ -113,7 +119,9 @@ func (shutter *shutter) Initialize() error {
 	return shutter.stop()
 }
 
-func (shutter *shutter) setCmd(steps int) {
+func (shutter *shutter) setCmd(steps int, stopIfDirchange bool) {
+	shutter.lock.Lock()
+	defer shutter.lock.Unlock()
 	if steps == 0 {
 		//stop
 		shutter.Cmd = 0
@@ -126,7 +134,11 @@ func (shutter *shutter) setCmd(steps int) {
 		//up
 		if shutter.Cmd < 0 {
 			// direction change
-			shutter.Cmd = steps
+			if stopIfDirchange {
+				shutter.Cmd = 0
+			} else {
+				shutter.Cmd = steps
+			}
 			shutter.Wait = shutter.config.DirSwitchWait
 		} else {
 			shutter.Cmd += steps
@@ -141,7 +153,11 @@ func (shutter *shutter) setCmd(steps int) {
 		//down
 		if shutter.Cmd > 0 {
 			//direction change
-			shutter.Cmd = steps
+			if stopIfDirchange {
+				shutter.Cmd = 0
+			} else {
+				shutter.Cmd = steps
+			}
 			shutter.Wait = shutter.config.DirSwitchWait
 		} else {
 			shutter.Cmd += steps
@@ -158,6 +174,8 @@ func (shutter *shutter) setCmd(steps int) {
 }
 
 func (shutter *shutter) Tick() error {
+	shutter.lock.Lock()
+	defer shutter.lock.Unlock()
 	if shutter.Wait > 0 {
 		shutter.Wait--
 		if shutter.Wait == 0 {
@@ -201,16 +219,22 @@ func (shutter *shutter) AddListener(listener ShutterStateListener) {
 }
 
 func (shutter *shutter) Open() {
-	shutter.setCmd(shutter.config.Range)
+	shutter.setCmd(shutter.config.Range, false)
 }
 func (shutter *shutter) Close() {
-	shutter.setCmd(-shutter.config.Range)
+	shutter.setCmd(-shutter.config.Range, false)
+}
+func (shutter *shutter) OpenOrStop() {
+	shutter.setCmd(shutter.config.Range, true)
+}
+func (shutter *shutter) CloseOrStop() {
+	shutter.setCmd(-shutter.config.Range, true)
 }
 func (shutter *shutter) MoveBy(steps int) {
-	shutter.setCmd(steps)
+	shutter.setCmd(steps, false)
 }
 func (shutter *shutter) Stop() {
-	shutter.setCmd(0)
+	shutter.setCmd(0, false)
 }
 func (shutter *shutter) GetRange() int {
 	return shutter.config.Range

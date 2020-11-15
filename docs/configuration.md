@@ -140,6 +140,8 @@ Presented to Home assistant as a [binary sensor](https://www.home-assistant.io/i
 Command payload:
 * OPEN
 * CLOSE
+* OPENORSTOP - Stop if currently opening (since 0.5.4)
+* CLOSEORSTOP - Stop if currently closing (since 0.5.4)
 * STOP
 * <integer>
   * Negative - move down by given time (in 100 ms)

@@ -130,12 +130,12 @@ func TestDirectionChange(t *testing.T) {
 	s.Initialize()
 
 	// Check up
-	s.setCmd(1)
+	s.setCmd(1, false)
 	s.Tick()
 	checkPins("req up ", t, io, gpio.High, gpio.Low)
 
 	// Check wait
-	s.setCmd(-1)
+	s.setCmd(-1, false)
 	for i := 0; i < s.config.DirSwitchWait; i++ {
 		s.Tick()
 		checkPins("waiting ", t, io, gpio.Low, gpio.Low)
@@ -149,17 +149,39 @@ func TestDirectionChange(t *testing.T) {
 	checkPins("req down ", t, io, gpio.Low, gpio.Low)
 }
 
+func TestDirectionChangeStop(t *testing.T) {
+	s, io := createShutterForTest(false)
+	s.Initialize()
+
+	// Check up
+	s.setCmd(2, false)
+	s.Tick()
+	checkPins("req up ", t, io, gpio.High, gpio.Low)
+
+	// Check wait
+	s.setCmd(-1, true)
+	for i := 0; i < s.config.DirSwitchWait; i++ {
+		s.Tick()
+		checkPins("waiting ", t, io, gpio.Low, gpio.Low)
+	}
+	s.Tick()
+
+	checkPins("req stopped ", t, io, gpio.Low, gpio.Low)
+	s.Tick()
+	checkPins("req stopped ", t, io, gpio.Low, gpio.Low)
+}
+
 func TestDirectionChangeInverted(t *testing.T) {
 	s, io := createShutterForTest(true)
 	s.Initialize()
 
 	// Check up
-	s.setCmd(1)
+	s.setCmd(1, false)
 	s.Tick()
 	checkPins("req up ", t, io, gpio.Low, gpio.High)
 
 	// Check wait
-	s.setCmd(-1)
+	s.setCmd(-1, false)
 	for i := 0; i < s.config.DirSwitchWait; i++ {
 		s.Tick()
 		checkPins("waiting ", t, io, gpio.High, gpio.High)
@@ -178,7 +200,7 @@ func TestDirectionChangeWithExtraWait(t *testing.T) {
 	s.Initialize()
 
 	// Check up
-	s.setCmd(1)
+	s.setCmd(1, false)
 	s.Tick()
 	checkPins("req up ", t, io, gpio.High, gpio.Low)
 
@@ -191,7 +213,7 @@ func TestDirectionChangeWithExtraWait(t *testing.T) {
 	s.Tick()
 
 	// Check down
-	s.setCmd(-1)
+	s.setCmd(-1, false)
 	s.Tick()
 	checkPins("req down ", t, io, gpio.Low, gpio.High)
 
@@ -204,7 +226,7 @@ func TestDirectionChangeWithExtraWaitInverted(t *testing.T) {
 	s.Initialize()
 
 	// Check up
-	s.setCmd(1)
+	s.setCmd(1, false)
 	s.Tick()
 	checkPins("req up ", t, io, gpio.Low, gpio.High)
 
@@ -217,7 +239,7 @@ func TestDirectionChangeWithExtraWaitInverted(t *testing.T) {
 	s.Tick()
 
 	// Check down
-	s.setCmd(-1)
+	s.setCmd(-1, false)
 	s.Tick()
 	checkPins("req down ", t, io, gpio.High, gpio.Low)
 
@@ -230,19 +252,19 @@ func TestDirectionChangeWithStop(t *testing.T) {
 	s.Initialize()
 
 	// Check up
-	s.setCmd(1)
+	s.setCmd(1, false)
 	s.Tick()
 	checkPins("req up ", t, io, gpio.High, gpio.Low)
 
 	// Stop --> wait
-	s.setCmd(0)
+	s.setCmd(0, false)
 	for i := 0; i < s.config.DirSwitchWait; i++ {
 		s.Tick()
 		checkPins("waiting ", t, io, gpio.Low, gpio.Low)
 	}
 
 	// Check wait
-	s.setCmd(-1)
+	s.setCmd(-1, false)
 	s.Tick()
 	checkPins("req down ", t, io, gpio.Low, gpio.High)
 
@@ -255,19 +277,19 @@ func TestDirectionChangeWithStopInverted(t *testing.T) {
 	s.Initialize()
 
 	// Check up
-	s.setCmd(1)
+	s.setCmd(1, false)
 	s.Tick()
 	checkPins("req up ", t, io, gpio.Low, gpio.High)
 
 	// Stop --> wait
-	s.setCmd(0)
+	s.setCmd(0, false)
 	for i := 0; i < s.config.DirSwitchWait; i++ {
 		s.Tick()
 		checkPins("waiting ", t, io, gpio.High, gpio.High)
 	}
 
 	// Check wait
-	s.setCmd(-1)
+	s.setCmd(-1, false)
 	s.Tick()
 	checkPins("req down ", t, io, gpio.High, gpio.Low)
 

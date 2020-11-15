@@ -14,6 +14,8 @@ func (*testshutter) Tick() error                                { return nil }
 func (*testshutter) Initialize() error                          { return nil }
 func (*testshutter) Open()                                      {}
 func (*testshutter) Close()                                     {}
+func (*testshutter) OpenOrStop()                                {}
+func (*testshutter) CloseOrStop()                               {}
 func (*testshutter) MoveBy(int)                                 {}
 func (*testshutter) Stop()                                      {}
 func (*testshutter) GetRange() int                              { return 10 }

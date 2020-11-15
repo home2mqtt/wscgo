@@ -71,6 +71,10 @@ func (cover *cover) onMsgReceive(client mqtt.Client, msg mqtt.Message) {
 		cover.Open()
 	case "CLOSE":
 		cover.Close()
+	case "OPENORSTOP":
+		cover.OpenOrStop()
+	case "CLOSEORSTOP":
+		cover.CloseOrStop()
 	case "STOP":
 		cover.Stop()
 	default:
