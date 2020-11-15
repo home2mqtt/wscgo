@@ -42,6 +42,9 @@ func Dial(address string) (*Client, error) {
 	var cbatt *ble.Characteristic
 	var cpin *ble.Characteristic
 	p, err := client.DiscoverProfile(true)
+	if err != nil {
+		return nil, err
+	}
 	if ctemp = p.FindCharacteristic(&ble.Characteristic{UUID: bt.TemperaturesChar}); ctemp == nil {
 		client.CancelConnection()
 		return nil, errors.New("Couldn't find Temperature characteristic")
