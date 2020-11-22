@@ -13,7 +13,7 @@ const recoverDuration int = 300
 
 var cbrange devices.ThermostatRange = devices.ThermostatRange{
 	Min:  7.0,
-	Max:  23.0,
+	Max:  28.5,
 	Step: 0.5,
 }
 
