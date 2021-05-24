@@ -8,7 +8,7 @@ import (
 
 	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/conn/v3/gpio"
 )
 
 type LightConfig struct {

@@ -5,10 +5,9 @@ import (
 	"os"
 
 	"github.com/balazsgrill/wscgo/config"
-	"github.com/balazsgrill/wscgo/integration"
-	"periph.io/x/periph/host"
+	"periph.io/x/host/v3"
 
-	_ "github.com/balazsgrill/wscgo/integration"
+	"github.com/balazsgrill/wscgo/integration"
 )
 
 func main() {

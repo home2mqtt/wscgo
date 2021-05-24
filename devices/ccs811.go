@@ -1,8 +1,8 @@
 package devices
 
 import (
-	"periph.io/x/periph/conn/i2c/i2creg"
-	"periph.io/x/periph/experimental/devices/ccs811"
+	"periph.io/x/conn/v3/i2c/i2creg"
+	"periph.io/x/devices/v3/ccs811"
 )
 
 // ICCS811 denotes a CCS811 environmental sensor

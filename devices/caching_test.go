@@ -3,9 +3,9 @@ package devices
 import (
 	"testing"
 
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/gpio/gpiotest"
-	"periph.io/x/periph/conn/physic"
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/gpio/gpiotest"
+	"periph.io/x/conn/v3/physic"
 )
 
 type callCountPin struct {

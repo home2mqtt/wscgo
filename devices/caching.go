@@ -3,8 +3,8 @@ package devices
 import (
 	"time"
 
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/physic"
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/physic"
 )
 
 type cachedGpio struct {

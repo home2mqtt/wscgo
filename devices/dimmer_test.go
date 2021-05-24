@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/balazsgrill/wscgo/tests"
-	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/conn/v3/gpio"
 )
 
 func checkDimmerPins(msg string, t *testing.T, io *tests.TestIo, on gpio.Level, pwm gpio.Duty) {

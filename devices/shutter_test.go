@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/balazsgrill/wscgo/tests"
-	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/conn/v3/gpio"
 )
 
 func checkPins(msg string, t *testing.T, io *tests.TestIo, up gpio.Level, down gpio.Level) {

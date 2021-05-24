@@ -5,7 +5,7 @@ package config
 import (
 	"io/ioutil"
 
-	"periph.io/x/periph/host/distro"
+	"periph.io/x/host/v3/distro"
 )
 
 const modelinfo string = "/proc/device-tree/model"

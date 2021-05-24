@@ -65,8 +65,8 @@ frequency = 1000
 Pins are identified by string IDs as detected on the running platform or registered via IO extender configurations.
 
 On raspberry Pi, IO headers available are detected.
-* See [GPIO of BCM283x](https://godoc.org/periph.io/x/periph/host/bcm283x#Pin) 
-* and [Headers exposed on RPi](https://godoc.org/periph.io/x/periph/host/rpi)
+* See [GPIO of BCM283x](https://godoc.org/periph.io/x/host/v3/bcm283x#Pin) 
+* and [Headers exposed on RPi](https://godoc.org/periph.io/x/host/v3/rpi)
 
 ### Digital output
 

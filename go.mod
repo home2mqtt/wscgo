@@ -1,13 +1,13 @@
 module github.com/balazsgrill/wscgo
 
-go 1.13
+go 1.14
 
 require (
-	github.com/eclipse/paho.mqtt.golang v1.2.0
-	github.com/go-ble/ble v0.0.0-20200407180624-067514cd6e24
-	github.com/pkg/errors v0.8.1
-	github.com/smartystreets/goconvey v1.6.4 // indirect
-	golang.org/x/net v0.0.0-20200602114024-627f9648deb9 // indirect
-	gopkg.in/ini.v1 v1.57.0
-	periph.io/x/periph v3.6.3+incompatible
+	github.com/eclipse/paho.mqtt.golang v1.3.4
+	github.com/go-ble/ble v0.0.0-20210519192345-b055c211937b
+	github.com/pkg/errors v0.9.1
+	gopkg.in/ini.v1 v1.62.0
+	periph.io/x/conn/v3 v3.6.7
+	periph.io/x/devices/v3 v3.6.10
+	periph.io/x/host/v3 v3.6.7
 )
