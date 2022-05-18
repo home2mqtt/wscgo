@@ -8,6 +8,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.66.4
 	periph.io/x/conn/v3 v3.6.10
-	periph.io/x/devices/v3 v3.6.13
+	periph.io/x/devices/v3 v3.6.15
 	periph.io/x/host/v3 v3.7.2
 )
