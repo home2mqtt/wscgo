@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/balazsgrill/hass"
 	"github.com/balazsgrill/wscgo/devices"
 )
 
@@ -31,7 +32,7 @@ func TestDiscoveryJson(t *testing.T) {
 		PositionTopic: "test/pos",
 	}
 	c := IntegrateCover(&testshutter{}, conf)
-	info := c.GetDiscoveryInfo("test_"+conf.ObjectId, &DeviceDiscoveryInfo{
+	info := c.GetDiscoveryInfo("test_"+conf.ObjectId, &hass.Device{
 		Manufacturer: "wscgo",
 		Model:        "wscgo",
 		SwVersion:    "0.0.0-test",

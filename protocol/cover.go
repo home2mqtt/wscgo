@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/balazsgrill/hass"
 	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
@@ -15,16 +16,6 @@ type CoverConfig struct {
 	CommandTopic      string `ini:"topic,omitempty"`
 	GroupTopic        string `ini:"opt_groupTopic"`
 	PositionTopic     string `ini:"position_topic,omitempty"`
-}
-
-//https://www.home-assistant.io/integrations/cover.mqtt/
-type coverDiscoveryInfo struct {
-	BasicDiscoveryInfo
-	CommandTopic   string `json:"command_topic,omitempty"`
-	Name           string `json:"name,omitempty"`
-	PositionTopic  string `json:"position_topic,omitempty"`
-	PositionOpen   int    `json:"position_open"`
-	PositionClosed int    `json:"position_closed"`
 }
 
 type cover struct {
@@ -50,9 +41,9 @@ func IntegrateCover(shutter devices.IShutter, config *CoverConfig) IDiscoverable
 	}
 }
 
-func (cover *cover) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{} {
-	return &coverDiscoveryInfo{
-		BasicDiscoveryInfo: BasicDiscoveryInfo{
+func (cover *cover) GetDiscoveryInfo(uniqueID string, device *hass.Device) hass.IConfig {
+	return &hass.Cover{
+		BasicConfig: hass.BasicConfig{
 			UniqueID: uniqueID,
 			Device:   device,
 		},
@@ -95,8 +86,4 @@ func (cover *cover) Configure(client mqtt.Client) {
 	cover.AddListener(func(value int) {
 		client.Publish(cover.PositionTopic, 0, true, strconv.Itoa(value))
 	})
-}
-
-func (cover *cover) GetComponent() string {
-	return "cover"
 }

@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/balazsgrill/hass"
 	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"periph.io/x/conn/v3/gpio"
@@ -18,13 +19,6 @@ type SwitchConfig struct {
 type sw struct {
 	devices.IOutput
 	*SwitchConfig
-}
-
-//https://www.home-assistant.io/integrations/switch.mqtt/
-type switchDiscoveryInfo struct {
-	BasicDiscoveryInfo
-	CommandTopic string `json:"command_topic,omitempty"`
-	Name         string `json:"name,omitempty"`
 }
 
 func CreateSwitchConfig(id string) *SwitchConfig {
@@ -65,13 +59,9 @@ func (sw *sw) Configure(client mqtt.Client) {
 	})
 }
 
-func (sw *sw) GetComponent() string {
-	return "switch"
-}
-
-func (sw *sw) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{} {
-	return &switchDiscoveryInfo{
-		BasicDiscoveryInfo: BasicDiscoveryInfo{
+func (sw *sw) GetDiscoveryInfo(uniqueID string, device *hass.Device) hass.IConfig {
+	return &hass.Switch{
+		BasicConfig: hass.BasicConfig{
 			UniqueID: uniqueID,
 			Device:   device,
 		},

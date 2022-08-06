@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/balazsgrill/hass"
 	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
@@ -14,15 +15,6 @@ type SensorConfig struct {
 	UnitOfMeasurement string
 	Topic             string
 	Icon              string
-}
-
-//https://www.home-assistant.io/integrations/sensor.mqtt/
-type sensorDiscoveryInfo struct {
-	BasicDiscoveryInfo
-	Name              string `json:"name,omitempty"`
-	UnitOfMeasurement string `json:"unit_of_measurement"`
-	Topic             string `json:"state_topic"`
-	Icon              string `json:"icon"`
 }
 
 type sensor struct {
@@ -48,10 +40,6 @@ func IntegrateSensor(sensordev devices.ISensor, config *SensorConfig) IDiscovera
 	}
 }
 
-func (sensor *sensor) GetComponent() string {
-	return "sensor"
-}
-
 // ConfigureSensorListener configures the sensor to publish a message on each measured sensor value
 func ConfigureSensorListener(sensor devices.ISensor, topic string, client mqtt.Client) {
 	sensor.AddListener(func(value float64) {
@@ -69,9 +57,9 @@ func (sensor *sensor) Configure(client mqtt.Client) {
 	ConfigureSensorListener(sensor, sensor.Topic, client)
 }
 
-func (sensor *sensor) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{} {
-	return &sensorDiscoveryInfo{
-		BasicDiscoveryInfo: BasicDiscoveryInfo{
+func (sensor *sensor) GetDiscoveryInfo(uniqueID string, device *hass.Device) hass.IConfig {
+	return &hass.Sensor{
+		BasicConfig: hass.BasicConfig{
 			UniqueID: uniqueID,
 			Device:   device,
 		},

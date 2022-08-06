@@ -3,14 +3,14 @@ package config
 import (
 	"os"
 
-	"github.com/balazsgrill/wscgo/protocol"
+	"github.com/balazsgrill/hass"
 )
 
 // ComputeDeviceInfo extracts discovery metadata from the host system
-func ComputeDeviceInfo(version string) *protocol.DeviceDiscoveryInfo {
+func ComputeDeviceInfo(version string) *hass.Device {
 	model, serial, _ := getModelInfo()
 	host, _ := os.Hostname()
-	return &protocol.DeviceDiscoveryInfo{
+	return &hass.Device{
 		Identifiers:  []string{serial},
 		Connections:  []string{},
 		Manufacturer: "wscgo",

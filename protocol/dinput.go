@@ -1,6 +1,7 @@
 package protocol
 
 import (
+	"github.com/balazsgrill/hass"
 	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
@@ -13,12 +14,6 @@ type DInputConfig struct {
 type dinput struct {
 	devices.IInput
 	*DInputConfig
-}
-
-type dinputDiscoveryConfig struct {
-	BasicDiscoveryInfo
-	Name       string `json:"name"`
-	StateTopic string `json:"state_topic"`
 }
 
 func CreateDInputConfig(id string) *DInputConfig {
@@ -47,13 +42,9 @@ func (input *dinput) Configure(client mqtt.Client) {
 	})
 }
 
-func (input *dinput) GetComponent() string {
-	return "binary_sensor"
-}
-
-func (input *dinput) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{} {
-	return &dinputDiscoveryConfig{
-		BasicDiscoveryInfo: BasicDiscoveryInfo{
+func (input *dinput) GetDiscoveryInfo(uniqueID string, device *hass.Device) hass.IConfig {
+	return &hass.DInput{
+		BasicConfig: hass.BasicConfig{
 			UniqueID: uniqueID,
 			Device:   device,
 		},

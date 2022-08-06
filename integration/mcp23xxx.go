@@ -62,7 +62,7 @@ func (p *mcp23xxxConfigParser) ParseConfiguration(section config.ConfigurationSe
 		})
 		return nil
 	default:
-		return fmt.Errorf("Unknown MCP23 variant: %s", p.variant)
+		return fmt.Errorf("unknown MCP23 variant: %s", p.variant)
 	}
 }
 

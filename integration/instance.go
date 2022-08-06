@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/balazsgrill/hass"
 	"github.com/balazsgrill/wscgo/config"
 	"github.com/balazsgrill/wscgo/devices"
 	"github.com/balazsgrill/wscgo/protocol"
@@ -16,7 +17,7 @@ type WscgoInstance struct {
 	client     mqtt.Client
 	devices    []devices.Device
 	protocols  []protocol.IDiscoverable
-	deviceInfo *protocol.DeviceDiscoveryInfo
+	deviceInfo *hass.Device
 	nodeInfo   *protocol.DiscoverableNode
 }
 
@@ -25,7 +26,7 @@ func (instance *WscgoInstance) AddDevice(device devices.Device) {
 }
 
 func (instance *WscgoInstance) AddProtocol(pro protocol.IDiscoverable) {
-	log.Println("Initializing ", pro.GetComponent(), pro.GetObjectId())
+	log.Println("Initializing ", pro.GetObjectId())
 	instance.protocols = append(instance.protocols, pro)
 }
 
@@ -49,7 +50,7 @@ func (instance *WscgoInstance) Configure(conf *config.WscgoConfiguration) {
 func (instance *WscgoInstance) eventOnConnected(client mqtt.Client) {
 	log.Println("Connected to MQTT broker")
 	for _, d := range instance.protocols {
-		log.Println("Configuring ", d.GetComponent(), d.GetObjectId())
+		log.Println("Configuring ", d.GetObjectId())
 		d.Configure(client)
 	}
 	instance.publishDiscoveryMessages(client)
@@ -65,8 +66,8 @@ func (instance *WscgoInstance) publishDiscoveryMessages(client mqtt.Client) {
 	}
 }
 
-func (instance *WscgoInstance) eventOnDisconnected(client mqtt.Client) {
-	log.Println("MQTT Connection lost")
+func (instance *WscgoInstance) eventOnDisconnected(client mqtt.Client, err error) {
+	log.Println("MQTT Connection lost " + err.Error())
 }
 
 func (instance *WscgoInstance) SetMqttClientOptions(conf *protocol.MqttConfig) {
@@ -74,7 +75,7 @@ func (instance *WscgoInstance) SetMqttClientOptions(conf *protocol.MqttConfig) {
 		instance.client.Disconnect(100)
 	}
 	opts := protocol.ConfigureClientOptions(conf)
-	opts = opts.SetOnConnectHandler(instance.eventOnConnected)
+	opts = opts.SetOnConnectHandler(instance.eventOnConnected).SetConnectionLostHandler(instance.eventOnDisconnected)
 	instance.deviceInfo = config.ComputeDeviceInfo(instance.Version)
 	instance.client = mqtt.NewClient(opts)
 }

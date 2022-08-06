@@ -7,14 +7,14 @@ package protocol
 import (
 	"encoding/json"
 
+	"github.com/balazsgrill/hass"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 type IDiscoverable interface {
 	MQTTProtocol
-	GetComponent() string
 	GetObjectId() string
-	GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{}
+	GetDiscoveryInfo(uniqueID string, device *hass.Device) hass.IConfig
 }
 
 type DiscoverableNode struct {
@@ -27,29 +27,15 @@ type BasicDeviceConfig struct {
 	ObjectId string
 }
 
-type DeviceDiscoveryInfo struct {
-	Identifiers  []string `json:"identifiers,omitempty"`
-	Connections  []string `json:"connections,omitempty"`
-	Manufacturer string   `json:"manufacturer,omitempty"`
-	Model        string   `json:"model,omitempty"`
-	Name         string   `json:"name,omitempty"`
-	SwVersion    string   `json:"sw_version,omitempty"`
-}
-
-type BasicDiscoveryInfo struct {
-	Device   *DeviceDiscoveryInfo `json:"device,omitempty"`
-	UniqueID string               `json:"unique_id,omitempty"`
-}
-
 // <discovery_prefix>/<component>/[<node_id>/]<object_id>/config
-func PublisDiscoveryMessage(client mqtt.Client, node *DiscoverableNode, component IDiscoverable, device *DeviceDiscoveryInfo) error {
-	uniqueid := node.NodeID + "_" + component.GetComponent() + "_" + component.GetObjectId()
+func PublisDiscoveryMessage(client mqtt.Client, node *DiscoverableNode, component IDiscoverable, device *hass.Device) error {
+	uniqueid := node.NodeID + "_" + component.GetObjectId()
 	di := component.GetDiscoveryInfo(uniqueid, device)
 	c, err := json.Marshal(di)
 	if err != nil {
 		return err
 	}
-	topic := node.DiscoveryPrefix + "/" + component.GetComponent() + "/" + node.NodeID + "/" + component.GetObjectId() + "/config"
+	topic := node.DiscoveryPrefix + "/" + di.GetComponent() + "/" + node.NodeID + "/" + component.GetObjectId() + "/config"
 	client.Publish(topic, 0, false, c)
 	return nil
 }

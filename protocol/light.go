@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/balazsgrill/hass"
 	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"periph.io/x/conn/v3/gpio"
@@ -19,17 +20,6 @@ type LightConfig struct {
 type light struct {
 	devices.IDimmer
 	*LightConfig
-}
-
-type lightDiscoveryInfo struct {
-	BasicDiscoveryInfo
-	CommandTopic           string `json:"command_topic,omitempty"`
-	Name                   string `json:"name,omitempty"`
-	BrightnessCommandTopic string `json:"brightness_command_topic,omitempty"`
-	BrightnessScale        int32  `json:"brightness_scale"`
-	BrightnessStateTopic   string `json:"brightness_state_topic,omitempty"`
-	OnCommandType          string `json:"on_command_type,omitempty"`
-	StateTopic             string `json:"state_topic,omitempty"`
 }
 
 func CreateLightConfig(id string) *LightConfig {
@@ -72,17 +62,13 @@ func (light *light) fireBrightnessEvent(client mqtt.Client, brightness gpio.Duty
 	client.Publish(light.CommandTopic+"/brightness", 0, false, fmt.Sprintf("%d", brightness))
 }
 
-func (light *light) GetComponent() string {
-	return "light"
-}
-
 func (light *light) Configure(client mqtt.Client) {
 	client.Subscribe(light.CommandTopic, 0, light.onMsgReceive)
 }
 
-func (light *light) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{} {
-	return &lightDiscoveryInfo{
-		BasicDiscoveryInfo: BasicDiscoveryInfo{
+func (light *light) GetDiscoveryInfo(uniqueID string, device *hass.Device) hass.IConfig {
+	return &hass.Light{
+		BasicConfig: hass.BasicConfig{
 			UniqueID: uniqueID,
 			Device:   device,
 		},

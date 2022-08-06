@@ -5,27 +5,10 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/balazsgrill/hass"
 	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
-
-// https://www.home-assistant.io/integrations/climate.mqtt/
-type hvacDiscoveryInfo struct {
-	BasicDiscoveryInfo
-	Name string `json:"name,omitempty"`
-
-	ActionTopic string `json:"action_topic,omitempty"`
-
-	CurrentTemperatureTopic string `json:"current_temperature_topic,omitempty"`
-	TemperatreCommandTopic  string `json:"temperature_command_topic,omitempty"`
-	//TemperatureUnit         string  `json:"temperature_unit,omitempty"`
-	TemperatureStateTopic string   `json:"temperature_state_topic,omitempty"`
-	MaxTemp               float64  `json:"max_temp,omitempty"`
-	MinTemp               float64  `json:"min_temp,omitempty"`
-	TempStep              float64  `json:"temp_step,omitempty"`
-	Modes                 []string `json:"modes,omitempty"`
-	ModeCommandTopic      string   `json:"mode_command_topic,omitempty"`
-}
 
 // HVACConfig contains configuration parameters for a HVAC device
 type HVACConfig struct {
@@ -52,10 +35,6 @@ func IntegrateHVAC(device devices.IThermostat, config *HVACConfig) IDiscoverable
 		IThermostat: device,
 		HVACConfig:  config,
 	}
-}
-
-func (h *hvac) GetComponent() string {
-	return "climate"
 }
 
 func (h *hvac) CurrentTemperatureTopic() string {
@@ -104,10 +83,10 @@ func (h *hvac) Configure(client mqtt.Client) {
 	client.Subscribe(h.ModeCommandTopic(), 0, h.onSetMode)
 }
 
-func (h *hvac) GetDiscoveryInfo(uniqueID string, device *DeviceDiscoveryInfo) interface{} {
+func (h *hvac) GetDiscoveryInfo(uniqueID string, device *hass.Device) hass.IConfig {
 	r := h.TemperatureRange()
-	return &hvacDiscoveryInfo{
-		BasicDiscoveryInfo: BasicDiscoveryInfo{
+	return &hass.HVAC{
+		BasicConfig: hass.BasicConfig{
 			UniqueID: uniqueID,
 			Device:   device,
 		},
