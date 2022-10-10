@@ -2,13 +2,12 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/JuulLabs-OSS/cbgo v0.0.1/go.mod h1:L4YtGP+gnyD84w7+jN66ncspFRfOYB5aj9QSXaFHmBA=
 github.com/JuulLabs-OSS/cbgo v0.0.2 h1:gCDyT0+EPuI8GOFyvAksFcVD2vF4CXBAVwT6uVnD9oo=
 github.com/JuulLabs-OSS/cbgo v0.0.2/go.mod h1:L4YtGP+gnyD84w7+jN66ncspFRfOYB5aj9QSXaFHmBA=
-github.com/balazsgrill/hass v0.0.4 h1:nGWFpxkr6GM2PYWjHUb1TolF25wn7PoHrNmXO8OISc4=
-github.com/balazsgrill/hass v0.0.4/go.mod h1:jZnX6yebKk2rY78zv9ZQE7f7kVjtuJu3KP0bUSVzt3k=
+github.com/balazsgrill/hass v0.0.6 h1:+BHrsI1fwDoV0yo+tyOisJjW75z8uZUP9EXAaGq5T6I=
+github.com/balazsgrill/hass v0.0.6/go.mod h1:94lN6vuyZTTV/0GggEWnKrLQzT/TuLa3rosI7TQeQf4=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/eclipse/paho.mqtt.golang v1.3.5/go.mod h1:eTzb4gxwwyWpqBUHGQZ4ABAV7+Jgm1PklsYT/eo8Hcc=
 github.com/eclipse/paho.mqtt.golang v1.4.1 h1:tUSpviiL5G3P9SZZJPC4ZULZJsxQKXxfENpMvdbAXAI=
 github.com/eclipse/paho.mqtt.golang v1.4.1/go.mod h1:JGt0RsEwEX+Xa/agj90YJ9d9DH2b7upDZMK9HRbFvCA=
 github.com/go-ble/ble v0.0.0-20220207185428-60d1eecf2633 h1:ZrzoZQz1CF33SPHLkjRpnVuZwr9cO1lTEc4Js7SgBos=
