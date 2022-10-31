@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/balazsgrill/hass v0.0.6
-	github.com/eclipse/paho.mqtt.golang v1.4.1
+	github.com/eclipse/paho.mqtt.golang v1.4.2
 	github.com/go-ble/ble v0.0.0-20220207185428-60d1eecf2633
 	gopkg.in/ini.v1 v1.67.0
 	periph.io/x/conn/v3 v3.7.0
