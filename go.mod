@@ -7,9 +7,9 @@ require (
 	github.com/eclipse/paho.mqtt.golang v1.4.1
 	github.com/go-ble/ble v0.0.0-20220207185428-60d1eecf2633
 	gopkg.in/ini.v1 v1.67.0
-	periph.io/x/conn/v3 v3.6.10
+	periph.io/x/conn/v3 v3.7.0
 	periph.io/x/devices/v3 v3.6.15
-	periph.io/x/host/v3 v3.7.2
+	periph.io/x/host/v3 v3.8.0
 )
 
 require (
