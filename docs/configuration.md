@@ -114,7 +114,7 @@ Example:
 ```ini
 [dinput:1]
 name = Button
-state_topic = home/f1/button1
+topic = home/f1/button1
 pin = MCP23017_27_PORTA_0
 ```
 
