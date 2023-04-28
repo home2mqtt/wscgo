@@ -8,7 +8,7 @@ require (
 	github.com/go-ble/ble v0.0.0-20220207185428-60d1eecf2633
 	gopkg.in/ini.v1 v1.67.0
 	periph.io/x/conn/v3 v3.7.0
-	periph.io/x/devices/v3 v3.7.0
+	periph.io/x/devices/v3 v3.7.1
 	periph.io/x/host/v3 v3.8.1
 )
 
