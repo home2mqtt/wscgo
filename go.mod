@@ -3,13 +3,13 @@ module github.com/balazsgrill/wscgo
 go 1.18
 
 require (
-	github.com/balazsgrill/hass v0.0.6
-	github.com/eclipse/paho.mqtt.golang v1.4.2
+	github.com/balazsgrill/hass v0.0.7
+	github.com/eclipse/paho.mqtt.golang v1.4.3
 	github.com/go-ble/ble v0.0.0-20220207185428-60d1eecf2633
 	gopkg.in/ini.v1 v1.67.0
 	periph.io/x/conn/v3 v3.7.0
-	periph.io/x/devices/v3 v3.7.0
-	periph.io/x/host/v3 v3.8.0
+	periph.io/x/devices/v3 v3.7.1
+	periph.io/x/host/v3 v3.8.2
 )
 
 require (
@@ -23,7 +23,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/raff/goble v0.0.0-20200327175727-d63360dcfd80 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
-	golang.org/x/net v0.0.0-20220728211354-c7608f3a8462 // indirect
-	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
-	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/net v0.8.0 // indirect
+	golang.org/x/sync v0.1.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 )

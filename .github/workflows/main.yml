@@ -68,7 +68,7 @@ jobs:
         format: 'deb'
         owner: 'home2mqtt'             
         repo: 'home2mqtt'         
-        distro: 'unstable'   
+        distro: 'any-distro'   
         release: 'main'        
         republish: 'true' 
         file: "wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
