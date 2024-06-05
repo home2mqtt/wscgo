@@ -59,10 +59,17 @@ jobs:
         path: "wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
     
     - name: Publish CI package
+      id: push
       if: github.ref == 'refs/heads/master'
-      run: curl "-u${{ secrets.JFROG_ACCESS }}" -XPUT "https://balazsgrill.jfrog.io/artifactory/wscgo/pool/wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb;deb.distribution=unstable;deb.component=main;deb.architecture=armhf" -T "wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
-
-    - name: Publish CI package
-      if: startsWith(github.ref, 'refs/tags/v')
-      run: curl "-u${{ secrets.JFROG_ACCESS }}" -XPUT "https://balazsgrill.jfrog.io/artifactory/wscgo/pool/wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb;deb.distribution=stable;deb.component=main;deb.architecture=armhf" -T "wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
+      uses: cloudsmith-io/action@master
+      with:
+        api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+        command: 'push'
+        format: 'deb'
+        owner: 'home2mqtt'             
+        repo: 'home2mqtt'         
+        distro: 'unstable'   
+        release: 'main'        
+        republish: 'true' 
+        file: "wscgo_${{ steps.dotenv.outputs.version }}-${{ steps.current-time.outputs.formattedTime }}_armhf.deb"
 
