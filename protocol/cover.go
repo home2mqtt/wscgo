@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/balazsgrill/hass"
-	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/home2mqtt/hass"
+	"github.com/home2mqtt/wscgo/devices"
 )
 
 // CoverConfig is the protocol configuration of a cover (a.k.a. shutter)

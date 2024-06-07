@@ -4,10 +4,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/balazsgrill/wscgo/config"
+	"github.com/home2mqtt/wscgo/config"
 	"periph.io/x/host/v3"
 
-	"github.com/balazsgrill/wscgo/integration"
+	"github.com/home2mqtt/wscgo/integration"
 )
 
 func main() {

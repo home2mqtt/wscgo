@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/balazsgrill/hass"
-	"github.com/balazsgrill/wscgo/devices"
+	"github.com/home2mqtt/hass"
+	"github.com/home2mqtt/wscgo/devices"
 )
 
 type testshutter struct {

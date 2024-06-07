@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/balazsgrill/hass"
-	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/home2mqtt/hass"
+	"github.com/home2mqtt/wscgo/devices"
 	"periph.io/x/conn/v3/gpio"
 )
 

@@ -1,11 +1,12 @@
+//go:build linux
 // +build linux
 
 package integration
 
 import (
-	"github.com/balazsgrill/wscgo/config"
-	"github.com/balazsgrill/wscgo/devices/cometblue"
-	"github.com/balazsgrill/wscgo/protocol"
+	"github.com/home2mqtt/wscgo/config"
+	"github.com/home2mqtt/wscgo/devices/cometblue"
+	"github.com/home2mqtt/wscgo/protocol"
 )
 
 type cometblueConfigurationParser struct {

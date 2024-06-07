@@ -1,9 +1,9 @@
-module github.com/balazsgrill/wscgo
+module github.com/home2mqtt/wscgo
 
-go 1.18
+go 1.21
 
 require (
-	github.com/balazsgrill/hass v0.0.7
+	github.com/home2mqtt/hass v0.0.8
 	github.com/eclipse/paho.mqtt.golang v1.4.3
 	github.com/go-ble/ble v0.0.0-20220207185428-60d1eecf2633
 	gopkg.in/ini.v1 v1.67.0

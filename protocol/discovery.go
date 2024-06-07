@@ -7,8 +7,8 @@ package protocol
 import (
 	"encoding/json"
 
-	"github.com/balazsgrill/hass"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/home2mqtt/hass"
 )
 
 type IDiscoverable interface {

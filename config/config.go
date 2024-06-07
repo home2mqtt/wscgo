@@ -4,8 +4,8 @@ import (
 	"os"
 	"sort"
 
-	"github.com/balazsgrill/wscgo/devices"
-	"github.com/balazsgrill/wscgo/protocol"
+	"github.com/home2mqtt/wscgo/devices"
+	"github.com/home2mqtt/wscgo/protocol"
 )
 
 // DeviceInitializer is a function capable of initializing a device

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/balazsgrill/hass"
-	"github.com/balazsgrill/wscgo/devices"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/home2mqtt/hass"
+	"github.com/home2mqtt/wscgo/devices"
 )
 
 // SensorConfig is the protocol configuration of a sensor

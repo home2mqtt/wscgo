@@ -4,11 +4,11 @@ import (
 	"log"
 	"time"
 
-	"github.com/balazsgrill/hass"
-	"github.com/balazsgrill/wscgo/config"
-	"github.com/balazsgrill/wscgo/devices"
-	"github.com/balazsgrill/wscgo/protocol"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/home2mqtt/hass"
+	"github.com/home2mqtt/wscgo/config"
+	"github.com/home2mqtt/wscgo/devices"
+	"github.com/home2mqtt/wscgo/protocol"
 )
 
 type WscgoInstance struct {

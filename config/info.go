@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"github.com/balazsgrill/hass"
+	"github.com/home2mqtt/hass"
 )
 
 // ComputeDeviceInfo extracts discovery metadata from the host system

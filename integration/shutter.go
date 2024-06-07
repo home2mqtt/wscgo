@@ -1,9 +1,9 @@
 package integration
 
 import (
-	"github.com/balazsgrill/wscgo/config"
-	"github.com/balazsgrill/wscgo/devices"
-	"github.com/balazsgrill/wscgo/protocol"
+	"github.com/home2mqtt/wscgo/config"
+	"github.com/home2mqtt/wscgo/devices"
+	"github.com/home2mqtt/wscgo/protocol"
 )
 
 type shutterConfigPartParser struct{}

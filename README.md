@@ -1,7 +1,7 @@
 # wscgo
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/balazsgrill/wscgo)](https://goreportcard.com/report/github.com/balazsgrill/wscgo)
-![Build status](https://github.com/balazsgrill/wscgo/workflows/Main/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/home2mqtt/wscgo)](https://goreportcard.com/report/github.com/home2mqtt/wscgo)
+![Build status](https://github.com/home2mqtt/wscgo/workflows/Main/badge.svg)
 [![Maintainability](https://api.codeclimate.com/v1/badges/27fbdc40e649c93f781e/maintainability)](https://codeclimate.com/github/balazsgrill/wscgo/maintainability)
 
 wscgo is a highly configurable controller intended for home automation written in Go. Supported 

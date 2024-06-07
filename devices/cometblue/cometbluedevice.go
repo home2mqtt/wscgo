@@ -1,3 +1,4 @@
+//go:build linux
 // +build linux
 
 package cometblue
@@ -5,7 +6,7 @@ package cometblue
 import (
 	"sync"
 
-	"github.com/balazsgrill/wscgo/devices"
+	"github.com/home2mqtt/wscgo/devices"
 )
 
 // recoverDuration time to wait before retrying in case of communication error
