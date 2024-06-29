@@ -92,7 +92,7 @@ func (h *hvac) GetDiscoveryInfo(uniqueID string, device *hass.Device) hass.IConf
 		},
 		Name:                    h.Name,
 		CurrentTemperatureTopic: h.CurrentTemperatureTopic(),
-		TemperatreCommandTopic:  h.TemperatureCommandTopic(),
+		TemperatureCommandTopic: h.TemperatureCommandTopic(),
 		TemperatureStateTopic:   h.TemperatureStateTopic(),
 		//TemperatureUnit:         "C",
 		MaxTemp:          r.Max,
