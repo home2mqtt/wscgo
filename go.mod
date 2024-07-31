@@ -3,7 +3,7 @@ module github.com/home2mqtt/wscgo
 go 1.21
 
 require (
-	github.com/eclipse/paho.mqtt.golang v1.4.3
+	github.com/eclipse/paho.mqtt.golang v1.5.0
 	github.com/go-ble/ble v0.0.0-20220207185428-60d1eecf2633
 	github.com/home2mqtt/hass v0.0.8
 	gopkg.in/ini.v1 v1.67.0
@@ -15,7 +15,7 @@ require (
 require (
 	github.com/JuulLabs-OSS/cbgo v0.0.2 // indirect
 	github.com/goph/emperror v0.17.1 // indirect
-	github.com/gorilla/websocket v1.5.0 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/jonboulle/clockwork v0.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
@@ -25,7 +25,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/raff/goble v0.0.0-20200327175727-d63360dcfd80 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
-	golang.org/x/net v0.8.0 // indirect
-	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/net v0.27.0 // indirect
+	golang.org/x/sync v0.7.0 // indirect
+	golang.org/x/sys v0.22.0 // indirect
 )
